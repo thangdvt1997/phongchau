@@ -59,6 +59,11 @@ async function main() {
     { key: 'phuquoc', name: 'Phu Quoc Pepper Fields', country: 'Vietnam', province: 'Kien Giang', farmName: 'Phu Quoc Pepper Cooperative' },
     { key: 'bentre', name: 'Ben Tre Coconut Delta', country: 'Vietnam', province: 'Ben Tre', farmName: 'Ben Tre Coconut Farms' },
     { key: 'angiang', name: 'An Giang Rice Fields', country: 'Vietnam', province: 'An Giang', farmName: 'An Giang Rice Cooperative' },
+    { key: 'tayninh', name: 'Tay Ninh Peanut Fields', country: 'Vietnam', province: 'Tay Ninh', farmName: 'Tay Ninh Peanut Cooperative' },
+    { key: 'lamdong', name: 'Lam Dong Highlands', country: 'Vietnam', province: 'Lam Dong', farmName: 'Lam Dong Macadamia Farms' },
+    { key: 'tiengiang', name: 'Tien Giang Orchard Delta', country: 'Vietnam', province: 'Tien Giang', farmName: 'Tien Giang Fruit Cooperative' },
+    { key: 'yenbai', name: 'Yen Bai Cinnamon Hills', country: 'Vietnam', province: 'Yen Bai', farmName: 'Yen Bai Spice Cooperative' },
+    { key: 'thainguyen', name: 'Thai Nguyen Tea Hills', country: 'Vietnam', province: 'Thai Nguyen', farmName: 'Thai Nguyen Tea Cooperative' },
   ];
   const origins: Record<string, { id: string }> = {};
   for (const { key, ...o } of originData) {
@@ -89,10 +94,15 @@ async function main() {
   const catCoconut = await upsertCategory('Coconut Products', 'coconut-products');
   const catCashew = await upsertCategory('Cashew', 'cashew', catNuts.id);
   const catPepper = await upsertCategory('Pepper', 'pepper', catSpices.id);
-  await upsertCategory('Fresh Agricultural Products', 'fresh-agricultural-products');
-  await upsertCategory('Processed Products', 'processed-products');
-  await upsertCategory('Frozen Products', 'frozen-products');
-  await upsertCategory('Dried Products', 'dried-products');
+  const catFreshAgri = await upsertCategory('Fresh Agricultural Products', 'fresh-agricultural-products');
+  const catProcessed = await upsertCategory('Processed Products', 'processed-products');
+  const catFrozen = await upsertCategory('Frozen Products', 'frozen-products');
+  const catDried = await upsertCategory('Dried Products', 'dried-products');
+  const catPeanut = await upsertCategory('Peanut', 'peanut', catNuts.id);
+  const catMacadamia = await upsertCategory('Macadamia', 'macadamia', catNuts.id);
+  const catHerbsSpices = await upsertCategory('Herbs & Spices', 'herbs-spices');
+  const catTea = await upsertCategory('Tea', 'tea');
+  const catHoney = await upsertCategory('Honey & Bee Products', 'honey-bee-products');
 
   // ---------- Products ----------
   interface SeedProduct {
@@ -108,7 +118,210 @@ async function main() {
     hsCode: string;
   }
 
-  const products: SeedProduct[] = [
+  // ---------- Bulk catalog generator ----------
+  // Generates a large, realistic product catalog (~320 items) by crossing each category's
+  // "product line" names (e.g. "Roasted Cashew Nut") with its grade/style list (e.g. "W320"),
+  // capped per category so the mix stays proportional rather than combinatorially exploding.
+  // Each generated entry still goes through the exact same creation loop below (images,
+  // documents, certifications, variants, inventory, batch, price tiers) as the 8 hand-curated
+  // flagship products above it.
+  function slugify(s: string): string {
+    return s
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+  }
+
+  type UnitProfile = 'dry' | 'liquid' | 'frozen' | 'snack';
+
+  function variantsForUnit(unit: UnitProfile, sku: string, basePrice: number) {
+    switch (unit) {
+      case 'liquid':
+        return [
+          { sku: `${sku}-500ML`, weightLabel: '500ml', packagingLabel: 'Bottle', gradeLabel: 'Retail', price: Math.round(basePrice / 1000) * 1000 },
+          { sku: `${sku}-20L`, weightLabel: '20L', packagingLabel: 'Jerry Can', gradeLabel: 'Bulk', price: Math.round((basePrice * 36) / 1000) * 1000 },
+        ];
+      case 'frozen':
+        return [
+          { sku: `${sku}-1KG`, weightLabel: '1kg', packagingLabel: 'IQF Vacuum Bag', gradeLabel: 'Retail', price: Math.round(basePrice / 1000) * 1000 },
+          { sku: `${sku}-10KG`, weightLabel: '10kg', packagingLabel: 'Master Carton', gradeLabel: 'Bulk', price: Math.round((basePrice * 9) / 1000) * 1000 },
+        ];
+      case 'snack':
+        return [
+          { sku: `${sku}-200G`, weightLabel: '200g', packagingLabel: 'Box', gradeLabel: 'Retail', price: Math.round(basePrice / 1000) * 1000 },
+          { sku: `${sku}-10KG`, weightLabel: '10kg', packagingLabel: 'Master Carton', gradeLabel: 'Bulk', price: Math.round((basePrice * 45) / 1000) * 1000 },
+        ];
+      case 'dry':
+      default:
+        return [
+          { sku: `${sku}-500G`, weightLabel: '500g', packagingLabel: 'Vacuum Bag', gradeLabel: 'Retail', price: Math.round(basePrice / 1000) * 1000 },
+          { sku: `${sku}-25KG`, weightLabel: '25kg', packagingLabel: 'Carton', gradeLabel: 'Bulk', price: Math.round((basePrice * 47) / 1000) * 1000 },
+        ];
+    }
+  }
+
+  interface BulkCategoryConfig {
+    key: string;
+    categoryId: string;
+    originId: string;
+    hsCode: string;
+    unit: UnitProfile;
+    certPool: string[];
+    lines: string[];
+    grades: string[];
+    priceMin: number;
+    priceMax: number;
+    cap: number;
+    moq: string;
+  }
+
+  const bulkConfigs: BulkCategoryConfig[] = [
+    {
+      key: 'CASHEW2', categoryId: catCashew.id, originId: origins.binhphuoc.id, hsCode: '0801.32', unit: 'dry',
+      certPool: ['HACCP', 'ISO22000', 'GLOBALGAP', 'ORGANIC'],
+      lines: ['Roasted Cashew Nut', 'Raw Cashew Nut', 'Salted Roasted Cashew', 'Honey Roasted Cashew', 'Wasabi Coated Cashew', 'Cashew Nut Pieces'],
+      grades: ['W180', 'W210', 'W240', 'W320', 'W450', 'SW', 'LWP', 'DW', 'SP', 'BB'],
+      priceMin: 140000, priceMax: 320000, cap: 40, moq: '1 x 20FT container',
+    },
+    {
+      key: 'PEANUT', categoryId: catPeanut.id, originId: origins.tayninh.id, hsCode: '1202.42', unit: 'dry',
+      certPool: ['HACCP', 'ISO22000', 'VIETGAP'],
+      lines: ['Raw Peanut Kernel', 'Roasted Peanut', 'Coated Peanut', 'Peanut Kernel Split'],
+      grades: ['24/28', '28/32', '34/38', '38/42', '40/50', 'Blanched', 'Split'],
+      priceMin: 45000, priceMax: 90000, cap: 20, moq: '5 tonnes',
+    },
+    {
+      key: 'MACA', categoryId: catMacadamia.id, originId: origins.lamdong.id, hsCode: '0802.61', unit: 'dry',
+      certPool: ['HACCP', 'ISO22000', 'ORGANIC'],
+      lines: ['Raw Macadamia Nut', 'Roasted Macadamia Nut', 'Salted Macadamia'],
+      grades: ['Style 1', 'Style 2', 'Whole Kernel', 'Half Kernel'],
+      priceMin: 280000, priceMax: 450000, cap: 12, moq: '500kg',
+    },
+    {
+      key: 'COFFEE2', categoryId: catCoffee.id, originId: origins.daklak.id, hsCode: '0901.21', unit: 'dry',
+      certPool: ['ISO22000', 'VIETGAP', 'ORGANIC', 'FDA'],
+      lines: ['Robusta Coffee Beans', 'Arabica Washed Coffee Beans', 'Arabica Natural Coffee Beans', 'Arabica Honey Coffee Beans', 'Culi Robusta Coffee Beans', 'Instant Coffee 3-in-1', 'Instant Black Coffee'],
+      grades: ['Grade 1', 'Grade 2', 'Screen 16', 'Screen 18', 'Specialty', 'Fine Robusta'],
+      priceMin: 75000, priceMax: 180000, cap: 30, moq: '500kg',
+    },
+    {
+      key: 'PEPPER2', categoryId: catPepper.id, originId: origins.phuquoc.id, hsCode: '0904.11', unit: 'dry',
+      certPool: ['HACCP', 'BRC', 'HALAL'],
+      lines: ['Black Pepper', 'White Pepper', 'Red Pepper', 'Green Pepper (Dried)', 'Green Pepper (Pickled)', 'Pepper Powder'],
+      grades: ['500GL', '550GL', '570GL', 'Grade A', 'Grade B', 'ASTA'],
+      priceMin: 140000, priceMax: 260000, cap: 25, moq: '1 tonne',
+    },
+    {
+      key: 'RICE2', categoryId: catRice.id, originId: origins.angiang.id, hsCode: '1006.30', unit: 'dry',
+      certPool: ['VIETGAP', 'ISO22000', 'GLOBALGAP'],
+      lines: ['Jasmine Rice', 'ST25 Fragrant Rice', 'White Glutinous Rice', 'Black Glutinous Rice', 'Brown Rice', 'Japonica Rice', 'Broken Rice'],
+      grades: ['5% Broken', '10% Broken', '15% Broken', '25% Broken', '100% Broken', 'Premium'],
+      priceMin: 16000, priceMax: 32000, cap: 30, moq: '20 tonnes',
+    },
+    {
+      key: 'COCONUT2', categoryId: catCoconut.id, originId: origins.bentre.id, hsCode: '0801.11', unit: 'dry',
+      certPool: ['HACCP', 'ORGANIC', 'ISO22000'],
+      lines: ['Desiccated Coconut', 'Coconut Milk Powder', 'Coconut Oil', 'Coconut Water (Canned)', 'Coconut Sugar', 'Coconut Cream', 'Coconut Charcoal Briquette'],
+      grades: ['Fine High-Fat', 'Fine Low-Fat', 'Medium Desiccated', 'Coarse Desiccated', 'Virgin Cold-Pressed', 'RBD Grade', 'Organic'],
+      priceMin: 55000, priceMax: 140000, cap: 30, moq: '1 x 20FT container',
+    },
+    {
+      key: 'DRIED', categoryId: catDried.id, originId: origins.tiengiang.id, hsCode: '0813.40', unit: 'dry',
+      certPool: ['HACCP', 'ISO22000', 'FDA'],
+      lines: ['Dried Mango', 'Dried Banana', 'Dried Jackfruit', 'Dried Pineapple', 'Dried Dragon Fruit', 'Dried Longan', 'Dried Lychee', 'Mixed Dried Fruit'],
+      grades: ['Natural (No Sugar)', 'Lightly Sweetened', 'Sun-Dried', 'Low-Temp Dried', 'Premium Select'],
+      priceMin: 85000, priceMax: 220000, cap: 30, moq: '500kg',
+    },
+    {
+      key: 'FROZEN', categoryId: catFrozen.id, originId: origins.tiengiang.id, hsCode: '0811.90', unit: 'frozen',
+      certPool: ['HACCP', 'BRC', 'FDA'],
+      lines: ['Frozen Durian', 'Frozen Mango', 'Frozen Jackfruit', 'Frozen Okra', 'Frozen Edamame', 'Frozen Sweet Corn', 'Frozen Passion Fruit Puree', 'Frozen Dragon Fruit'],
+      grades: ['IQF Whole', 'IQF Diced', 'IQF Sliced', 'IQF Puree'],
+      priceMin: 60000, priceMax: 190000, cap: 24, moq: '1 x reefer container',
+    },
+    {
+      key: 'HERBS', categoryId: catHerbsSpices.id, originId: origins.yenbai.id, hsCode: '0910.99', unit: 'dry',
+      certPool: ['HACCP', 'ORGANIC', 'ISO22000'],
+      lines: ['Cinnamon', 'Star Anise', 'Turmeric', 'Dried Ginger', 'Chili', 'Cardamom', 'Lemongrass', 'Bay Leaf'],
+      grades: ['Whole', 'Ground/Powder', 'Split', 'Sifted', 'Organic'],
+      priceMin: 40000, priceMax: 160000, cap: 30, moq: '500kg',
+    },
+    {
+      key: 'TEA', categoryId: catTea.id, originId: origins.thainguyen.id, hsCode: '0902.20', unit: 'dry',
+      certPool: ['ISO22000', 'ORGANIC', 'VIETGAP'],
+      lines: ['Green Tea', 'Lotus Tea', 'Artichoke Tea', 'Moringa Tea', 'Ginger Tea Blend'],
+      grades: ['Grade A Leaf', 'Grade B Leaf', 'Bud & Leaf', 'Tea Bag Cut'],
+      priceMin: 70000, priceMax: 220000, cap: 16, moq: '300kg',
+    },
+    {
+      key: 'HONEY', categoryId: catHoney.id, originId: origins.daklak.id, hsCode: '0409.00', unit: 'liquid',
+      certPool: ['HACCP', 'ORGANIC', 'FDA'],
+      lines: ['Longan Flower Honey', 'Forest Wild Honey', 'Rubber Flower Honey', 'Royal Jelly', 'Bee Propolis'],
+      grades: ['Raw Unfiltered', 'Filtered', 'Crystallization-Resistant', 'Organic Certified'],
+      priceMin: 90000, priceMax: 260000, cap: 12, moq: '200kg',
+    },
+    {
+      key: 'SNACK', categoryId: catProcessed.id, originId: origins.bentre.id, hsCode: '1704.90', unit: 'snack',
+      certPool: ['HACCP', 'ISO22000', 'FDA'],
+      lines: ['Coconut Candy', 'Cashew Brittle', 'Sesame Peanut Candy', 'Ginger Candy', 'Rice Paper Chips'],
+      grades: ['Original', 'Pandan', 'Durian', 'Ginger', 'Sesame', 'Mixed Nut'],
+      priceMin: 35000, priceMax: 90000, cap: 20, moq: '2000 units',
+    },
+    {
+      key: 'FRESH', categoryId: catFreshAgri.id, originId: origins.tiengiang.id, hsCode: '0810.90', unit: 'dry',
+      certPool: ['GLOBALGAP', 'VIETGAP', 'HACCP'],
+      lines: ['Fresh Dragon Fruit', 'Fresh Mango (Cat Chu)', 'Fresh Pomelo', 'Fresh Ginger', 'Fresh Garlic'],
+      grades: ['Class 1 Export', 'Class 2 Standard'],
+      priceMin: 20000, priceMax: 55000, cap: 10, moq: '1 x reefer container',
+    },
+  ];
+
+  function generateBulkProducts(): SeedProduct[] {
+    const generated: SeedProduct[] = [];
+    for (const cfg of bulkConfigs) {
+      const combos: { line: string; grade: string; lineIdx: number; gradeIdx: number }[] = [];
+      cfg.lines.forEach((line, lineIdx) => {
+        cfg.grades.forEach((grade, gradeIdx) => {
+          combos.push({ line, grade, lineIdx, gradeIdx });
+        });
+      });
+      const chosen = combos.slice(0, cfg.cap);
+      chosen.forEach(({ line, grade, lineIdx, gradeIdx }, i) => {
+        const gradeSpan = cfg.grades.length > 1 ? cfg.grades.length - 1 : 1;
+        const basePrice =
+          Math.round(
+            (cfg.priceMin + ((cfg.priceMax - cfg.priceMin) * gradeIdx) / gradeSpan + lineIdx * 1500) / 500,
+          ) * 500;
+        const name = `${line} ${grade}`;
+        const slug = `${cfg.key.toLowerCase()}-${slugify(line)}-${slugify(grade)}`;
+        // Cap the line segment's length (not the whole concatenated string) so the grade
+        // code — the part that actually distinguishes SKUs within one line — is never the
+        // part silently cut off, which previously caused e.g. "...Screen 16" and
+        // "...Screen 18" to both truncate to the same 40-char SKU.
+        const lineCode = slugify(line).toUpperCase().replace(/-/g, '').slice(0, 18);
+        const gradeCode = slugify(grade).toUpperCase().replace(/-/g, '').slice(0, 14);
+        const sku = `${cfg.key}-${lineCode}-${gradeCode}`;
+        const certCodes = [cfg.certPool[i % cfg.certPool.length], cfg.certPool[(i + 1) % cfg.certPool.length]];
+        generated.push({
+          sku,
+          name,
+          slug,
+          categoryId: cfg.categoryId,
+          originId: cfg.originId,
+          certCodes,
+          basePrice,
+          moq: cfg.moq,
+          hsCode: cfg.hsCode,
+          variants: variantsForUnit(cfg.unit, sku, basePrice),
+        });
+      });
+    }
+    return generated;
+  }
+
+  const handCurated: SeedProduct[] = [
     {
       sku: 'CASHEW-W320',
       name: 'Vietnam Roasted Cashew Nut W320',
@@ -230,6 +443,9 @@ async function main() {
       ],
     },
   ];
+
+  const products: SeedProduct[] = [...handCurated, ...generateBulkProducts()];
+  console.log(`Seeding ${products.length} products...`);
 
   for (const p of products) {
     const product = await prisma.product.upsert({
