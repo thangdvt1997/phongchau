@@ -448,16 +448,17 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
         <h2 className="text-lg font-semibold text-gray-900">Basics</h2>
         <div className="mt-4 grid grid-cols-2 gap-4">
           <div>
-            <label className={labelCls()}>Name</label>
-            <input required value={form.name} onChange={(e) => handleNameChange(e.target.value)} className={inputCls()} />
+            <label htmlFor="pf-name" className={labelCls()}>Name</label>
+            <input id="pf-name" required value={form.name} onChange={(e) => handleNameChange(e.target.value)} className={inputCls()} />
           </div>
           <div>
-            <label className={labelCls()}>SKU</label>
-            <input required value={form.sku} onChange={(e) => update('sku', e.target.value)} className={inputCls()} />
+            <label htmlFor="pf-sku" className={labelCls()}>SKU</label>
+            <input id="pf-sku" required value={form.sku} onChange={(e) => update('sku', e.target.value)} className={inputCls()} />
           </div>
           <div>
-            <label className={labelCls()}>Slug</label>
+            <label htmlFor="pf-slug" className={labelCls()}>Slug</label>
             <input
+              id="pf-slug"
               value={form.slug}
               onChange={(e) => {
                 setSlugTouched(true);
@@ -467,8 +468,8 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
             />
           </div>
           <div>
-            <label className={labelCls()}>Status</label>
-            <select value={form.status} onChange={(e) => update('status', e.target.value)} className={inputCls()}>
+            <label htmlFor="pf-status" className={labelCls()}>Status</label>
+            <select id="pf-status" value={form.status} onChange={(e) => update('status', e.target.value)} className={inputCls()}>
               {STATUS_OPTIONS.map((s) => (
                 <option key={s} value={s}>
                   {s}
@@ -477,8 +478,9 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
             </select>
           </div>
           <div>
-            <label className={labelCls()}>Category</label>
+            <label htmlFor="pf-category" className={labelCls()}>Category</label>
             <select
+              id="pf-category"
               required
               value={form.categoryId}
               onChange={(e) => update('categoryId', e.target.value)}
@@ -493,8 +495,8 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
             </select>
           </div>
           <div>
-            <label className={labelCls()}>Brand</label>
-            <select value={form.brandId} onChange={(e) => update('brandId', e.target.value)} className={inputCls()}>
+            <label htmlFor="pf-brand" className={labelCls()}>Brand</label>
+            <select id="pf-brand" value={form.brandId} onChange={(e) => update('brandId', e.target.value)} className={inputCls()}>
               <option value="">None</option>
               {brands.map((b) => (
                 <option key={b.id} value={b.id}>
@@ -504,8 +506,8 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
             </select>
           </div>
           <div>
-            <label className={labelCls()}>Origin</label>
-            <select value={form.originId} onChange={(e) => update('originId', e.target.value)} className={inputCls()}>
+            <label htmlFor="pf-origin" className={labelCls()}>Origin</label>
+            <select id="pf-origin" value={form.originId} onChange={(e) => update('originId', e.target.value)} className={inputCls()}>
               <option value="">None</option>
               {origins.map((o) => (
                 <option key={o.id} value={o.id}>
@@ -515,8 +517,9 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
             </select>
           </div>
           <div>
-            <label className={labelCls()}>Base Price</label>
+            <label htmlFor="pf-base-price" className={labelCls()}>Base Price</label>
             <input
+              id="pf-base-price"
               required
               type="number"
               step="0.01"
@@ -526,8 +529,8 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
             />
           </div>
           <div>
-            <label className={labelCls()}>Currency</label>
-            <input value={form.currency} onChange={(e) => update('currency', e.target.value)} className={inputCls()} />
+            <label htmlFor="pf-currency" className={labelCls()}>Currency</label>
+            <input id="pf-currency" value={form.currency} onChange={(e) => update('currency', e.target.value)} className={inputCls()} />
           </div>
           <div className="flex items-center gap-2 pt-6">
             <input
@@ -543,8 +546,9 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
         </div>
         <div className="mt-4 grid grid-cols-1 gap-4">
           <div>
-            <label className={labelCls()}>Short Description</label>
+            <label htmlFor="pf-short-description" className={labelCls()}>Short Description</label>
             <textarea
+              id="pf-short-description"
               value={form.shortDescription}
               onChange={(e) => update('shortDescription', e.target.value)}
               rows={2}
@@ -552,8 +556,9 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
             />
           </div>
           <div>
-            <label className={labelCls()}>Full Description</label>
+            <label htmlFor="pf-full-description" className={labelCls()}>Full Description</label>
             <textarea
+              id="pf-full-description"
               value={form.fullDescription}
               onChange={(e) => update('fullDescription', e.target.value)}
               rows={5}
@@ -567,32 +572,34 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
         <h2 className="text-lg font-semibold text-gray-900">Agricultural Details</h2>
         <div className="mt-4 grid grid-cols-3 gap-4">
           <div>
-            <label className={labelCls()}>Variety</label>
-            <input value={form.variety} onChange={(e) => update('variety', e.target.value)} className={inputCls()} />
+            <label htmlFor="pf-variety" className={labelCls()}>Variety</label>
+            <input id="pf-variety" value={form.variety} onChange={(e) => update('variety', e.target.value)} className={inputCls()} />
           </div>
           <div>
-            <label className={labelCls()}>Harvest Season</label>
+            <label htmlFor="pf-harvest-season" className={labelCls()}>Harvest Season</label>
             <input
+              id="pf-harvest-season"
               value={form.harvestSeason}
               onChange={(e) => update('harvestSeason', e.target.value)}
               className={inputCls()}
             />
           </div>
           <div>
-            <label className={labelCls()}>Grade</label>
-            <input value={form.grade} onChange={(e) => update('grade', e.target.value)} className={inputCls()} />
+            <label htmlFor="pf-grade" className={labelCls()}>Grade</label>
+            <input id="pf-grade" value={form.grade} onChange={(e) => update('grade', e.target.value)} className={inputCls()} />
           </div>
           <div>
-            <label className={labelCls()}>Moisture</label>
-            <input value={form.moisture} onChange={(e) => update('moisture', e.target.value)} className={inputCls()} />
+            <label htmlFor="pf-moisture" className={labelCls()}>Moisture</label>
+            <input id="pf-moisture" value={form.moisture} onChange={(e) => update('moisture', e.target.value)} className={inputCls()} />
           </div>
           <div>
-            <label className={labelCls()}>Shelf Life</label>
-            <input value={form.shelfLife} onChange={(e) => update('shelfLife', e.target.value)} className={inputCls()} />
+            <label htmlFor="pf-shelf-life" className={labelCls()}>Shelf Life</label>
+            <input id="pf-shelf-life" value={form.shelfLife} onChange={(e) => update('shelfLife', e.target.value)} className={inputCls()} />
           </div>
           <div>
-            <label className={labelCls()}>Storage Temperature</label>
+            <label htmlFor="pf-storage-temp" className={labelCls()}>Storage Temperature</label>
             <input
+              id="pf-storage-temp"
               value={form.storageTemperature}
               onChange={(e) => update('storageTemperature', e.target.value)}
               className={inputCls()}
@@ -616,44 +623,48 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
         <h2 className="text-lg font-semibold text-gray-900">Export Details</h2>
         <div className="mt-4 grid grid-cols-3 gap-4">
           <div>
-            <label className={labelCls()}>HS Code</label>
-            <input value={form.hsCode} onChange={(e) => update('hsCode', e.target.value)} className={inputCls()} />
+            <label htmlFor="pf-hs-code" className={labelCls()}>HS Code</label>
+            <input id="pf-hs-code" value={form.hsCode} onChange={(e) => update('hsCode', e.target.value)} className={inputCls()} />
           </div>
           <div>
-            <label className={labelCls()}>Country of Origin</label>
+            <label htmlFor="pf-country-of-origin" className={labelCls()}>Country of Origin</label>
             <input
+              id="pf-country-of-origin"
               value={form.countryOfOrigin}
               onChange={(e) => update('countryOfOrigin', e.target.value)}
               className={inputCls()}
             />
           </div>
           <div>
-            <label className={labelCls()}>MOQ</label>
-            <input value={form.moq} onChange={(e) => update('moq', e.target.value)} className={inputCls()} />
+            <label htmlFor="pf-moq" className={labelCls()}>MOQ</label>
+            <input id="pf-moq" value={form.moq} onChange={(e) => update('moq', e.target.value)} className={inputCls()} />
           </div>
           <div>
-            <label className={labelCls()}>Supply Ability</label>
+            <label htmlFor="pf-supply-ability" className={labelCls()}>Supply Ability</label>
             <input
+              id="pf-supply-ability"
               value={form.supplyAbility}
               onChange={(e) => update('supplyAbility', e.target.value)}
               className={inputCls()}
             />
           </div>
           <div>
-            <label className={labelCls()}>Lead Time</label>
-            <input value={form.leadTime} onChange={(e) => update('leadTime', e.target.value)} className={inputCls()} />
+            <label htmlFor="pf-lead-time" className={labelCls()}>Lead Time</label>
+            <input id="pf-lead-time" value={form.leadTime} onChange={(e) => update('leadTime', e.target.value)} className={inputCls()} />
           </div>
           <div>
-            <label className={labelCls()}>Port of Loading</label>
+            <label htmlFor="pf-port-of-loading" className={labelCls()}>Port of Loading</label>
             <input
+              id="pf-port-of-loading"
               value={form.portOfLoading}
               onChange={(e) => update('portOfLoading', e.target.value)}
               className={inputCls()}
             />
           </div>
           <div className="col-span-3">
-            <label className={labelCls()}>Incoterms (comma-separated, e.g. FOB, CIF, EXW)</label>
+            <label htmlFor="pf-incoterms" className={labelCls()}>Incoterms (comma-separated, e.g. FOB, CIF, EXW)</label>
             <input
+              id="pf-incoterms"
               value={form.incoterms}
               onChange={(e) => update('incoterms', e.target.value)}
               className={inputCls()}
@@ -666,20 +677,22 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
         <h2 className="text-lg font-semibold text-gray-900">Packaging</h2>
         <div className="mt-4 grid grid-cols-4 gap-4">
           <div>
-            <label className={labelCls()}>Net Weight</label>
-            <input value={form.netWeight} onChange={(e) => update('netWeight', e.target.value)} className={inputCls()} />
+            <label htmlFor="pf-net-weight" className={labelCls()}>Net Weight</label>
+            <input id="pf-net-weight" value={form.netWeight} onChange={(e) => update('netWeight', e.target.value)} className={inputCls()} />
           </div>
           <div>
-            <label className={labelCls()}>Gross Weight</label>
+            <label htmlFor="pf-gross-weight" className={labelCls()}>Gross Weight</label>
             <input
+              id="pf-gross-weight"
               value={form.grossWeight}
               onChange={(e) => update('grossWeight', e.target.value)}
               className={inputCls()}
             />
           </div>
           <div>
-            <label className={labelCls()}>Units / Carton</label>
+            <label htmlFor="pf-units-per-carton" className={labelCls()}>Units / Carton</label>
             <input
+              id="pf-units-per-carton"
               type="number"
               value={form.unitsPerCarton}
               onChange={(e) => update('unitsPerCarton', e.target.value)}
@@ -687,8 +700,9 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
             />
           </div>
           <div>
-            <label className={labelCls()}>Cartons / Pallet</label>
+            <label htmlFor="pf-cartons-per-pallet" className={labelCls()}>Cartons / Pallet</label>
             <input
+              id="pf-cartons-per-pallet"
               type="number"
               value={form.cartonsPerPallet}
               onChange={(e) => update('cartonsPerPallet', e.target.value)}
@@ -702,12 +716,13 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
         <h2 className="text-lg font-semibold text-gray-900">SEO</h2>
         <div className="mt-4 grid grid-cols-1 gap-4">
           <div>
-            <label className={labelCls()}>SEO Title</label>
-            <input value={form.seoTitle} onChange={(e) => update('seoTitle', e.target.value)} className={inputCls()} />
+            <label htmlFor="pf-seo-title" className={labelCls()}>SEO Title</label>
+            <input id="pf-seo-title" value={form.seoTitle} onChange={(e) => update('seoTitle', e.target.value)} className={inputCls()} />
           </div>
           <div>
-            <label className={labelCls()}>SEO Description</label>
+            <label htmlFor="pf-seo-description" className={labelCls()}>SEO Description</label>
             <textarea
+              id="pf-seo-description"
               value={form.seoDescription}
               onChange={(e) => update('seoDescription', e.target.value)}
               rows={2}
@@ -752,30 +767,35 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
           {variants.map((v, i) => (
             <div key={v.id ?? i} className="grid grid-cols-6 items-center gap-2 rounded-md border border-gray-200 p-3">
               <input
+                aria-label={`Variant ${i + 1} SKU`}
                 placeholder="SKU"
                 value={v.sku}
                 onChange={(e) => updateVariant(i, { sku: e.target.value })}
                 className="rounded-md border border-gray-300 px-2 py-1.5 text-sm"
               />
               <input
+                aria-label={`Variant ${i + 1} weight label`}
                 placeholder="Weight label"
                 value={v.weightLabel}
                 onChange={(e) => updateVariant(i, { weightLabel: e.target.value })}
                 className="rounded-md border border-gray-300 px-2 py-1.5 text-sm"
               />
               <input
+                aria-label={`Variant ${i + 1} packaging label`}
                 placeholder="Packaging label"
                 value={v.packagingLabel}
                 onChange={(e) => updateVariant(i, { packagingLabel: e.target.value })}
                 className="rounded-md border border-gray-300 px-2 py-1.5 text-sm"
               />
               <input
+                aria-label={`Variant ${i + 1} grade label`}
                 placeholder="Grade label"
                 value={v.gradeLabel}
                 onChange={(e) => updateVariant(i, { gradeLabel: e.target.value })}
                 className="rounded-md border border-gray-300 px-2 py-1.5 text-sm"
               />
               <input
+                aria-label={`Variant ${i + 1} price`}
                 type="number"
                 step="0.01"
                 placeholder="Price"
@@ -832,8 +852,9 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
             )}
             <div className="mt-4 flex flex-wrap items-end gap-3">
               <div>
-                <label className="text-xs font-medium text-gray-600">File</label>
+                <label htmlFor="pf-image-file" className="text-xs font-medium text-gray-600">File</label>
                 <input
+                  id="pf-image-file"
                   type="file"
                   accept="image/*"
                   onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
@@ -841,16 +862,18 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600">Alt text</label>
+                <label htmlFor="pf-image-alt" className="text-xs font-medium text-gray-600">Alt text</label>
                 <input
+                  id="pf-image-alt"
                   value={imageAlt}
                   onChange={(e) => setImageAlt(e.target.value)}
                   className="mt-1 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600">Type</label>
+                <label htmlFor="pf-image-type" className="text-xs font-medium text-gray-600">Type</label>
                 <select
+                  id="pf-image-type"
                   value={imageType}
                   onChange={(e) => setImageType(e.target.value)}
                   className="mt-1 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
@@ -886,7 +909,7 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
                       <p className="text-xs text-gray-500">{doc.type}</p>
                     </div>
                     <div className="flex items-center gap-3">
-                      <a href={doc.fileUrl} target="_blank" rel="noreferrer" className="text-brand-700 hover:underline">
+                      <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="text-brand-700 hover:underline">
                         View
                       </a>
                       <button
@@ -903,24 +926,27 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
             )}
             <div className="mt-4 flex flex-wrap items-end gap-3">
               <div>
-                <label className="text-xs font-medium text-gray-600">File</label>
+                <label htmlFor="pf-doc-file" className="text-xs font-medium text-gray-600">File</label>
                 <input
+                  id="pf-doc-file"
                   type="file"
                   onChange={(e) => setDocFile(e.target.files?.[0] ?? null)}
                   className="mt-1 block text-sm"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600">Title</label>
+                <label htmlFor="pf-doc-title" className="text-xs font-medium text-gray-600">Title</label>
                 <input
+                  id="pf-doc-title"
                   value={docTitle}
                   onChange={(e) => setDocTitle(e.target.value)}
                   className="mt-1 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600">Type</label>
+                <label htmlFor="pf-doc-type" className="text-xs font-medium text-gray-600">Type</label>
                 <select
+                  id="pf-doc-type"
                   value={docType}
                   onChange={(e) => setDocType(e.target.value)}
                   className="mt-1 rounded-md border border-gray-300 px-2 py-1.5 text-sm"

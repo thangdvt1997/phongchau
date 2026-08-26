@@ -150,7 +150,7 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
                 <a
                   href={doc.fileUrl}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="text-sm font-medium text-brand-700 hover:underline"
                 >
                   {doc.title} ({doc.type})

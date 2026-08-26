@@ -82,6 +82,33 @@ describe('Auth (e2e)', () => {
     expect(res.status).toBe(401);
   });
 
+  it('registration is case-insensitive on email: a different-cased duplicate -> 409', async () => {
+    const email = uniqueEmail('auth-case');
+    const firstRes = await request(server).post(`${API_PREFIX}/auth/register`).send({
+      email,
+      password: 'SuperSecret1!',
+      fullName: 'Case Test',
+    });
+    expect(firstRes.status).toBe(201);
+    // Same address, different casing — must be treated as the same account, not a new one.
+    const upperCased = email.toUpperCase();
+    const dupRes = await request(server).post(`${API_PREFIX}/auth/register`).send({
+      email: upperCased,
+      password: 'SuperSecret1!',
+      fullName: 'Case Test Duplicate',
+    });
+    expect(dupRes.status).toBe(409);
+  });
+
+  it('login is case-insensitive on the seeded customer email', async () => {
+    const res = await request(server).post(`${API_PREFIX}/auth/login`).send({
+      email: SEEDED_CUSTOMER_EMAIL.toUpperCase(),
+      password: SEEDED_CUSTOMER_PASSWORD,
+    });
+    expect(res.status).toBe(201);
+    expect(res.body.user.email).toBe(SEEDED_CUSTOMER_EMAIL);
+  });
+
   it('POST /auth/refresh with the refresh token -> 201 (Nest default POST status) with new tokens', async () => {
     const login = await request(server).post(`${API_PREFIX}/auth/login`).send({
       email: SEEDED_CUSTOMER_EMAIL,

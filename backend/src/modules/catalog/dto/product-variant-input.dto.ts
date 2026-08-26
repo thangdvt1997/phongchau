@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 
 /**
  * Nested variant payload used inside CreateProductDto/UpdateProductDto.
@@ -41,12 +41,14 @@ export class ProductVariantInputDto {
   @ApiProperty()
   @Type(() => Number)
   @IsNumber()
+  @Min(0)
   price!: number;
 
   @ApiProperty({ required: false })
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
+  @Min(0)
   compareAtPrice?: number;
 
   @ApiProperty({ required: false })

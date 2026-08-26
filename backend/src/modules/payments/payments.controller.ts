@@ -19,6 +19,7 @@ import { PaymentProviderType, Role } from '@prisma/client';
 import { STORAGE_SERVICE, StorageService } from '../../common/interfaces/storage.interface';
 import { PaymentsService } from './payments.service';
 import { RefundPaymentDto } from './dto/refund-payment.dto';
+import { paymentProofUploadOptions } from '../../common/utils/file-upload.util';
 
 @ApiTags('payments')
 @Controller()
@@ -62,7 +63,7 @@ export class PaymentsController {
   @ApiConsumes('multipart/form-data')
   @UseGuards(JwtAuthGuard)
   @Post('admin/payments/:id/proof')
-  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
+  @UseInterceptors(FileInterceptor('file', { ...paymentProofUploadOptions, storage: memoryStorage() }))
   async uploadProof(@Param('id') id: string, @UploadedFile() file?: Express.Multer.File) {
     if (!file) {
       throw new BadRequestException('A file is required');

@@ -122,6 +122,10 @@ export class B2bAdminService {
   }
 
   async createPriceTier(productId: string, dto: CreatePriceTierDto) {
+    const product = await this.prisma.product.findUnique({ where: { id: productId } });
+    if (!product) {
+      throw new NotFoundException(`Product ${productId} not found`);
+    }
     if (dto.maxQty !== undefined && dto.maxQty !== null && dto.maxQty < dto.minQty) {
       throw new BadRequestException('maxQty must be greater than or equal to minQty');
     }
@@ -168,6 +172,12 @@ export class B2bAdminService {
   }
 
   async upsertCustomerPrice(companyId: string, dto: CreateCustomerPriceDto) {
+    await this.findCompanyOrThrow(companyId);
+    const product = await this.prisma.product.findUnique({ where: { id: dto.productId } });
+    if (!product) {
+      throw new NotFoundException(`Product ${dto.productId} not found`);
+    }
+
     const data = {
       price: dto.price,
       currency: dto.currency,

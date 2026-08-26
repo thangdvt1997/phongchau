@@ -5,6 +5,8 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '@prisma/client';
+import { ListCustomersQueryDto } from './dto/list-customers-query.dto';
+import { ListAuditLogsQueryDto } from './dto/list-audit-logs-query.dto';
 
 @ApiTags('admin')
 @ApiBearerAuth()
@@ -20,21 +22,12 @@ export class AdminController {
   }
 
   @Get('customers')
-  customers(
-    @Query('role') role?: Role,
-    @Query('q') q?: string,
-    @Query('page') page?: string,
-    @Query('pageSize') pageSize?: string,
-  ) {
-    return this.adminService.listCustomers(role, q, Number(page) || 1, Number(pageSize) || 20);
+  customers(@Query() query: ListCustomersQueryDto) {
+    return this.adminService.listCustomers(query.role, query.q, query.page ?? 1, query.pageSize ?? 20);
   }
 
   @Get('audit-logs')
-  auditLogs(
-    @Query('entityType') entityType?: string,
-    @Query('page') page?: string,
-    @Query('pageSize') pageSize?: string,
-  ) {
-    return this.adminService.listAuditLogs(entityType, Number(page) || 1, Number(pageSize) || 20);
+  auditLogs(@Query() query: ListAuditLogsQueryDto) {
+    return this.adminService.listAuditLogs(query.entityType, query.page ?? 1, query.pageSize ?? 20);
   }
 }

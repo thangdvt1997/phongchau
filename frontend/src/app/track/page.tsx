@@ -46,23 +46,35 @@ export default function TrackOrderPage() {
     <div className="mx-auto max-w-2xl px-6 py-16">
       <h1 className="text-2xl font-bold text-gray-900">Track Your Order</h1>
       <form onSubmit={handleSubmit} className="mt-6 flex gap-3">
-        <input
-          required
-          placeholder="Order number (e.g. ORD-2026-XXXXXXXX)"
-          value={orderNumber}
-          onChange={(e) => setOrderNumber(e.target.value)}
-          className="flex-1 rounded-md border border-gray-300 px-3 py-2"
-        />
-        <input
-          placeholder="Email (guest orders)"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="flex-1 rounded-md border border-gray-300 px-3 py-2"
-        />
+        <div className="flex-1">
+          <label htmlFor="track-order-number" className="text-sm font-medium text-gray-700">
+            Order number
+          </label>
+          <input
+            id="track-order-number"
+            required
+            placeholder="Order number (e.g. ORD-2026-XXXXXXXX)"
+            value={orderNumber}
+            onChange={(e) => setOrderNumber(e.target.value)}
+            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+          />
+        </div>
+        <div className="flex-1">
+          <label htmlFor="track-email" className="text-sm font-medium text-gray-700">
+            Email (guest orders)
+          </label>
+          <input
+            id="track-email"
+            placeholder="Email (guest orders)"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+          />
+        </div>
         <button
           type="submit"
           disabled={loading}
-          className="rounded-md bg-brand-600 px-5 py-2 font-semibold text-white"
+          className="self-end rounded-md bg-brand-600 px-5 py-2 font-semibold text-white"
         >
           Track
         </button>

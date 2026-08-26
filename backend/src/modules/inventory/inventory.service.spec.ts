@@ -17,6 +17,12 @@ describe('InventoryService', () => {
       inventoryTransaction: {
         create: jest.fn(),
       },
+      productVariant: {
+        findUnique: jest.fn().mockResolvedValue({ id: 'v1' }),
+      },
+      warehouse: {
+        findUnique: jest.fn().mockResolvedValue({ id: 'w1' }),
+      },
       $transaction: jest.fn((cb: any) => cb(prisma)),
     };
     service = new InventoryService(prisma as unknown as PrismaService);
@@ -105,6 +111,29 @@ describe('InventoryService', () => {
         service.adjust({ productVariantId: 'v1', warehouseId: 'w1', quantity: 5, type: 'OUT' }),
       ).rejects.toBeInstanceOf(BadRequestException);
       expect(prisma.inventory.update).not.toHaveBeenCalled();
+    });
+
+    // Regression: adjust() used to call tx.inventory.create() straight from a client-supplied
+    // productVariantId/warehouseId with no existence check, so a bogus id tripped Prisma's FK
+    // constraint and surfaced as a raw 500 instead of a clean 400.
+    it('throws BadRequestException for a productVariantId that does not exist, without touching inventory', async () => {
+      prisma.productVariant.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.adjust({ productVariantId: 'missing-variant', warehouseId: 'w1', quantity: 5, type: 'IN' }),
+      ).rejects.toBeInstanceOf(BadRequestException);
+      expect(prisma.inventory.findFirst).not.toHaveBeenCalled();
+      expect(prisma.inventory.create).not.toHaveBeenCalled();
+    });
+
+    it('throws BadRequestException for a warehouseId that does not exist, without touching inventory', async () => {
+      prisma.warehouse.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.adjust({ productVariantId: 'v1', warehouseId: 'missing-warehouse', quantity: 5, type: 'IN' }),
+      ).rejects.toBeInstanceOf(BadRequestException);
+      expect(prisma.inventory.findFirst).not.toHaveBeenCalled();
+      expect(prisma.inventory.create).not.toHaveBeenCalled();
     });
   });
 });

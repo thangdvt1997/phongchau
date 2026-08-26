@@ -7,6 +7,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { MulterError } from 'multer';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -16,6 +17,18 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+
+    // Multer rejects an upload (e.g. LIMIT_FILE_SIZE) by throwing a plain MulterError,
+    // not an HttpException — without this it would otherwise fall through to a 500.
+    if (exception instanceof MulterError) {
+      response.status(HttpStatus.BAD_REQUEST).json({
+        statusCode: HttpStatus.BAD_REQUEST,
+        path: request.url,
+        timestamp: new Date().toISOString(),
+        message: this.multerErrorMessage(exception),
+      });
+      return;
+    }
 
     const isHttpException = exception instanceof HttpException;
     const status = isHttpException
@@ -42,5 +55,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
       timestamp: new Date().toISOString(),
       message,
     });
+  }
+
+  private multerErrorMessage(error: MulterError): string {
+    if (error.code === 'LIMIT_FILE_SIZE') {
+      return 'Uploaded file exceeds the maximum allowed size';
+    }
+    return error.message || 'Invalid file upload';
   }
 }

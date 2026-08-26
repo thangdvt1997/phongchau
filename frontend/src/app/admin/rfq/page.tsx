@@ -64,8 +64,9 @@ export default function AdminRfqListPage() {
       <h1 className="text-2xl font-bold text-gray-900">RFQs</h1>
 
       <div className="mt-4 flex items-center gap-3">
-        <label className="text-sm font-medium text-gray-700">Status</label>
+        <label htmlFor="rfq-status-filter" className="text-sm font-medium text-gray-700">Status</label>
         <select
+          id="rfq-status-filter"
           value={status}
           onChange={(e) => {
             setStatus(e.target.value);

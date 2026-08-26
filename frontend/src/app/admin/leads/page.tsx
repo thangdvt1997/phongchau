@@ -65,8 +65,9 @@ export default function AdminLeadsPage() {
       <h1 className="text-2xl font-bold text-gray-900">Leads</h1>
 
       <div className="mt-4 flex items-center gap-3">
-        <label className="text-sm font-medium text-gray-700">Status</label>
+        <label htmlFor="leads-status-filter" className="text-sm font-medium text-gray-700">Status</label>
         <select
+          id="leads-status-filter"
           value={status}
           onChange={(e) => {
             setStatus(e.target.value);
@@ -118,6 +119,7 @@ export default function AdminLeadsPage() {
                   <td className="px-4 py-2 text-gray-700">{l.source}</td>
                   <td className="px-4 py-2">
                     <select
+                      aria-label={`Status for ${l.fullName}`}
                       value={l.status}
                       disabled={updatingId === l.id}
                       onChange={(e) => updateStatus(l.id, e.target.value)}

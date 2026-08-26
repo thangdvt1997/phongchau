@@ -117,8 +117,11 @@ function RfqPageContent() {
       </p>
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <div>
-          <label className="text-sm font-semibold text-gray-700">Product</label>
+          <label htmlFor="rfq-product" className="text-sm font-semibold text-gray-700">
+            Product
+          </label>
           <select
+            id="rfq-product"
             required
             value={productId}
             onChange={(e) => setProductId(e.target.value)}
@@ -133,79 +136,133 @@ function RfqPageContent() {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <input
-            required
-            type="number"
-            min={1}
-            placeholder="Quantity"
-            value={form.quantity}
-            onChange={(e) => update('quantity', e.target.value)}
-            className="rounded-md border border-gray-300 px-3 py-2"
-          />
-          <input
-            required
-            placeholder="Unit (kg, tonne, container...)"
-            value={form.unit}
-            onChange={(e) => update('unit', e.target.value)}
-            className="rounded-md border border-gray-300 px-3 py-2"
-          />
+          <div>
+            <label htmlFor="rfq-quantity" className="text-sm font-semibold text-gray-700">
+              Quantity
+            </label>
+            <input
+              id="rfq-quantity"
+              required
+              type="number"
+              min={1}
+              placeholder="Quantity"
+              value={form.quantity}
+              onChange={(e) => update('quantity', e.target.value)}
+              className="mt-1 rounded-md border border-gray-300 px-3 py-2"
+            />
+          </div>
+          <div>
+            <label htmlFor="rfq-unit" className="text-sm font-semibold text-gray-700">
+              Unit
+            </label>
+            <input
+              id="rfq-unit"
+              required
+              placeholder="Unit (kg, tonne, container...)"
+              value={form.unit}
+              onChange={(e) => update('unit', e.target.value)}
+              className="mt-1 rounded-md border border-gray-300 px-3 py-2"
+            />
+          </div>
         </div>
 
-        <input
-          placeholder="Packaging (e.g. Vacuum bag 25kg)"
-          value={form.packaging}
-          onChange={(e) => update('packaging', e.target.value)}
-          className="w-full rounded-md border border-gray-300 px-3 py-2"
-        />
-        <input
-          placeholder="Specification / grade requirements"
-          value={form.specification}
-          onChange={(e) => update('specification', e.target.value)}
-          className="w-full rounded-md border border-gray-300 px-3 py-2"
-        />
+        <div>
+          <label htmlFor="rfq-packaging" className="text-sm font-semibold text-gray-700">
+            Packaging
+          </label>
+          <input
+            id="rfq-packaging"
+            placeholder="Packaging (e.g. Vacuum bag 25kg)"
+            value={form.packaging}
+            onChange={(e) => update('packaging', e.target.value)}
+            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+          />
+        </div>
+        <div>
+          <label htmlFor="rfq-specification" className="text-sm font-semibold text-gray-700">
+            Specification / grade requirements
+          </label>
+          <input
+            id="rfq-specification"
+            placeholder="Specification / grade requirements"
+            value={form.specification}
+            onChange={(e) => update('specification', e.target.value)}
+            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+          />
+        </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <input
-            placeholder="Destination country"
-            value={form.destinationCountry}
-            onChange={(e) => update('destinationCountry', e.target.value)}
-            className="rounded-md border border-gray-300 px-3 py-2"
-          />
-          <input
-            placeholder="Destination port"
-            value={form.destinationPort}
-            onChange={(e) => update('destinationPort', e.target.value)}
-            className="rounded-md border border-gray-300 px-3 py-2"
-          />
+          <div>
+            <label htmlFor="rfq-destination-country" className="text-sm font-semibold text-gray-700">
+              Destination country
+            </label>
+            <input
+              id="rfq-destination-country"
+              placeholder="Destination country"
+              value={form.destinationCountry}
+              onChange={(e) => update('destinationCountry', e.target.value)}
+              className="mt-1 rounded-md border border-gray-300 px-3 py-2"
+            />
+          </div>
+          <div>
+            <label htmlFor="rfq-destination-port" className="text-sm font-semibold text-gray-700">
+              Destination port
+            </label>
+            <input
+              id="rfq-destination-port"
+              placeholder="Destination port"
+              value={form.destinationPort}
+              onChange={(e) => update('destinationPort', e.target.value)}
+              className="mt-1 rounded-md border border-gray-300 px-3 py-2"
+            />
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <select
-            value={form.incoterm}
-            onChange={(e) => update('incoterm', e.target.value)}
-            className="rounded-md border border-gray-300 px-3 py-2"
-          >
-            {['EXW', 'FOB', 'CIF', 'CFR', 'DDP'].map((i) => (
-              <option key={i} value={i}>
-                {i}
-              </option>
-            ))}
-          </select>
-          <input
-            placeholder="Payment term (e.g. T/T 30/70)"
-            value={form.paymentTerm}
-            onChange={(e) => update('paymentTerm', e.target.value)}
-            className="rounded-md border border-gray-300 px-3 py-2"
-          />
+          <div>
+            <label htmlFor="rfq-incoterm" className="text-sm font-semibold text-gray-700">
+              Incoterm
+            </label>
+            <select
+              id="rfq-incoterm"
+              value={form.incoterm}
+              onChange={(e) => update('incoterm', e.target.value)}
+              className="mt-1 rounded-md border border-gray-300 px-3 py-2"
+            >
+              {['EXW', 'FOB', 'CIF', 'CFR', 'DDP'].map((i) => (
+                <option key={i} value={i}>
+                  {i}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="rfq-payment-term" className="text-sm font-semibold text-gray-700">
+              Payment term
+            </label>
+            <input
+              id="rfq-payment-term"
+              placeholder="Payment term (e.g. T/T 30/70)"
+              value={form.paymentTerm}
+              onChange={(e) => update('paymentTerm', e.target.value)}
+              className="mt-1 rounded-md border border-gray-300 px-3 py-2"
+            />
+          </div>
         </div>
 
-        <textarea
-          placeholder="Special requirements"
-          value={form.specialRequirement}
-          onChange={(e) => update('specialRequirement', e.target.value)}
-          className="w-full rounded-md border border-gray-300 px-3 py-2"
-          rows={3}
-        />
+        <div>
+          <label htmlFor="rfq-special-requirement" className="text-sm font-semibold text-gray-700">
+            Special requirements
+          </label>
+          <textarea
+            id="rfq-special-requirement"
+            placeholder="Special requirements"
+            value={form.specialRequirement}
+            onChange={(e) => update('specialRequirement', e.target.value)}
+            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+            rows={3}
+          />
+        </div>
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 

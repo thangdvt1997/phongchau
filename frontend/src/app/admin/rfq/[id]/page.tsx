@@ -299,7 +299,11 @@ export default function AdminRfqDetailPage({ params }: { params: { id: string } 
         <h2 className="font-semibold text-gray-800">Update Status</h2>
         <form onSubmit={submitStatus} className="mt-3 space-y-3">
           <div className="flex gap-3">
+            <label htmlFor="rfq-status-select" className="sr-only">
+              New status
+            </label>
             <select
+              id="rfq-status-select"
               value={statusValue}
               onChange={(e) => setStatusValue(e.target.value)}
               className="rounded-md border border-gray-300 px-3 py-2 text-sm"
@@ -319,7 +323,11 @@ export default function AdminRfqDetailPage({ params }: { params: { id: string } 
               Update
             </button>
           </div>
+          <label htmlFor="rfq-status-note" className="sr-only">
+            Status update note
+          </label>
           <textarea
+            id="rfq-status-note"
             placeholder="Optional note"
             value={statusNote}
             onChange={(e) => setStatusNote(e.target.value)}
@@ -349,7 +357,7 @@ export default function AdminRfqDetailPage({ params }: { params: { id: string } 
                 </div>
                 <p className="mt-1 text-gray-700">{m.message}</p>
                 {m.attachmentUrl && (
-                  <a href={m.attachmentUrl} target="_blank" rel="noreferrer" className="text-xs text-brand-700 hover:underline">
+                  <a href={m.attachmentUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-brand-700 hover:underline">
                     Attachment
                   </a>
                 )}
@@ -358,7 +366,11 @@ export default function AdminRfqDetailPage({ params }: { params: { id: string } 
           )}
         </div>
         <form onSubmit={submitReply} className="mt-3 flex gap-2">
+          <label htmlFor="rfq-reply-message" className="sr-only">
+            Reply to customer
+          </label>
           <textarea
+            id="rfq-reply-message"
             placeholder="Reply to customer..."
             value={replyMessage}
             onChange={(e) => setReplyMessage(e.target.value)}
@@ -428,13 +440,21 @@ export default function AdminRfqDetailPage({ params }: { params: { id: string } 
           )}
           <form onSubmit={submitQuotation} className="mt-3 space-y-3">
             <div className="flex gap-3">
+              <label htmlFor="quotation-valid-until" className="sr-only">
+                Valid until
+              </label>
               <input
+                id="quotation-valid-until"
                 type="date"
                 value={validUntil}
                 onChange={(e) => setValidUntil(e.target.value)}
                 className="rounded-md border border-gray-300 px-3 py-2 text-sm"
               />
+              <label htmlFor="quotation-currency" className="sr-only">
+                Currency
+              </label>
               <input
+                id="quotation-currency"
                 placeholder="Currency (e.g. USD)"
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
@@ -446,6 +466,7 @@ export default function AdminRfqDetailPage({ params }: { params: { id: string } 
               {lines.map((line, idx) => (
                 <div key={idx} className="flex flex-wrap items-center gap-2">
                   <select
+                    aria-label={`Line ${idx + 1} product`}
                     value={line.productId}
                     onChange={(e) => updateLine(idx, 'productId', e.target.value)}
                     required
@@ -459,6 +480,7 @@ export default function AdminRfqDetailPage({ params }: { params: { id: string } 
                     ))}
                   </select>
                   <input
+                    aria-label={`Line ${idx + 1} quantity`}
                     type="number"
                     min={0}
                     step="0.01"
@@ -469,6 +491,7 @@ export default function AdminRfqDetailPage({ params }: { params: { id: string } 
                     className="w-28 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
                   />
                   <input
+                    aria-label={`Line ${idx + 1} unit price`}
                     type="number"
                     min={0}
                     step="0.01"
@@ -479,6 +502,7 @@ export default function AdminRfqDetailPage({ params }: { params: { id: string } 
                     className="w-28 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
                   />
                   <input
+                    aria-label={`Line ${idx + 1} lead time`}
                     placeholder="Lead time"
                     value={line.leadTime}
                     onChange={(e) => updateLine(idx, 'leadTime', e.target.value)}

@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional, Min } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator';
 import { CompanyStatus } from '@prisma/client';
 
 export class ListCompaniesQueryDto {
@@ -21,5 +21,6 @@ export class ListCompaniesQueryDto {
   @Type(() => Number)
   @IsInt()
   @Min(1)
+  @Max(100)
   pageSize?: number = 20;
 }

@@ -109,8 +109,9 @@ export function BlogForm({ initial, mode, blogId }: BlogFormProps) {
   return (
     <form onSubmit={handleSubmit} className="mt-6 max-w-3xl space-y-4">
       <div>
-        <label className="text-sm font-semibold text-gray-700">Title</label>
+        <label htmlFor="bf-title" className="text-sm font-semibold text-gray-700">Title</label>
         <input
+          id="bf-title"
           required
           value={values.title}
           onChange={(e) => handleTitleChange(e.target.value)}
@@ -119,8 +120,9 @@ export function BlogForm({ initial, mode, blogId }: BlogFormProps) {
       </div>
 
       <div>
-        <label className="text-sm font-semibold text-gray-700">Slug</label>
+        <label htmlFor="bf-slug" className="text-sm font-semibold text-gray-700">Slug</label>
         <input
+          id="bf-slug"
           required
           value={values.slug}
           onChange={(e) => {
@@ -133,8 +135,9 @@ export function BlogForm({ initial, mode, blogId }: BlogFormProps) {
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="text-sm font-semibold text-gray-700">Category</label>
+          <label htmlFor="bf-category" className="text-sm font-semibold text-gray-700">Category</label>
           <select
+            id="bf-category"
             value={values.category}
             onChange={(e) => update('category', e.target.value)}
             className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
@@ -147,8 +150,9 @@ export function BlogForm({ initial, mode, blogId }: BlogFormProps) {
           </select>
         </div>
         <div>
-          <label className="text-sm font-semibold text-gray-700">Status</label>
+          <label htmlFor="bf-status" className="text-sm font-semibold text-gray-700">Status</label>
           <select
+            id="bf-status"
             value={values.status}
             onChange={(e) => update('status', e.target.value)}
             className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
@@ -163,8 +167,9 @@ export function BlogForm({ initial, mode, blogId }: BlogFormProps) {
       </div>
 
       <div>
-        <label className="text-sm font-semibold text-gray-700">Excerpt</label>
+        <label htmlFor="bf-excerpt" className="text-sm font-semibold text-gray-700">Excerpt</label>
         <textarea
+          id="bf-excerpt"
           value={values.excerpt}
           onChange={(e) => update('excerpt', e.target.value)}
           rows={2}
@@ -173,8 +178,9 @@ export function BlogForm({ initial, mode, blogId }: BlogFormProps) {
       </div>
 
       <div>
-        <label className="text-sm font-semibold text-gray-700">Content (HTML)</label>
+        <label htmlFor="bf-content" className="text-sm font-semibold text-gray-700">Content (HTML)</label>
         <textarea
+          id="bf-content"
           required
           value={values.content}
           onChange={(e) => update('content', e.target.value)}
@@ -184,8 +190,9 @@ export function BlogForm({ initial, mode, blogId }: BlogFormProps) {
       </div>
 
       <div>
-        <label className="text-sm font-semibold text-gray-700">Cover Image URL</label>
+        <label htmlFor="bf-cover-image" className="text-sm font-semibold text-gray-700">Cover Image URL</label>
         <input
+          id="bf-cover-image"
           value={values.coverImageUrl}
           onChange={(e) => update('coverImageUrl', e.target.value)}
           className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
@@ -194,16 +201,18 @@ export function BlogForm({ initial, mode, blogId }: BlogFormProps) {
 
       <div className="grid grid-cols-1 gap-4">
         <div>
-          <label className="text-sm font-semibold text-gray-700">SEO Title</label>
+          <label htmlFor="bf-seo-title" className="text-sm font-semibold text-gray-700">SEO Title</label>
           <input
+            id="bf-seo-title"
             value={values.seoTitle}
             onChange={(e) => update('seoTitle', e.target.value)}
             className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
           />
         </div>
         <div>
-          <label className="text-sm font-semibold text-gray-700">SEO Description</label>
+          <label htmlFor="bf-seo-description" className="text-sm font-semibold text-gray-700">SEO Description</label>
           <textarea
+            id="bf-seo-description"
             value={values.seoDescription}
             onChange={(e) => update('seoDescription', e.target.value)}
             rows={2}

@@ -70,6 +70,9 @@ export class CatalogService {
   }
 
   async createCategory(dto: CreateCategoryDto) {
+    if (dto.parentId) {
+      await this.assertCategoryExists(dto.parentId);
+    }
     const slug = await this.resolveSlug(dto.slug ?? dto.name, (s) =>
       this.prisma.category.findUnique({ where: { slug: s } }),
     );
@@ -92,6 +95,12 @@ export class CatalogService {
 
   async updateCategory(id: string, dto: UpdateCategoryDto) {
     await this.getCategoryById(id);
+    if (dto.parentId) {
+      if (dto.parentId === id) {
+        throw new BadRequestException('A category cannot be its own parent');
+      }
+      await this.assertCategoryExists(dto.parentId);
+    }
     const slug = dto.slug
       ? await this.resolveSlug(dto.slug, (s) => this.prisma.category.findUnique({ where: { slug: s } }), id)
       : undefined;
@@ -199,6 +208,13 @@ export class CatalogService {
   }
 
   // ---------- shared ----------
+
+  private async assertCategoryExists(id: string): Promise<void> {
+    const parent = await this.prisma.category.findUnique({ where: { id } });
+    if (!parent) {
+      throw new BadRequestException('parentId does not reference an existing category');
+    }
+  }
 
   private async resolveSlug(
     seed: string,

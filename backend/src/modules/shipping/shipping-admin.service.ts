@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { OrderStatus } from '@prisma/client';
 import { CreateShipmentDto } from './dto/create-shipment.dto';
@@ -10,6 +10,11 @@ export class ShippingAdminService {
   constructor(private readonly prisma: PrismaService) {}
 
   async createShipment(dto: CreateShipmentDto) {
+    const order = await this.prisma.order.findUnique({ where: { id: dto.orderId } });
+    if (!order) {
+      throw new BadRequestException(`orderId ${dto.orderId} does not reference an existing order`);
+    }
+
     const shipment = await this.prisma.shipment.create({
       data: {
         orderId: dto.orderId,

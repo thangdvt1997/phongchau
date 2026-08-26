@@ -3,6 +3,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { OrdersService } from './orders.service';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { OrderNotesDto } from './dto/order-notes.dto';
+import { AdminOrdersQueryDto } from './dto/admin-orders-query.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -19,12 +20,8 @@ export class OrdersAdminController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Get()
-  list(
-    @Query('status') status?: OrderStatus,
-    @Query('page') page?: string,
-    @Query('pageSize') pageSize?: string,
-  ) {
-    return this.ordersService.adminList(status, Number(page) || 1, Number(pageSize) || 20);
+  list(@Query() query: AdminOrdersQueryDto) {
+    return this.ordersService.adminList(query.status, query.page ?? 1, query.pageSize ?? 20);
   }
 
   @Get(':id')

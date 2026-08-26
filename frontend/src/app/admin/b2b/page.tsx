@@ -82,8 +82,9 @@ export default function AdminB2bListPage() {
       <h1 className="text-2xl font-bold text-gray-900">B2B Companies</h1>
 
       <div className="mt-4 flex items-center gap-3">
-        <label className="text-sm font-medium text-gray-700">Status</label>
+        <label htmlFor="b2b-status-filter" className="text-sm font-medium text-gray-700">Status</label>
         <select
+          id="b2b-status-filter"
           value={status}
           onChange={(e) => {
             setStatus(e.target.value);
@@ -154,7 +155,11 @@ export default function AdminB2bListPage() {
                         </div>
                         {rejectOpenFor === c.id && (
                           <div className="flex items-center gap-2">
+                            <label htmlFor={`reject-reason-${c.id}`} className="sr-only">
+                              Reason for rejection
+                            </label>
                             <textarea
+                              id={`reject-reason-${c.id}`}
                               placeholder="Reason for rejection"
                               value={rejectReason}
                               onChange={(e) => setRejectReason(e.target.value)}

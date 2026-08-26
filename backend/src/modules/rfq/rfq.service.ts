@@ -113,6 +113,8 @@ export class RfqService {
   ) {}
 
   async create(user: AuthenticatedUser, dto: CreateRfqDto) {
+    await this.assertProductsExist(dto.items.map((item) => item.productId));
+
     const rfqNumber = `RFQ-${new Date().getFullYear()}-${nanoid(6).toUpperCase()}`;
     const rfq = await this.prisma.rfq.create({
       data: {
@@ -378,6 +380,7 @@ export class RfqService {
       throw new NotFoundException('RFQ not found');
     }
     assertValidRfqTransition(rfq.status, RfqStatus.QUOTATION_SENT);
+    await this.assertProductsExist(dto.items.map((item) => item.productId));
 
     const existingCount = await this.prisma.quotation.count({ where: { rfqId: id } });
     const totalAmount = dto.items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
@@ -414,6 +417,15 @@ export class RfqService {
     }
 
     return this.serializeQuotation(quotation);
+  }
+
+  /** Validates every referenced productId exists before an RFQ/quotation create hits Prisma's FK constraint (which would otherwise surface as a raw 500). */
+  private async assertProductsExist(productIds: string[]): Promise<void> {
+    const uniqueIds = [...new Set(productIds)];
+    const count = await this.prisma.product.count({ where: { id: { in: uniqueIds } } });
+    if (count !== uniqueIds.length) {
+      throw new BadRequestException('One or more items reference a productId that does not exist');
+    }
   }
 
   private isOwner(

@@ -33,6 +33,9 @@ export class OrdersService {
     if (!user && !dto.guestEmail) {
       throw new BadRequestException('guestEmail is required for guest checkout');
     }
+    // Fail fast on an unsupported/disabled payment provider before reserving any stock
+    // or creating the order — see PaymentsService.ensureProviderEnabled for why.
+    this.payments.ensureProviderEnabled(dto.paymentProvider);
 
     const pricedCart = await this.cart.getPricedCart(user, sessionId);
     if (pricedCart.items.length === 0) {

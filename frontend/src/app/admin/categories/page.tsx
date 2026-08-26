@@ -139,6 +139,7 @@ function CategoriesTab() {
     <div>
       <form onSubmit={handleCreate} className="flex flex-wrap items-end gap-3 rounded-md border border-gray-200 p-4">
         <input
+          aria-label="Category name"
           required
           placeholder="Name"
           value={form.name}
@@ -146,12 +147,14 @@ function CategoriesTab() {
           className={inputCls()}
         />
         <input
+          aria-label="Category slug (optional)"
           placeholder="Slug (optional)"
           value={form.slug}
           onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
           className={inputCls()}
         />
         <select
+          aria-label="Parent category"
           value={form.parentId}
           onChange={(e) => setForm((f) => ({ ...f, parentId: e.target.value }))}
           className={inputCls()}
@@ -164,12 +167,14 @@ function CategoriesTab() {
           ))}
         </select>
         <input
+          aria-label="Category description"
           placeholder="Description"
           value={form.description}
           onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
           className={inputCls()}
         />
         <input
+          aria-label="Category image URL"
           placeholder="Image URL"
           value={form.imageUrl}
           onChange={(e) => setForm((f) => ({ ...f, imageUrl: e.target.value }))}
@@ -275,6 +280,7 @@ function BrandsTab() {
     <div>
       <form onSubmit={handleCreate} className="flex flex-wrap items-end gap-3 rounded-md border border-gray-200 p-4">
         <input
+          aria-label="Brand name"
           required
           placeholder="Name"
           value={form.name}
@@ -282,12 +288,14 @@ function BrandsTab() {
           className={inputCls()}
         />
         <input
+          aria-label="Brand slug (optional)"
           placeholder="Slug (optional)"
           value={form.slug}
           onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
           className={inputCls()}
         />
         <input
+          aria-label="Brand logo URL"
           placeholder="Logo URL"
           value={form.logoUrl}
           onChange={(e) => setForm((f) => ({ ...f, logoUrl: e.target.value }))}
@@ -392,6 +400,7 @@ function OriginsTab() {
     <div>
       <form onSubmit={handleCreate} className="flex flex-wrap items-end gap-3 rounded-md border border-gray-200 p-4">
         <input
+          aria-label="Origin name"
           required
           placeholder="Name"
           value={form.name}
@@ -399,6 +408,7 @@ function OriginsTab() {
           className={inputCls()}
         />
         <input
+          aria-label="Origin country"
           required
           placeholder="Country"
           value={form.country}
@@ -406,12 +416,14 @@ function OriginsTab() {
           className={inputCls()}
         />
         <input
+          aria-label="Origin province"
           placeholder="Province"
           value={form.province}
           onChange={(e) => setForm((f) => ({ ...f, province: e.target.value }))}
           className={inputCls()}
         />
         <input
+          aria-label="Origin farm name"
           placeholder="Farm Name"
           value={form.farmName}
           onChange={(e) => setForm((f) => ({ ...f, farmName: e.target.value }))}
@@ -517,6 +529,7 @@ function CertificationsTab() {
     <div>
       <form onSubmit={handleCreate} className="flex flex-wrap items-end gap-3 rounded-md border border-gray-200 p-4">
         <input
+          aria-label="Certification name"
           required
           placeholder="Name"
           value={form.name}
@@ -524,6 +537,7 @@ function CertificationsTab() {
           className={inputCls()}
         />
         <input
+          aria-label="Certification code"
           required
           placeholder="Code"
           value={form.code}
@@ -531,6 +545,7 @@ function CertificationsTab() {
           className={inputCls()}
         />
         <input
+          aria-label="Certification description"
           placeholder="Description"
           value={form.description}
           onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}

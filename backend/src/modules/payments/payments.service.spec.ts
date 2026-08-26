@@ -34,6 +34,28 @@ describe('PaymentsService', () => {
     service = new PaymentsService(prisma as unknown as PrismaService, registry);
   });
 
+  describe('ensureProviderEnabled', () => {
+    // Regression: Orders.checkout() now calls this before reserving stock or creating the
+    // order, so a disabled/unsupported provider fails fast instead of leaving an orphaned
+    // PENDING order behind (see orders.service.ts checkout()).
+    it('throws BadRequestException for an unregistered provider', () => {
+      expect(() => service.ensureProviderEnabled(PaymentProviderType.STRIPE)).toThrow(
+        BadRequestException,
+      );
+    });
+
+    it('throws BadRequestException for a disabled provider', () => {
+      codProvider.enabled = false;
+      expect(() => service.ensureProviderEnabled(PaymentProviderType.COD)).toThrow(
+        BadRequestException,
+      );
+    });
+
+    it('does not throw for a registered, enabled provider', () => {
+      expect(() => service.ensureProviderEnabled(PaymentProviderType.COD)).not.toThrow();
+    });
+  });
+
   describe('createPaymentForOrder', () => {
     it('throws BadRequestException when the provider is not registered', async () => {
       await expect(

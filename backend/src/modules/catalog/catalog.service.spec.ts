@@ -82,6 +82,31 @@ describe('CatalogService', () => {
         expect.objectContaining({ data: expect.objectContaining({ slug: 'fresh-fruit-1' }) }),
       );
     });
+
+    // Regression: createCategory() used to pass a client-supplied parentId straight into
+    // category.create() with no existence check, so a bogus parentId tripped Prisma's FK
+    // constraint and surfaced as a raw 500 instead of a clean 400.
+    it('throws BadRequestException for a parentId that does not exist, without creating anything', async () => {
+      prisma.category.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.createCategory({ name: 'Fresh Fruit', parentId: 'missing-parent' } as any),
+      ).rejects.toBeInstanceOf(BadRequestException);
+      expect(prisma.category.create).not.toHaveBeenCalled();
+    });
+
+    it('creates the category once the parentId is confirmed to exist', async () => {
+      prisma.category.findUnique
+        .mockResolvedValueOnce({ id: 'parent-1' }) // parentId existence check
+        .mockResolvedValueOnce(null); // slug collision check
+      prisma.category.create.mockResolvedValue({ id: 'c3' });
+
+      await service.createCategory({ name: 'Fresh Fruit', parentId: 'parent-1' } as any);
+
+      expect(prisma.category.create).toHaveBeenCalledWith(
+        expect.objectContaining({ data: expect.objectContaining({ parentId: 'parent-1' }) }),
+      );
+    });
   });
 
   describe('deleteCategory', () => {

@@ -443,7 +443,11 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
         <h2 className="font-semibold text-gray-800">Update Status</h2>
         <form onSubmit={submitStatus} className="mt-3 space-y-3">
           <div className="flex gap-3">
+            <label htmlFor="order-status-select" className="sr-only">
+              New status
+            </label>
             <select
+              id="order-status-select"
               value={statusValue}
               onChange={(e) => setStatusValue(e.target.value)}
               className="rounded-md border border-gray-300 px-3 py-2 text-sm"
@@ -462,7 +466,11 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
               Update
             </button>
           </div>
+          <label htmlFor="order-status-note" className="sr-only">
+            Status update note
+          </label>
           <textarea
+            id="order-status-note"
             placeholder="Optional note"
             value={statusNote}
             onChange={(e) => setStatusNote(e.target.value)}
@@ -507,8 +515,9 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
         <h2 className="font-semibold text-gray-800">Notes</h2>
         <form onSubmit={submitNotes} className="mt-3 space-y-3">
           <div>
-            <label className="text-sm font-medium text-gray-700">Internal note (staff only)</label>
+            <label htmlFor="order-internal-note" className="text-sm font-medium text-gray-700">Internal note (staff only)</label>
             <textarea
+              id="order-internal-note"
               value={internalNote}
               onChange={(e) => setInternalNote(e.target.value)}
               className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
@@ -516,8 +525,9 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
             />
           </div>
           <div>
-            <label className="text-sm font-medium text-gray-700">Customer-visible note</label>
+            <label htmlFor="order-customer-note" className="text-sm font-medium text-gray-700">Customer-visible note</label>
             <textarea
+              id="order-customer-note"
               value={customerNote}
               onChange={(e) => setCustomerNote(e.target.value)}
               className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
@@ -577,6 +587,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                 {refundOpenFor === p.id && (
                   <form onSubmit={(e) => submitRefund(p.id, e)} className="mt-2 flex flex-wrap items-center gap-2">
                     <input
+                      aria-label="Refund amount"
                       type="number"
                       min={0}
                       step="0.01"
@@ -586,6 +597,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                       className="w-56 rounded-md border border-gray-300 px-2 py-1 text-xs"
                     />
                     <input
+                      aria-label="Refund reason"
                       placeholder="Reason"
                       value={refundReason}
                       onChange={(e) => setRefundReason(e.target.value)}
@@ -614,18 +626,21 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
             <p className="mt-2 text-sm text-gray-500">No shipment created yet.</p>
             <form onSubmit={submitShipment} className="mt-3 grid grid-cols-2 gap-3 text-sm">
               <input
+                aria-label="Carrier"
                 placeholder="Carrier"
                 value={shipmentForm.carrier}
                 onChange={(e) => setShipmentForm((f) => ({ ...f, carrier: e.target.value }))}
                 className="rounded-md border border-gray-300 px-3 py-2"
               />
               <input
+                aria-label="Tracking number"
                 placeholder="Tracking number"
                 value={shipmentForm.trackingNumber}
                 onChange={(e) => setShipmentForm((f) => ({ ...f, trackingNumber: e.target.value }))}
                 className="rounded-md border border-gray-300 px-3 py-2"
               />
               <select
+                aria-label="Shipping method"
                 value={shipmentForm.method}
                 onChange={(e) => setShipmentForm((f) => ({ ...f, method: e.target.value }))}
                 className="rounded-md border border-gray-300 px-3 py-2"
@@ -637,6 +652,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                 ))}
               </select>
               <select
+                aria-label="Shipping zone"
                 value={shipmentForm.zone}
                 onChange={(e) => setShipmentForm((f) => ({ ...f, zone: e.target.value }))}
                 className="rounded-md border border-gray-300 px-3 py-2"
@@ -649,6 +665,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                 ))}
               </select>
               <input
+                aria-label="Shipping cost"
                 type="number"
                 min={0}
                 step="0.01"
@@ -694,6 +711,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                   className="mt-3 flex flex-wrap items-center gap-2"
                 >
                   <select
+                    aria-label="Tracking status"
                     value={trackingForms[s.id]?.status ?? s.status}
                     onChange={(e) =>
                       setTrackingForms((f) => ({
@@ -710,6 +728,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                     ))}
                   </select>
                   <input
+                    aria-label="Tracking location"
                     placeholder="Location"
                     value={trackingForms[s.id]?.location ?? ''}
                     onChange={(e) =>
@@ -721,6 +740,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                     className="w-32 rounded-md border border-gray-300 px-2 py-1 text-xs"
                   />
                   <input
+                    aria-label="Tracking note"
                     placeholder="Note"
                     value={trackingForms[s.id]?.note ?? ''}
                     onChange={(e) =>

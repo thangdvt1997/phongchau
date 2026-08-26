@@ -66,8 +66,11 @@ export default function CheckoutPage() {
       <form onSubmit={handleSubmit} className="mt-6 space-y-6">
         {!user && (
           <div>
-            <label className="text-sm font-semibold text-gray-700">Email</label>
+            <label htmlFor="checkout-guest-email" className="text-sm font-semibold text-gray-700">
+              Email
+            </label>
             <input
+              id="checkout-guest-email"
               type="email"
               required
               value={form.guestEmail}
@@ -79,54 +82,94 @@ export default function CheckoutPage() {
 
         <fieldset className="space-y-4 rounded-lg border border-gray-200 p-4">
           <legend className="px-2 text-sm font-semibold text-gray-700">Shipping Address</legend>
-          <input
-            required
-            placeholder="Full name"
-            value={form.fullName}
-            onChange={(e) => update('fullName', e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2"
-          />
-          <input
-            required
-            placeholder="Phone"
-            value={form.phone}
-            onChange={(e) => update('phone', e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2"
-          />
-          <input
-            required
-            placeholder="Address"
-            value={form.line1}
-            onChange={(e) => update('line1', e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2"
-          />
-          <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="checkout-fullname" className="text-sm font-medium text-gray-700">
+              Full name
+            </label>
             <input
+              id="checkout-fullname"
               required
-              placeholder="City"
-              value={form.city}
-              onChange={(e) => update('city', e.target.value)}
-              className="rounded-md border border-gray-300 px-3 py-2"
-            />
-            <input
-              placeholder="Postal code"
-              value={form.postalCode}
-              onChange={(e) => update('postalCode', e.target.value)}
-              className="rounded-md border border-gray-300 px-3 py-2"
+              placeholder="Full name"
+              value={form.fullName}
+              onChange={(e) => update('fullName', e.target.value)}
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
             />
           </div>
-          <input
-            required
-            placeholder="Country"
-            value={form.country}
-            onChange={(e) => update('country', e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2"
-          />
+          <div>
+            <label htmlFor="checkout-phone" className="text-sm font-medium text-gray-700">
+              Phone
+            </label>
+            <input
+              id="checkout-phone"
+              required
+              placeholder="Phone"
+              value={form.phone}
+              onChange={(e) => update('phone', e.target.value)}
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+            />
+          </div>
+          <div>
+            <label htmlFor="checkout-address" className="text-sm font-medium text-gray-700">
+              Address
+            </label>
+            <input
+              id="checkout-address"
+              required
+              placeholder="Address"
+              value={form.line1}
+              onChange={(e) => update('line1', e.target.value)}
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="checkout-city" className="text-sm font-medium text-gray-700">
+                City
+              </label>
+              <input
+                id="checkout-city"
+                required
+                placeholder="City"
+                value={form.city}
+                onChange={(e) => update('city', e.target.value)}
+                className="mt-1 rounded-md border border-gray-300 px-3 py-2"
+              />
+            </div>
+            <div>
+              <label htmlFor="checkout-postal-code" className="text-sm font-medium text-gray-700">
+                Postal code
+              </label>
+              <input
+                id="checkout-postal-code"
+                placeholder="Postal code"
+                value={form.postalCode}
+                onChange={(e) => update('postalCode', e.target.value)}
+                className="mt-1 rounded-md border border-gray-300 px-3 py-2"
+              />
+            </div>
+          </div>
+          <div>
+            <label htmlFor="checkout-country" className="text-sm font-medium text-gray-700">
+              Country
+            </label>
+            <input
+              id="checkout-country"
+              required
+              placeholder="Country"
+              value={form.country}
+              onChange={(e) => update('country', e.target.value)}
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+            />
+          </div>
         </fieldset>
 
         <fieldset className="rounded-lg border border-gray-200 p-4">
           <legend className="px-2 text-sm font-semibold text-gray-700">Payment</legend>
+          <label htmlFor="checkout-payment-provider" className="sr-only">
+            Payment method
+          </label>
           <select
+            id="checkout-payment-provider"
             value={form.paymentProvider}
             onChange={(e) => update('paymentProvider', e.target.value)}
             className="w-full rounded-md border border-gray-300 px-3 py-2"
@@ -137,8 +180,11 @@ export default function CheckoutPage() {
         </fieldset>
 
         <div>
-          <label className="text-sm font-semibold text-gray-700">Coupon code</label>
+          <label htmlFor="checkout-coupon" className="text-sm font-semibold text-gray-700">
+            Coupon code
+          </label>
           <input
+            id="checkout-coupon"
             value={form.couponCode}
             onChange={(e) => update('couponCode', e.target.value)}
             placeholder="e.g. WELCOME10"

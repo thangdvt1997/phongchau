@@ -9,6 +9,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  Min,
   ValidateNested,
 } from 'class-validator';
 import { ProductStatus } from '@prisma/client';
@@ -197,6 +198,7 @@ export class UpdateProductDto {
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
+  @Min(0)
   basePrice?: number;
 
   @ApiProperty({ required: false })

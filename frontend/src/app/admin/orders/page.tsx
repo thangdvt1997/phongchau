@@ -70,8 +70,9 @@ export default function AdminOrdersPage() {
       </div>
 
       <div className="mt-4 flex items-center gap-3">
-        <label className="text-sm font-medium text-gray-700">Status</label>
+        <label htmlFor="orders-status-filter" className="text-sm font-medium text-gray-700">Status</label>
         <select
+          id="orders-status-filter"
           value={status}
           onChange={(e) => {
             setStatus(e.target.value);

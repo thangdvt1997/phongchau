@@ -1,10 +1,10 @@
 const STATS = [
-  { value: '15+', label: 'Years Experience' },
-  { value: '30+', label: 'Countries Exported' },
-  { value: '5,000+', label: 'Tons / Year' },
-  { value: '200+', label: 'Partner Farms' },
-  { value: '1,200+', label: 'Customers' },
-  { value: '80+', label: 'Containers / Month' },
+  { value: '5', label: 'Sourcing Regions' },
+  { value: '8', label: 'Product Lines' },
+  { value: '8', label: 'Certifications Supported' },
+  { value: '2', label: 'Warehouses' },
+  { value: '5', label: 'Incoterms Supported' },
+  { value: '100%', label: 'Batch Traceability' },
 ];
 
 export function StatsStrip() {

@@ -5,17 +5,17 @@ export function Hero() {
     <section className="relative overflow-hidden bg-gradient-to-br from-brand-900 via-brand-700 to-brand-600 text-white">
       <div className="mx-auto max-w-7xl px-6 py-24 text-center">
         <p className="text-sm font-semibold uppercase tracking-widest text-brand-100">
-          Farm to Global Market
+          Sourced by Region, Exported to Spec
         </p>
         <h1 className="mt-4 text-4xl font-bold leading-tight md:text-5xl">
-          Vietnamese Agricultural Products,
+          Dak Lak Coffee, Binh Phuoc Cashew,
           <br />
-          Wholesale, OEM/ODM &amp; Export Logistics
+          Phu Quoc Pepper, Ben Tre Coconut, An Giang Rice
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-brand-50">
-          Cashew, coffee, pepper, rice, and coconut products — sourced directly from
-          certified Vietnamese farms, processed to international standards, and shipped
-          worldwide.
+          We work directly with farm cooperatives across five growing regions of Vietnam,
+          process under HACCP and ISO 22000-controlled facilities, and export under FOB,
+          CIF, EXW, CFR, and DDP terms — with a batch/lot number behind every shipment.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-4">
           <Link

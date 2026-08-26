@@ -156,6 +156,17 @@ export class InventoryService {
   async adjust(dto: AdjustInventoryDto) {
     const { productVariantId, warehouseId, quantity, type, reference } = dto;
 
+    const [variant, warehouse] = await Promise.all([
+      this.prisma.productVariant.findUnique({ where: { id: productVariantId } }),
+      this.prisma.warehouse.findUnique({ where: { id: warehouseId } }),
+    ]);
+    if (!variant) {
+      throw new BadRequestException(`productVariantId ${productVariantId} does not reference an existing variant`);
+    }
+    if (!warehouse) {
+      throw new BadRequestException(`warehouseId ${warehouseId} does not reference an existing warehouse`);
+    }
+
     return this.prisma.$transaction(async (tx) => {
       let inventory = await tx.inventory.findFirst({
         where: { productVariantId, warehouseId, batchId: null },

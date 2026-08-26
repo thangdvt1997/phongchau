@@ -29,6 +29,7 @@ import { AdminProductQueryDto } from './dto/admin-product-query.dto';
 import { UploadProductImageDto } from './dto/upload-product-image.dto';
 import { UploadProductDocumentDto } from './dto/upload-product-document.dto';
 import { CreateProductBatchDto } from './dto/create-product-batch.dto';
+import { documentUploadOptions, imageUploadOptions } from '../../common/utils/file-upload.util';
 
 @ApiTags('admin/catalog')
 @ApiBearerAuth()
@@ -180,7 +181,7 @@ export class CatalogAdminController {
 
   @Post('products/:id/images')
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', imageUploadOptions))
   uploadProductImage(
     @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,
@@ -198,7 +199,7 @@ export class CatalogAdminController {
 
   @Post('products/:id/documents')
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', documentUploadOptions))
   uploadProductDocument(
     @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,

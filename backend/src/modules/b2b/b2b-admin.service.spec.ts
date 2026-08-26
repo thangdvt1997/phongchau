@@ -32,6 +32,9 @@ describe('B2bAdminService', () => {
         upsert: jest.fn(),
         delete: jest.fn(),
       },
+      product: {
+        findUnique: jest.fn().mockResolvedValue({ id: 'p1' }),
+      },
       $transaction: jest.fn((ops: Promise<unknown>[]) => Promise.all(ops)),
     };
     notifications = { notify: jest.fn().mockResolvedValue(undefined) };
@@ -144,6 +147,19 @@ describe('B2bAdminService', () => {
   });
 
   describe('createPriceTier', () => {
+    // Regression: createPriceTier() used to call priceTier.create() straight from a
+    // client-supplied productId with no existence check, so a bogus productId tripped
+    // Prisma's FK constraint and surfaced as a raw 500 instead of a clean 400/404.
+    it('throws NotFoundException for a productId that does not exist, without creating anything', async () => {
+      prisma.product.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.createPriceTier('missing-product', { minQty: 1, price: 1, currency: 'VND' }),
+      ).rejects.toBeInstanceOf(NotFoundException);
+      expect(prisma.priceTier.findMany).not.toHaveBeenCalled();
+      expect(prisma.priceTier.create).not.toHaveBeenCalled();
+    });
+
     it('rejects when maxQty is less than minQty', async () => {
       await expect(
         service.createPriceTier('p1', { minQty: 10, maxQty: 5, price: 1, currency: 'VND' }),
@@ -193,6 +209,7 @@ describe('B2bAdminService', () => {
 
   describe('upsertCustomerPrice', () => {
     it('upserts on the [companyId, productId] compound key', async () => {
+      prisma.company.findUnique.mockResolvedValue({ id: 'c1' });
       prisma.customerPrice.upsert.mockResolvedValue({
         id: 'cp1',
         price: 42,
@@ -211,6 +228,28 @@ describe('B2bAdminService', () => {
         }),
       );
       expect(result.price).toBe(42);
+    });
+
+    // Regression: upsertCustomerPrice() used to call customerPrice.upsert() straight from
+    // client-supplied companyId/productId with no existence check, so a bogus id tripped
+    // Prisma's FK constraint and surfaced as a raw 500 instead of a clean 400/404.
+    it('throws NotFoundException for a companyId that does not exist, without upserting anything', async () => {
+      prisma.company.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.upsertCustomerPrice('missing-company', { productId: 'p1', price: 42, currency: 'VND' }),
+      ).rejects.toBeInstanceOf(NotFoundException);
+      expect(prisma.customerPrice.upsert).not.toHaveBeenCalled();
+    });
+
+    it('throws NotFoundException for a productId that does not exist, without upserting anything', async () => {
+      prisma.company.findUnique.mockResolvedValue({ id: 'c1' });
+      prisma.product.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.upsertCustomerPrice('c1', { productId: 'missing-product', price: 42, currency: 'VND' }),
+      ).rejects.toBeInstanceOf(NotFoundException);
+      expect(prisma.customerPrice.upsert).not.toHaveBeenCalled();
     });
   });
 

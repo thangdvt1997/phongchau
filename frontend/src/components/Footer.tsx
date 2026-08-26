@@ -1,14 +1,15 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 const COLUMNS = [
   {
     title: 'Products',
     links: [
-      { href: '/products/category/cashew', label: 'Cashew' },
-      { href: '/products/category/coffee', label: 'Coffee' },
-      { href: '/products/category/pepper', label: 'Pepper' },
-      { href: '/products/category/rice-grains', label: 'Rice & Grains' },
-      { href: '/products/category/coconut-products', label: 'Coconut Products' },
+      { href: '/products?categorySlug=cashew', label: 'Cashew' },
+      { href: '/products?categorySlug=coffee', label: 'Coffee' },
+      { href: '/products?categorySlug=pepper', label: 'Pepper' },
+      { href: '/products?categorySlug=rice-grains', label: 'Rice & Grains' },
+      { href: '/products?categorySlug=coconut-products', label: 'Coconut Products' },
     ],
   },
   {
@@ -35,8 +36,11 @@ export function Footer() {
     <footer className="border-t border-gray-200 bg-gray-50">
       <div className="mx-auto grid max-w-7xl grid-cols-2 gap-8 px-6 py-12 md:grid-cols-4">
         <div>
-          <p className="text-lg font-bold text-brand-700">Phong Chau</p>
-          <p className="mt-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2">
+            <Image src="/logo-icon.png" alt="" width={28} height={21} className="h-7 w-auto" />
+            <p className="text-lg font-bold text-brand-700">Phong Chau</p>
+          </div>
+          <p className="mt-3 text-sm text-gray-600">
             Vietnamese agricultural products, wholesale, OEM/ODM, and export logistics —
             farm to global market.
           </p>
@@ -56,8 +60,16 @@ export function Footer() {
           </div>
         ))}
       </div>
-      <div className="border-t border-gray-200 py-4 text-center text-xs text-gray-500">
-        © {new Date().getFullYear()} Phong Chau. All rights reserved.
+      <div className="flex flex-col items-center gap-2 border-t border-gray-200 py-4 text-center text-xs text-gray-500 sm:flex-row sm:justify-between sm:px-6">
+        <span>&copy; {new Date().getFullYear()} Phong Chau. All rights reserved.</span>
+        <span className="flex gap-4">
+          <Link href="/privacy" className="hover:text-brand-600">
+            Privacy Policy
+          </Link>
+          <Link href="/terms" className="hover:text-brand-600">
+            Terms of Service
+          </Link>
+        </span>
       </div>
     </footer>
   );

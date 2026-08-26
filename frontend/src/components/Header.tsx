@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 
@@ -21,8 +22,9 @@ export function Header() {
   return (
     <header className="border-b border-gray-200 bg-white">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <Link href="/" className="text-xl font-bold text-brand-700">
-          Phong Chau
+        <Link href="/" className="flex items-center gap-2">
+          <Image src="/logo-icon.png" alt="" width={36} height={27} priority className="h-9 w-auto" />
+          <span className="text-xl font-bold text-brand-700">Phong Chau</span>
         </Link>
         <nav className="hidden gap-6 text-sm font-medium text-gray-700 lg:flex">
           {NAV_LINKS.map((link) => (

@@ -15,9 +15,9 @@ export default function WholesalePage() {
       <h1 className="text-3xl font-bold text-gray-900">Wholesale &amp; B2B</h1>
       <p className="mt-4 max-w-3xl text-gray-600">
         We serve distributors, wholesalers, supermarkets, restaurants, factories, and
-        international importers with tiered volume pricing, contract pricing, RFQ/quotation
-        workflows, purchase orders, invoicing, and flexible payment terms (Net 7/15/30, L/C,
-        T/T, 30/70).
+        international importers with tiered volume pricing, negotiated contract pricing, an
+        RFQ-based quotation process, purchase orders, invoicing, and flexible payment terms
+        (Net 7/15/30, L/C, T/T, 30/70).
       </p>
 
       <div className="mt-10 grid grid-cols-1 gap-10 md:grid-cols-2">
@@ -41,10 +41,10 @@ export default function WholesalePage() {
         <div>
           <h2 className="text-xl font-semibold text-gray-900">How It Works</h2>
           <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm text-gray-600">
-            <li>Register your business account with company details.</li>
-            <li>Our sales team reviews and approves your account.</li>
-            <li>Unlock wholesale/tier pricing, contract pricing, and quick reorder.</li>
-            <li>Submit RFQs for custom quantity, packaging, or export requirements.</li>
+            <li>Register your business account with company and tax details.</li>
+            <li>Our sales team reviews your application and approves the account.</li>
+            <li>View wholesale tier pricing, plus any negotiated contract pricing, on your account.</li>
+            <li>Submit an RFQ for custom quantity, packaging, or export requirements — sales reviews it and issues a formal quotation.</li>
           </ol>
         </div>
       </div>

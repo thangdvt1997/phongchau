@@ -69,6 +69,7 @@ describe('OrdersService', () => {
       }),
     };
     payments = {
+      ensureProviderEnabled: jest.fn(),
       createPaymentForOrder: jest.fn().mockResolvedValue({
         payment: { id: 'pay1' },
         redirectUrl: null,
@@ -155,6 +156,24 @@ describe('OrdersService', () => {
 
       await expect(service.checkout(null, 'sess1', baseDto as any)).rejects.toThrow('db exploded');
       expect(inventory.releaseStock).toHaveBeenCalledWith('v1', 2);
+    });
+
+    // Regression: an unsupported/disabled payment provider used to only be caught inside
+    // payments.createPaymentForOrder(), which runs AFTER order.create() and coupon.update() —
+    // so a checkout that "failed" with 400 still left a real orphaned PENDING order (and an
+    // incremented coupon usage count) behind. ensureProviderEnabled() is now checked first,
+    // before stock is even reserved.
+    it('rejects an unsupported/disabled payment provider before reserving stock or creating the order', async () => {
+      payments.ensureProviderEnabled.mockImplementation(() => {
+        throw new BadRequestException('Payment provider VNPAY is not enabled');
+      });
+
+      await expect(service.checkout(null, 'sess1', baseDto as any)).rejects.toBeInstanceOf(
+        BadRequestException,
+      );
+      expect(inventory.reserveStock).not.toHaveBeenCalled();
+      expect(prisma.order.create).not.toHaveBeenCalled();
+      expect(cart.getPricedCart).not.toHaveBeenCalled();
     });
   });
 

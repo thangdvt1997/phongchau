@@ -1,9 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import { IsEmail, IsEnum, IsOptional, IsString, MinLength } from 'class-validator';
 import { BusinessType } from '@prisma/client';
 
 export class RegisterB2bDto {
   @ApiProperty()
+  // See RegisterDto.email — normalize casing so email-uniqueness/login stay case-insensitive.
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim().toLowerCase() : value))
   @IsEmail()
   email!: string;
 

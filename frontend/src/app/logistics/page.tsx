@@ -30,26 +30,44 @@ export default function LogisticsPage() {
       </p>
 
       <form onSubmit={getQuote} className="mt-8 grid grid-cols-1 gap-4 rounded-lg border border-gray-200 p-6 sm:grid-cols-3">
-        <input
-          placeholder="Destination country"
-          value={destinationCountry}
-          onChange={(e) => setDestinationCountry(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2"
-        />
-        <input
-          type="number"
-          placeholder="Weight (kg)"
-          value={weightKg}
-          onChange={(e) => setWeightKg(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2"
-        />
-        <input
-          type="number"
-          placeholder="Order subtotal"
-          value={subtotal}
-          onChange={(e) => setSubtotal(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2"
-        />
+        <div>
+          <label htmlFor="logistics-destination" className="text-sm font-medium text-gray-700">
+            Destination country
+          </label>
+          <input
+            id="logistics-destination"
+            placeholder="Destination country"
+            value={destinationCountry}
+            onChange={(e) => setDestinationCountry(e.target.value)}
+            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+          />
+        </div>
+        <div>
+          <label htmlFor="logistics-weight" className="text-sm font-medium text-gray-700">
+            Weight (kg)
+          </label>
+          <input
+            id="logistics-weight"
+            type="number"
+            placeholder="Weight (kg)"
+            value={weightKg}
+            onChange={(e) => setWeightKg(e.target.value)}
+            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+          />
+        </div>
+        <div>
+          <label htmlFor="logistics-subtotal" className="text-sm font-medium text-gray-700">
+            Order subtotal
+          </label>
+          <input
+            id="logistics-subtotal"
+            type="number"
+            placeholder="Order subtotal"
+            value={subtotal}
+            onChange={(e) => setSubtotal(e.target.value)}
+            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+          />
+        </div>
         <button type="submit" className="sm:col-span-3 rounded-md bg-brand-600 px-4 py-2.5 font-semibold text-white">
           Get Shipping Estimate
         </button>

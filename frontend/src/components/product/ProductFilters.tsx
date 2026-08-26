@@ -30,8 +30,11 @@ export function ProductFilters({ categories }: { categories: Category[] }) {
           updateParam('q', q || null);
         }}
       >
-        <label className="text-sm font-semibold text-gray-700">Search</label>
+        <label htmlFor="product-search" className="text-sm font-semibold text-gray-700">
+          Search
+        </label>
         <input
+          id="product-search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Product name, SKU..."
@@ -86,8 +89,11 @@ export function ProductFilters({ categories }: { categories: Category[] }) {
       </div>
 
       <div>
-        <label className="text-sm font-semibold text-gray-700">Sort by</label>
+        <label htmlFor="product-sort" className="text-sm font-semibold text-gray-700">
+          Sort by
+        </label>
         <select
+          id="product-sort"
           value={searchParams.get('sort') ?? 'newest'}
           onChange={(e) => updateParam('sort', e.target.value)}
           className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"

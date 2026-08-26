@@ -135,6 +135,7 @@ describe('RfqService', () => {
       lead: { create: jest.fn() },
       user: { findUnique: jest.fn() },
       auditLog: { create: jest.fn() },
+      product: { count: jest.fn() },
       $transaction: jest.fn(),
     };
     notifications = { notify: jest.fn().mockResolvedValue(undefined) };
@@ -235,6 +236,39 @@ describe('RfqService', () => {
     });
   });
 
+  // Regression: create() used to call rfq.create() with the client-supplied item
+  // productIds straight through with no existence check, so a bogus productId tripped
+  // Prisma's FK constraint and surfaced as a raw 500 instead of a clean 400.
+  describe('create', () => {
+    it('rejects when an item references a productId that does not exist, without creating the RFQ', async () => {
+      prisma.product.count.mockResolvedValue(0);
+
+      await expect(
+        service.create(user, {
+          items: [{ productId: 'missing-product', quantity: 10, unit: 'kg' }],
+        } as any),
+      ).rejects.toBeInstanceOf(BadRequestException);
+      expect(prisma.rfq.create).not.toHaveBeenCalled();
+    });
+
+    it('creates the RFQ once every item productId is confirmed to exist', async () => {
+      prisma.product.count.mockResolvedValue(1);
+      prisma.rfq.create.mockResolvedValue({
+        id: 'r1',
+        rfqNumber: 'RFQ-2026-XYZ999',
+        status: RfqStatus.DRAFT,
+        items: [],
+        quotations: [],
+      });
+
+      await service.create(user, {
+        items: [{ productId: 'p1', quantity: 10, unit: 'kg' }],
+      } as any);
+
+      expect(prisma.rfq.create).toHaveBeenCalled();
+    });
+  });
+
   describe('acceptQuotation', () => {
     it('rejects when the quotation is not in SENT status', async () => {
       prisma.rfq.findUnique.mockResolvedValue({
@@ -268,6 +302,27 @@ describe('RfqService', () => {
       await expect(service.acceptQuotation('r1', 'q1', user)).rejects.toBeInstanceOf(
         BadRequestException,
       );
+    });
+  });
+
+  describe('adminCreateQuotation', () => {
+    const admin = { id: 'a1', email: 'sales@pc.com', role: Role.SALES, companyId: null };
+
+    it('rejects when a quotation item references a productId that does not exist', async () => {
+      prisma.rfq.findUnique.mockResolvedValue({ id: 'r1', status: RfqStatus.SALES_REVIEW });
+      prisma.product.count.mockResolvedValue(0);
+
+      await expect(
+        service.adminCreateQuotation(
+          'r1',
+          {
+            currency: 'VND',
+            items: [{ productId: 'missing-product', quantity: 10, unitPrice: 1000 }],
+          } as any,
+          admin,
+        ),
+      ).rejects.toBeInstanceOf(BadRequestException);
+      expect(prisma.quotation.create).not.toHaveBeenCalled();
     });
   });
 

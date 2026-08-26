@@ -16,6 +16,21 @@ export class PaymentsService {
   ) {}
 
   /**
+   * Checked by Orders.checkout() before it reserves stock or creates the order, so an
+   * unsupported/disabled provider fails fast without leaving an orphaned PENDING order,
+   * an incremented coupon usage count, or a reserve-then-release stock round trip behind.
+   */
+  ensureProviderEnabled(provider: PaymentProviderType): void {
+    const registered = this.registry.get(provider);
+    if (!registered) {
+      throw new BadRequestException(`Unsupported payment provider: ${provider}`);
+    }
+    if (!registered.enabled) {
+      throw new BadRequestException(`Payment provider ${provider} is not enabled`);
+    }
+  }
+
+  /**
    * Stable public contract consumed by the Orders module (built separately) at
    * checkout time. Do not change this method's shape.
    */
@@ -26,13 +41,8 @@ export class PaymentsService {
     currency: string;
     provider: PaymentProviderType;
   }): Promise<{ payment: Payment; redirectUrl: string | null }> {
-    const provider = this.registry.get(params.provider);
-    if (!provider) {
-      throw new BadRequestException(`Unsupported payment provider: ${params.provider}`);
-    }
-    if (!provider.enabled) {
-      throw new BadRequestException(`Payment provider ${params.provider} is not enabled`);
-    }
+    this.ensureProviderEnabled(params.provider);
+    const provider = this.registry.get(params.provider)!;
 
     const intent = await provider.createIntent({
       orderId: params.orderId,

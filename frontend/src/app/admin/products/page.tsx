@@ -76,6 +76,7 @@ export default function AdminProductsPage() {
 
       <div className="mt-6 flex flex-wrap gap-3">
         <input
+          aria-label="Search products by name or SKU"
           value={q}
           onChange={(e) => {
             setPage(1);
@@ -85,6 +86,7 @@ export default function AdminProductsPage() {
           className="w-64 rounded-md border border-gray-300 px-3 py-2 text-sm"
         />
         <select
+          aria-label="Filter by category"
           value={categoryId}
           onChange={(e) => {
             setPage(1);

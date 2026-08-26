@@ -245,8 +245,9 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
         <h2 className="font-semibold text-gray-800">Credit Limit &amp; Payment Terms</h2>
         <form onSubmit={submitCompany} className="mt-3 flex flex-wrap items-end gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Credit Limit</label>
+            <label htmlFor="b2b-credit-limit" className="block text-sm font-medium text-gray-700">Credit Limit</label>
             <input
+              id="b2b-credit-limit"
               type="number"
               min={0}
               step="0.01"
@@ -256,8 +257,9 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Payment Terms</label>
+            <label htmlFor="b2b-payment-terms" className="block text-sm font-medium text-gray-700">Payment Terms</label>
             <input
+              id="b2b-payment-terms"
               placeholder="e.g. Net 30, T/T 30/70"
               value={paymentTerms}
               onChange={(e) => setPaymentTerms(e.target.value)}
@@ -282,7 +284,11 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
           Price tiers apply per product across all B2B customers, not just this company. Pick a product to
           manage its volume-based pricing.
         </p>
+        <label htmlFor="b2b-tier-product" className="sr-only">
+          Product for price tiers
+        </label>
         <select
+          id="b2b-tier-product"
           value={tierProductId}
           onChange={(e) => setTierProductId(e.target.value)}
           className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-sm"
@@ -330,6 +336,7 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
 
             <form onSubmit={submitTier} className="mt-3 flex flex-wrap items-center gap-2">
               <input
+                aria-label="Minimum quantity"
                 type="number"
                 min={0}
                 placeholder="Min qty"
@@ -339,6 +346,7 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
                 className="w-24 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
               />
               <input
+                aria-label="Maximum quantity (optional)"
                 type="number"
                 min={0}
                 placeholder="Max qty (optional)"
@@ -347,6 +355,7 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
                 className="w-36 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
               />
               <input
+                aria-label="Tier price"
                 type="number"
                 min={0}
                 step="0.01"
@@ -357,6 +366,7 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
                 className="w-28 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
               />
               <input
+                aria-label="Currency"
                 placeholder="Currency"
                 value={tierForm.currency}
                 onChange={(e) => setTierForm((f) => ({ ...f, currency: e.target.value }))}
@@ -415,6 +425,7 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
 
         <form onSubmit={submitCustomerPrice} className="mt-3 flex flex-wrap items-center gap-2">
           <select
+            aria-label="Product"
             value={cpForm.productId}
             onChange={(e) => setCpForm((f) => ({ ...f, productId: e.target.value }))}
             required
@@ -428,6 +439,7 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
             ))}
           </select>
           <input
+            aria-label="Contract price"
             type="number"
             min={0}
             step="0.01"
@@ -438,19 +450,24 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
             className="w-28 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
           />
           <input
+            aria-label="Currency"
             placeholder="Currency"
             value={cpForm.currency}
             onChange={(e) => setCpForm((f) => ({ ...f, currency: e.target.value }))}
             required
             className="w-24 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
           />
+          <label htmlFor="cp-valid-from" className="sr-only">Valid from</label>
           <input
+            id="cp-valid-from"
             type="date"
             value={cpForm.validFrom}
             onChange={(e) => setCpForm((f) => ({ ...f, validFrom: e.target.value }))}
             className="rounded-md border border-gray-300 px-2 py-1.5 text-sm"
           />
+          <label htmlFor="cp-valid-to" className="sr-only">Valid to</label>
           <input
+            id="cp-valid-to"
             type="date"
             value={cpForm.validTo}
             onChange={(e) => setCpForm((f) => ({ ...f, validTo: e.target.value }))}

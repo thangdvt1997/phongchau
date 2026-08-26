@@ -60,7 +60,11 @@ export function AddToCartPanel({ variants, productSlug }: { variants: ProductVar
       </p>
 
       <div className="mt-4 flex items-center gap-3">
+        <label htmlFor="add-to-cart-quantity" className="sr-only">
+          Quantity
+        </label>
         <input
+          id="add-to-cart-quantity"
           type="number"
           min={1}
           value={quantity}
@@ -70,9 +74,29 @@ export function AddToCartPanel({ variants, productSlug }: { variants: ProductVar
         <button
           onClick={handleAddToCart}
           disabled={!inStock || status === 'adding'}
-          className="flex-1 rounded-md bg-brand-600 px-4 py-2.5 font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
+          className="flex-1 flex items-center justify-center gap-1.5 rounded-md bg-brand-600 px-4 py-2.5 font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
         >
-          {status === 'adding' ? 'Adding...' : status === 'added' ? 'Added to cart ✓' : 'Add to Cart'}
+          {status === 'adding' ? (
+            'Adding...'
+          ) : status === 'added' ? (
+            <>
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="h-4 w-4 shrink-0"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M16.704 5.29a1 1 0 010 1.415l-7.5 7.5a1 1 0 01-1.415 0l-3.5-3.5a1 1 0 111.415-1.415L8.5 12.086l6.79-6.795a1 1 0 011.414 0z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Added to cart
+            </>
+          ) : (
+            'Add to Cart'
+          )}
         </button>
       </div>
 

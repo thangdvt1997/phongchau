@@ -4,7 +4,9 @@ import { CrmService } from './crm.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
-import { LeadStatus, Role } from '@prisma/client';
+import { Role } from '@prisma/client';
+import { ListLeadsQueryDto } from './dto/list-leads-query.dto';
+import { UpdateLeadDto } from './dto/update-lead.dto';
 
 @ApiTags('admin/crm')
 @ApiBearerAuth()
@@ -15,20 +17,12 @@ export class CrmAdminController {
   constructor(private readonly crmService: CrmService) {}
 
   @Get()
-  list(
-    @Query('status') status?: LeadStatus,
-    @Query('page') page?: string,
-    @Query('pageSize') pageSize?: string,
-  ) {
-    return this.crmService.list(status, Number(page) || 1, Number(pageSize) || 20);
+  list(@Query() query: ListLeadsQueryDto) {
+    return this.crmService.list(query.status, query.page ?? 1, query.pageSize ?? 20);
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body('status') status: LeadStatus,
-    @Body('assigneeId') assigneeId?: string,
-  ) {
-    return this.crmService.updateStatus(id, status, assigneeId);
+  update(@Param('id') id: string, @Body() dto: UpdateLeadDto) {
+    return this.crmService.updateStatus(id, dto.status, dto.assigneeId);
   }
 }

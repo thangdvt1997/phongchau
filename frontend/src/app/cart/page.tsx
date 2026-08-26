@@ -40,7 +40,11 @@ export default function CartPage() {
               )}
             </div>
             <div className="flex items-center gap-3">
+              <label htmlFor={`cart-qty-${item.id}`} className="sr-only">
+                Quantity for {item.productName}
+              </label>
               <input
+                id={`cart-qty-${item.id}`}
                 type="number"
                 min={1}
                 value={item.quantity}

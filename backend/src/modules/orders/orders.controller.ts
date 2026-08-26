@@ -2,6 +2,7 @@ import { Body, Controller, Get, Headers, Param, Post, Query, UseGuards } from '@
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { OrdersService } from './orders.service';
 import { CheckoutDto } from './dto/checkout.dto';
+import { ListOrdersQueryDto } from './dto/list-orders-query.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { OptionalJwtAuthGuard } from '../../common/guards/optional-jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
@@ -27,12 +28,8 @@ export class OrdersController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get('orders')
-  listMine(
-    @CurrentUser() user: AuthenticatedUser,
-    @Query('page') page?: string,
-    @Query('pageSize') pageSize?: string,
-  ) {
-    return this.ordersService.listMyOrders(user, Number(page) || 1, Number(pageSize) || 20);
+  listMine(@CurrentUser() user: AuthenticatedUser, @Query() query: ListOrdersQueryDto) {
+    return this.ordersService.listMyOrders(user, query.page ?? 1, query.pageSize ?? 20);
   }
 
   @ApiBearerAuth()

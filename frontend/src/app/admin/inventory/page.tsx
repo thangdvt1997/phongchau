@@ -164,6 +164,7 @@ export default function AdminInventoryPage() {
           className="mt-3 flex flex-wrap items-end gap-3 rounded-md border border-gray-200 p-4"
         >
           <input
+            aria-label="Warehouse name"
             required
             placeholder="Name"
             value={warehouseForm.name}
@@ -171,6 +172,7 @@ export default function AdminInventoryPage() {
             className={inputCls()}
           />
           <input
+            aria-label="Warehouse code"
             required
             placeholder="Code"
             value={warehouseForm.code}
@@ -178,6 +180,7 @@ export default function AdminInventoryPage() {
             className={inputCls()}
           />
           <input
+            aria-label="Warehouse address"
             placeholder="Address"
             value={warehouseForm.address}
             onChange={(e) => setWarehouseForm((f) => ({ ...f, address: e.target.value }))}
@@ -288,8 +291,9 @@ export default function AdminInventoryPage() {
         <h2 className="text-lg font-semibold text-gray-900">Adjust Stock</h2>
         <form onSubmit={handleAdjust} className="mt-3 flex flex-wrap items-end gap-3 rounded-md border border-gray-200 p-4">
           <div>
-            <label className="text-xs font-medium text-gray-600">Variant SKU or ID</label>
+            <label htmlFor="adjust-variant-search" className="text-xs font-medium text-gray-600">Variant SKU or ID</label>
             <input
+              id="adjust-variant-search"
               required
               list="variant-sku-options"
               value={adjustForm.variantSearch}
@@ -303,8 +307,9 @@ export default function AdminInventoryPage() {
             </datalist>
           </div>
           <div>
-            <label className="text-xs font-medium text-gray-600">Warehouse</label>
+            <label htmlFor="adjust-warehouse" className="text-xs font-medium text-gray-600">Warehouse</label>
             <select
+              id="adjust-warehouse"
               required
               value={adjustForm.warehouseId}
               onChange={(e) => setAdjustForm((f) => ({ ...f, warehouseId: e.target.value }))}
@@ -319,8 +324,9 @@ export default function AdminInventoryPage() {
             </select>
           </div>
           <div>
-            <label className="text-xs font-medium text-gray-600">Quantity</label>
+            <label htmlFor="adjust-quantity" className="text-xs font-medium text-gray-600">Quantity</label>
             <input
+              id="adjust-quantity"
               required
               type="number"
               min={1}
@@ -330,8 +336,9 @@ export default function AdminInventoryPage() {
             />
           </div>
           <div>
-            <label className="text-xs font-medium text-gray-600">Type</label>
+            <label htmlFor="adjust-type" className="text-xs font-medium text-gray-600">Type</label>
             <select
+              id="adjust-type"
               value={adjustForm.type}
               onChange={(e) => setAdjustForm((f) => ({ ...f, type: e.target.value as AdjustType }))}
               className={`mt-1 block ${inputCls()}`}
@@ -342,8 +349,9 @@ export default function AdminInventoryPage() {
             </select>
           </div>
           <div>
-            <label className="text-xs font-medium text-gray-600">Reference (optional)</label>
+            <label htmlFor="adjust-reference" className="text-xs font-medium text-gray-600">Reference (optional)</label>
             <input
+              id="adjust-reference"
               value={adjustForm.reference}
               onChange={(e) => setAdjustForm((f) => ({ ...f, reference: e.target.value }))}
               className={`mt-1 block ${inputCls()}`}
