@@ -5,25 +5,31 @@ full agronomic/export data, cart, checkout, orders, RFQ workflow, B2B tier/contr
 reviews/wishlist, CMS blog, SEO (sitemap/robots/JSON-LD), notifications, and an admin panel with
 RBAC — all backed by a schema designed to extend without breaking changes.
 
-Everything below is intentionally **not** built yet. It maps to the source spec
-(`docs/Pormt.docx`) sections and to the P1/P2/P3 tiers that document explicitly asks for so the
-MVP doesn't get over-engineered up front.
-
-## P1 — Business
-- **OEM/ODM workflow**: `OemRequest` table exists (spec section 8) but has no admin
-  review/sample/pricing/approval/production/QC pipeline yet — model it after the RFQ state
-  machine in `backend/src/modules/rfq/rfq.service.ts`.
+## P1 — Business — status
+- **OEM/ODM workflow** ✅ done. `backend/src/modules/oem/` — full Request → Review → Sample →
+  Pricing → Approval → Production → QC → Delivery pipeline mirroring the RFQ state machine
+  (`ALLOWED_TRANSITIONS` in `oem.service.ts`), customer request form (`/oem`) + message thread +
+  admin management UI (`/admin/oem`).
+- **Full WMS** ✅ done (stock transfer + cycle count + damaged/expired write-off). Extended
+  `InventoryModule`: `stock-transfer.service.ts` (atomic warehouse-to-warehouse moves via
+  `$transaction`), `cycle-count.service.ts` (expected-vs-actual with auto-adjustment), and
+  `DAMAGE`/`EXPIRE` added to the existing adjust-stock flow. UI lives on the existing
+  `/admin/inventory` page. Picking/packing workflow (physical warehouse floor operations) is
+  still not built — genuinely out of scope for a web admin panel without barcode/RF hardware.
+- **Multi-currency** ✅ done, **display-only by design**. `backend/src/modules/currency/` —
+  admin-managed `ExchangeRate` rows, `GET /currency/rates` + `/currency/convert`, a header
+  currency switcher, and converted-price display on product cards/detail (VND stays visually
+  primary). Orders/payments/cart still settle in VND only — actually charging in a foreign
+  currency (payment gateway multi-currency support, FX rate locking at order time, accounting
+  implications) is real scope and remains future work.
 - **Live logistics/carrier integration**: `ShippingService.calculateShipping()` in
   `backend/src/modules/shipping/shipping.service.ts` uses a flat placeholder rate table. Swap in
   real carrier APIs (DHL, FedEx, GHN, GHTK, Viettel Post, J&T) behind the same method signature.
-- **Full WMS**: `InventoryModule` covers stock/reserve/release only. Picking, packing, cycle
-  count, damaged/expired goods handling, and stock transfer between warehouses are not built.
-- **Multi-currency/exchange rates**: schema stores a `currency` string per price-bearing row: wire
-  up an exchange-rate provider and currency switcher instead of the current single-currency-per-
-  record assumption.
+  Not started — needs real carrier API credentials.
 - **Real payment gateways**: `VnpayPaymentProvider`/`StripePaymentProvider`
   (`backend/src/modules/payments/providers/`) are structurally complete but disabled — flip
-  `PAYMENT_VNPAY_ENABLED`/`PAYMENT_STRIPE_ENABLED` once real sandbox/production keys exist.
+  `PAYMENT_VNPAY_ENABLED`/`PAYMENT_STRIPE_ENABLED` once real sandbox/production keys exist. Not
+  started — needs real gateway credentials.
 
 ## P2 — Growth
 - **CRM pipeline UI**: `Lead` rows are created automatically from RFQ submissions
