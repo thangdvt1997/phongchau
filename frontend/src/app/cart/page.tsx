@@ -2,10 +2,12 @@
 
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
-import { formatMoney } from '@/lib/format';
+import { useCurrency } from '@/context/CurrencyContext';
+import { formatMoney, convertDisplay } from '@/lib/format';
 
 export default function CartPage() {
   const { cart, loading, updateItem, removeItem } = useCart();
+  const { selected, getRate } = useCurrency();
 
   if (loading) {
     return <div className="mx-auto max-w-4xl px-6 py-16 text-center text-gray-500">Loading cart...</div>;
@@ -65,10 +67,16 @@ export default function CartPage() {
 
       <div className="mt-6 flex justify-end">
         <div className="w-full max-w-xs space-y-2">
-          <div className="flex justify-between text-gray-600">
+          <div className="flex justify-between font-semibold text-gray-900">
             <span>Subtotal</span>
             <span>{formatMoney(cart.subtotal, cart.currency)}</span>
           </div>
+          {selected !== 'VND' && getRate(selected) != null && (
+            <p className="text-right text-xs text-gray-400">
+              &asymp; {formatMoney(convertDisplay(cart.subtotal, getRate(selected)!), selected)} (estimate — you pay
+              in VND)
+            </p>
+          )}
           <p className="text-xs text-gray-400">Shipping and taxes calculated at checkout.</p>
           <Link
             href="/checkout"

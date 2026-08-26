@@ -4,18 +4,25 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ProductVariant } from '@/lib/types';
-import { formatMoney } from '@/lib/format';
+import { formatMoney, convertDisplay } from '@/lib/format';
 import { useCart } from '@/context/CartContext';
+import { useCurrency } from '@/context/CurrencyContext';
 
 export function AddToCartPanel({ variants, productSlug }: { variants: ProductVariant[]; productSlug: string }) {
   const [selectedId, setSelectedId] = useState(variants.find((v) => v.isDefault)?.id ?? variants[0]?.id);
   const [quantity, setQuantity] = useState(1);
   const [status, setStatus] = useState<'idle' | 'adding' | 'added' | 'error'>('idle');
   const { addItem } = useCart();
+  const { selected: selectedCurrency, getRate } = useCurrency();
   const router = useRouter();
 
   const selected = variants.find((v) => v.id === selectedId);
   if (!selected) return null;
+
+  // DISPLAY-only conversion — variant prices are always VND today; the customer is
+  // still charged the VND amount shown as the secondary reference line below.
+  const rate = selectedCurrency !== 'VND' ? getRate(selectedCurrency) : null;
+  const showConverted = selectedCurrency !== 'VND' && rate != null;
 
   const inStock = (selected.availableStock ?? 0) > 0;
 
@@ -31,7 +38,16 @@ export function AddToCartPanel({ variants, productSlug }: { variants: ProductVar
 
   return (
     <div className="rounded-lg border border-gray-200 p-6">
-      <p className="text-2xl font-bold text-brand-700">{formatMoney(selected.price)}</p>
+      {showConverted ? (
+        <>
+          <p className="text-2xl font-bold text-brand-700">
+            {formatMoney(convertDisplay(selected.price, rate!), selectedCurrency)}
+          </p>
+          <p className="text-sm text-gray-400">{formatMoney(selected.price)} (checkout price)</p>
+        </>
+      ) : (
+        <p className="text-2xl font-bold text-brand-700">{formatMoney(selected.price)}</p>
+      )}
       {selected.compareAtPrice && (
         <p className="text-sm text-gray-400 line-through">{formatMoney(selected.compareAtPrice)}</p>
       )}

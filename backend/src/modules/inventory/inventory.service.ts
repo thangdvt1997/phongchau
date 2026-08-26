@@ -166,6 +166,9 @@ export class InventoryService {
     if (!warehouse) {
       throw new BadRequestException(`warehouseId ${warehouseId} does not reference an existing warehouse`);
     }
+    if ((type === 'DAMAGE' || type === 'EXPIRE') && !reference) {
+      throw new BadRequestException('reference is required for DAMAGE and EXPIRE adjustments');
+    }
 
     return this.prisma.$transaction(async (tx) => {
       let inventory = await tx.inventory.findFirst({
@@ -181,6 +184,7 @@ export class InventoryService {
       if (type === 'IN' || type === 'ADJUST') {
         quantityOnHand += quantity;
       } else {
+        // OUT, DAMAGE, EXPIRE all decrease stock on hand.
         quantityOnHand -= quantity;
         if (quantityOnHand < 0) {
           throw new BadRequestException('Adjustment would result in negative stock on hand');

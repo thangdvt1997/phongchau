@@ -135,5 +135,56 @@ describe('InventoryService', () => {
       expect(prisma.inventory.findFirst).not.toHaveBeenCalled();
       expect(prisma.inventory.create).not.toHaveBeenCalled();
     });
+
+    // DAMAGE/EXPIRE write-off support added for cycle count / write-off feature work.
+    it('throws BadRequestException for a DAMAGE adjustment with no reference', async () => {
+      await expect(
+        service.adjust({ productVariantId: 'v1', warehouseId: 'w1', quantity: 5, type: 'DAMAGE' as any }),
+      ).rejects.toBeInstanceOf(BadRequestException);
+      expect(prisma.inventory.findFirst).not.toHaveBeenCalled();
+    });
+
+    it('throws BadRequestException for an EXPIRE adjustment with no reference', async () => {
+      await expect(
+        service.adjust({ productVariantId: 'v1', warehouseId: 'w1', quantity: 5, type: 'EXPIRE' as any }),
+      ).rejects.toBeInstanceOf(BadRequestException);
+      expect(prisma.inventory.findFirst).not.toHaveBeenCalled();
+    });
+
+    it('decreases quantityOnHand for a DAMAGE adjustment with a reference, same as OUT', async () => {
+      prisma.inventory.findFirst.mockResolvedValue({ id: 'inv1', quantityOnHand: 10, quantityReserved: 0 });
+      prisma.inventory.update.mockResolvedValue({ id: 'inv1', quantityOnHand: 7 });
+
+      await service.adjust({
+        productVariantId: 'v1',
+        warehouseId: 'w1',
+        quantity: 3,
+        type: 'DAMAGE' as any,
+        reference: 'Crushed carton in transit',
+      });
+
+      expect(prisma.inventory.update).toHaveBeenCalledWith({
+        where: { id: 'inv1' },
+        data: { quantityOnHand: 7 },
+      });
+    });
+
+    it('decreases quantityOnHand for an EXPIRE adjustment with a reference, same as OUT', async () => {
+      prisma.inventory.findFirst.mockResolvedValue({ id: 'inv1', quantityOnHand: 10, quantityReserved: 0 });
+      prisma.inventory.update.mockResolvedValue({ id: 'inv1', quantityOnHand: 8 });
+
+      await service.adjust({
+        productVariantId: 'v1',
+        warehouseId: 'w1',
+        quantity: 2,
+        type: 'EXPIRE' as any,
+        reference: 'Past shelf life date',
+      });
+
+      expect(prisma.inventory.update).toHaveBeenCalledWith({
+        where: { id: 'inv1' },
+        data: { quantityOnHand: 8 },
+      });
+    });
   });
 });

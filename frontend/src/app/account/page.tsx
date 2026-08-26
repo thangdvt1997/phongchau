@@ -23,11 +23,19 @@ interface RfqSummary {
   createdAt: string;
 }
 
+interface OemSummary {
+  id: string;
+  requestNumber: string;
+  status: string;
+  createdAt: string;
+}
+
 export default function AccountPage() {
   const { user, loading, logout } = useAuth();
   const router = useRouter();
   const [orders, setOrders] = useState<OrderSummary[]>([]);
   const [rfqs, setRfqs] = useState<RfqSummary[]>([]);
+  const [oemRequests, setOemRequests] = useState<OemSummary[]>([]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -39,6 +47,7 @@ export default function AccountPage() {
     if (!user) return;
     apiClient.get('/orders').then(({ data }) => setOrders(data.items));
     apiClient.get('/rfq').then(({ data }) => setRfqs(data.items ?? data));
+    apiClient.get('/oem').then(({ data }) => setOemRequests(data.items ?? data));
   }, [user]);
 
   if (!user) return null;
@@ -98,6 +107,27 @@ export default function AccountPage() {
             {rfqs.map((r) => (
               <div key={r.id} className="flex items-center justify-between p-4 text-sm">
                 <p className="font-medium text-gray-800">{r.rfqNumber}</p>
+                <p className="text-gray-500">{r.status}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="mt-10">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-gray-900">My OEM/ODM Requests</h2>
+          <Link href="/oem" className="text-sm font-medium text-brand-700 hover:underline">
+            New OEM/ODM Request
+          </Link>
+        </div>
+        {oemRequests.length === 0 ? (
+          <p className="mt-2 text-sm text-gray-500">No OEM/ODM requests yet.</p>
+        ) : (
+          <div className="mt-4 divide-y divide-gray-100 rounded-lg border border-gray-200">
+            {oemRequests.map((r) => (
+              <div key={r.id} className="flex items-center justify-between p-4 text-sm">
+                <p className="font-medium text-gray-800">{r.requestNumber}</p>
                 <p className="text-gray-500">{r.status}</p>
               </div>
             ))}

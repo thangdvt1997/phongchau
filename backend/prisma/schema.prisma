@@ -76,6 +76,36 @@ enum InventoryTxnType {
   ADJUST
   RESERVE
   RELEASE
+  TRANSFER_OUT
+  TRANSFER_IN
+  DAMAGE
+  EXPIRE
+  CYCLE_COUNT
+}
+
+enum StockTransferStatus {
+  PENDING
+  IN_TRANSIT
+  COMPLETED
+  CANCELLED
+}
+
+enum CycleCountStatus {
+  OPEN
+  COMPLETED
+}
+
+enum OemRequestStatus {
+  REQUEST
+  REVIEW
+  SAMPLE
+  PRICING
+  APPROVAL
+  PRODUCTION
+  QC
+  DELIVERY
+  REJECTED
+  CANCELLED
 }
 
 enum CouponType {
@@ -243,6 +273,8 @@ model User {
   wishlists         Wishlist[]
   rfqs              Rfq[]
   rfqMessages       RfqMessage[]
+  oemRequests       OemRequest[]
+  oemMessages       OemMessage[]
   auditLogs         AuditLog[]
   notifications     Notification[]
   leads             Lead[]        @relation("LeadAssignee")
@@ -285,6 +317,7 @@ model Company {
   users               User[]
   orders              Order[]
   rfqs                Rfq[]
+  oemRequests         OemRequest[]
   customerPrices      CustomerPrice[]
 
   @@map("companies")
@@ -474,6 +507,8 @@ model ProductVariant {
   inventory        Inventory[]
   cartItems        CartItem[]
   orderItems       OrderItem[]
+  stockTransfers   StockTransfer[]
+  cycleCounts      CycleCount[]
 
   @@index([productId])
   @@map("product_variants")
@@ -555,6 +590,9 @@ model Warehouse {
 
   inventory Inventory[]
   batches   ProductBatch[]
+  transfersOut StockTransfer[] @relation("TransferFrom")
+  transfersIn  StockTransfer[] @relation("TransferTo")
+  cycleCounts  CycleCount[]
 
   @@map("warehouses")
 }
@@ -590,6 +628,48 @@ model InventoryTransaction {
 
   @@index([inventoryId])
   @@map("inventory_transactions")
+}
+
+model StockTransfer {
+  id               String              @id @default(uuid())
+  transferNumber   String              @unique
+  productVariantId String
+  productVariant   ProductVariant      @relation(fields: [productVariantId], references: [id])
+  fromWarehouseId  String
+  fromWarehouse    Warehouse           @relation("TransferFrom", fields: [fromWarehouseId], references: [id])
+  toWarehouseId    String
+  toWarehouse      Warehouse           @relation("TransferTo", fields: [toWarehouseId], references: [id])
+  quantity         Int
+  status           StockTransferStatus @default(PENDING)
+  note             String?
+  createdBy        String?
+  createdAt        DateTime            @default(now())
+  completedAt      DateTime?
+
+  @@index([productVariantId])
+  @@index([fromWarehouseId])
+  @@index([toWarehouseId])
+  @@map("stock_transfers")
+}
+
+model CycleCount {
+  id               String           @id @default(uuid())
+  warehouseId      String
+  warehouse        Warehouse        @relation(fields: [warehouseId], references: [id])
+  productVariantId String
+  productVariant   ProductVariant   @relation(fields: [productVariantId], references: [id])
+  expectedQuantity Int
+  actualQuantity   Int?
+  discrepancy      Int?
+  status           CycleCountStatus @default(OPEN)
+  note             String?
+  countedBy        String?
+  createdAt        DateTime         @default(now())
+  completedAt      DateTime?
+
+  @@index([warehouseId])
+  @@index([productVariantId])
+  @@map("cycle_counts")
 }
 
 // ---------- Pricing ----------
@@ -894,20 +974,54 @@ model QuotationItem {
 
 // OEM/ODM — P1 stub: capture the request, no workflow engine yet.
 model OemRequest {
-  id                String   @id @default(uuid())
-  companyId         String?
-  productType        String
-  ingredients        String?
-  targetMarket       String?
-  packageType        String?
-  brandName          String?
-  estimatedQuantity  String?
-  targetPrice        String?
-  destinationCountry String?
-  status             String   @default("REQUEST")
-  createdAt          DateTime @default(now())
+  id                       String            @id @default(uuid())
+  requestNumber            String            @unique
+  userId                   String?
+  user                     User?             @relation(fields: [userId], references: [id])
+  companyId                String?
+  company                  Company?          @relation(fields: [companyId], references: [id])
+  status                   OemRequestStatus  @default(REQUEST)
 
+  productType              String
+  ingredients              String?
+  recipe                   String?
+  targetMarket             String?
+  packageType              String?
+  packageSize              String?
+  brandName                String?
+  isPrivateLabel           Boolean           @default(false)
+  estimatedQuantity        String?
+  certificationRequirement String?
+  targetPrice              String?
+  destinationCountry       String?
+  attachmentUrl            String?
+
+  assignedSalesId          String?
+  internalNote             String?
+
+  createdAt                DateTime          @default(now())
+  updatedAt                DateTime          @updatedAt
+
+  messages                 OemMessage[]
+
+  @@index([userId])
+  @@index([companyId])
+  @@index([status])
   @@map("oem_requests")
+}
+
+model OemMessage {
+  id            String     @id @default(uuid())
+  oemRequestId  String
+  oemRequest    OemRequest @relation(fields: [oemRequestId], references: [id], onDelete: Cascade)
+  senderId      String
+  sender        User       @relation(fields: [senderId], references: [id])
+  message       String
+  attachmentUrl String?
+  createdAt     DateTime   @default(now())
+
+  @@index([oemRequestId])
+  @@map("oem_messages")
 }
 
 // ---------- Engagement ----------
@@ -991,6 +1105,20 @@ model Lead {
 
   @@index([status])
   @@map("leads")
+}
+
+// ---------- Currency ----------
+// Admin-managed fixed rates (no external forex API in P1) — rate = how many units of
+// `targetCurrency` equal 1 unit of `baseCurrency` (VND). Used for DISPLAY conversion only;
+// orders/payments still settle in VND. See ROADMAP.md for full multi-currency checkout.
+model ExchangeRate {
+  id             String   @id @default(uuid())
+  baseCurrency   String   @default("VND")
+  targetCurrency String   @unique
+  rate           Decimal  @db.Decimal(18, 8)
+  updatedAt      DateTime @updatedAt
+
+  @@map("exchange_rates")
 }
 
 // ---------- Platform ----------

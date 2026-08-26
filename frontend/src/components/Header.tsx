@@ -4,11 +4,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
+import { useCurrency } from '@/context/CurrencyContext';
 
 const NAV_LINKS = [
   { href: '/products', label: 'Products' },
   { href: '/wholesale', label: 'Wholesale' },
   { href: '/rfq', label: 'Request Quote' },
+  { href: '/oem', label: 'OEM / Private Label' },
   { href: '/logistics', label: 'Logistics' },
   { href: '/about', label: 'About Us' },
   { href: '/blog', label: 'News' },
@@ -18,6 +20,7 @@ const NAV_LINKS = [
 export function Header() {
   const { user, logout } = useAuth();
   const { cart } = useCart();
+  const { selected, rates, setSelected } = useCurrency();
 
   return (
     <header className="border-b border-gray-200 bg-white">
@@ -34,6 +37,21 @@ export function Header() {
           ))}
         </nav>
         <div className="flex items-center gap-4 text-sm">
+          <label htmlFor="currency-switcher" className="sr-only">
+            Display currency
+          </label>
+          <select
+            id="currency-switcher"
+            value={selected}
+            onChange={(e) => setSelected(e.target.value)}
+            className="rounded-md border border-gray-300 bg-white px-2 py-1 text-sm text-gray-700"
+          >
+            {rates.map((r) => (
+              <option key={r.targetCurrency} value={r.targetCurrency}>
+                {r.targetCurrency}
+              </option>
+            ))}
+          </select>
           <Link href="/cart" className="relative font-medium text-gray-700 hover:text-brand-600">
             Cart
             {cart && cart.itemCount > 0 && (

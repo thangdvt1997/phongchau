@@ -14,9 +14,11 @@ const NAV = [
   { href: '/admin/inventory', label: 'Inventory' },
   { href: '/admin/orders', label: 'Orders' },
   { href: '/admin/rfq', label: 'RFQs' },
+  { href: '/admin/oem', label: 'OEM/ODM Requests' },
   { href: '/admin/b2b', label: 'B2B Companies' },
   { href: '/admin/leads', label: 'Leads' },
   { href: '/admin/blog', label: 'Blog / CMS' },
+  { href: '/admin/currency', label: 'Currency' },
 ];
 
 /** Wraps every /admin/* page: redirects non-staff away, renders the sidebar shell. */

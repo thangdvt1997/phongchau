@@ -12,7 +12,9 @@ import { CartModule } from './modules/cart/cart.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { ShippingModule } from './modules/shipping/shipping.module';
+import { CurrencyModule } from './modules/currency/currency.module';
 import { RfqModule } from './modules/rfq/rfq.module';
+import { OemModule } from './modules/oem/oem.module';
 import { B2bModule } from './modules/b2b/b2b.module';
 import { CmsModule } from './modules/cms/cms.module';
 import { SeoModule } from './modules/seo/seo.module';
@@ -35,7 +37,9 @@ import { CrmModule } from './modules/crm/crm.module';
     OrdersModule,
     PaymentsModule,
     ShippingModule,
+    CurrencyModule,
     RfqModule,
+    OemModule,
     B2bModule,
     CmsModule,
     SeoModule,

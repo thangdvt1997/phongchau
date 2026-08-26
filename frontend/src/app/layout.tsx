@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { AuthProvider } from '@/context/AuthContext';
 import { CartProvider } from '@/context/CartContext';
+import { CurrencyProvider } from '@/context/CurrencyContext';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 
@@ -43,13 +44,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         <AuthProvider>
-          <CartProvider>
-            <Header />
-            <main id="main-content" className="flex-1">
-              {children}
-            </main>
-            <Footer />
-          </CartProvider>
+          <CurrencyProvider>
+            <CartProvider>
+              <Header />
+              <main id="main-content" className="flex-1">
+                {children}
+              </main>
+              <Footer />
+            </CartProvider>
+          </CurrencyProvider>
         </AuthProvider>
       </body>
     </html>

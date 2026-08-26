@@ -1,10 +1,20 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { ProductListItem } from '@/lib/types';
-import { formatMoney } from '@/lib/format';
+import { formatMoney, convertDisplay } from '@/lib/format';
+import { useCurrency } from '@/context/CurrencyContext';
 
 export function ProductCard({ product }: { product: ProductListItem }) {
+  const { selected, getRate } = useCurrency();
   const image = product.image?.url ?? '/placeholder-product.svg';
+
+  // DISPLAY-only conversion — product.currency is always 'VND' today (checkout still
+  // settles in VND regardless of what's shown here). Fall back to the raw VND price
+  // whenever the selected currency is VND itself or has no configured rate.
+  const rate = selected !== 'VND' ? getRate(selected) : null;
+  const showConverted = selected !== 'VND' && rate != null;
   return (
     <Link
       href={`/products/${product.slug}`}
@@ -30,9 +40,22 @@ export function ProductCard({ product }: { product: ProductListItem }) {
         )}
         <h3 className="line-clamp-2 font-medium text-gray-900">{product.name}</h3>
         {product.origin && <p className="text-xs text-gray-500">Origin: {product.origin}</p>}
-        <p className="mt-auto pt-2 font-semibold text-brand-700">
-          {formatMoney(product.basePrice, product.currency)}
-        </p>
+        <div className="mt-auto pt-2">
+          {showConverted ? (
+            <>
+              <p className="font-semibold text-brand-700">
+                {formatMoney(convertDisplay(product.basePrice, rate!), selected)}
+              </p>
+              <p className="text-xs text-gray-400">
+                {formatMoney(product.basePrice, product.currency)} (checkout price)
+              </p>
+            </>
+          ) : (
+            <p className="font-semibold text-brand-700">
+              {formatMoney(product.basePrice, product.currency)}
+            </p>
+          )}
+        </div>
       </div>
     </Link>
   );

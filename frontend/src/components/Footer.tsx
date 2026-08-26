@@ -17,6 +17,7 @@ const COLUMNS = [
     links: [
       { href: '/wholesale', label: 'Wholesale / B2B' },
       { href: '/rfq', label: 'Request a Quote' },
+      { href: '/oem', label: 'OEM / Private Label' },
       { href: '/logistics', label: 'Logistics & Export' },
     ],
   },
