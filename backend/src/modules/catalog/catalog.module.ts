@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CommonModule } from '../../common/common.module';
+import { MarketingAutomationModule } from '../marketing/marketing.module';
 import { CatalogController } from './catalog.controller';
 import { CatalogAdminController } from './catalog-admin.controller';
 import { CatalogService } from './catalog.service';
@@ -8,9 +9,11 @@ import { ProductsService } from './products.service';
 // NOTE: CommonModule is imported explicitly (not relied upon as @Global())
 // because ProductsService injects STORAGE_SERVICE for image/document uploads
 // — importing here guarantees resolution regardless of CommonModule's own
-// @Global() status.
+// @Global() status. MarketingAutomationModule is imported for the price-drop
+// hook in ProductsService.update() — one-directional (Marketing doesn't
+// depend on Catalog), so no circular-import risk.
 @Module({
-  imports: [CommonModule],
+  imports: [CommonModule, MarketingAutomationModule],
   controllers: [CatalogController, CatalogAdminController],
   providers: [CatalogService, ProductsService],
   exports: [ProductsService, CatalogService],

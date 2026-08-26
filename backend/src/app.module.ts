@@ -20,6 +20,7 @@ import { CmsModule } from './modules/cms/cms.module';
 import { SeoModule } from './modules/seo/seo.module';
 import { EngagementModule } from './modules/engagement/engagement.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { MarketingAutomationModule } from './modules/marketing/marketing.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { CrmModule } from './modules/crm/crm.module';
 
@@ -45,6 +46,7 @@ import { CrmModule } from './modules/crm/crm.module';
     SeoModule,
     EngagementModule,
     NotificationsModule,
+    MarketingAutomationModule,
     AdminModule,
     CrmModule,
   ],

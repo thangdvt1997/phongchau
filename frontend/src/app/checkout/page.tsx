@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { apiClient } from '@/lib/api-client';
 import { formatMoney } from '@/lib/format';
+import { trackBeginCheckout } from '@/lib/analytics';
 
 export default function CheckoutPage() {
   const { user } = useAuth();
@@ -13,6 +14,18 @@ export default function CheckoutPage() {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Fire `begin_checkout` exactly once per checkout-page visit, the moment a non-empty
+  // cart is available (CartContext fetches it asynchronously, so it may be null on the
+  // very first render). The ref survives re-renders/re-fetches, unlike a plain state flag
+  // recomputed from `cart`, so a cart refresh mid-checkout never double-fires this.
+  const beginCheckoutTrackedRef = useRef(false);
+  useEffect(() => {
+    if (beginCheckoutTrackedRef.current) return;
+    if (!cart || cart.items.length === 0) return;
+    beginCheckoutTrackedRef.current = true;
+    trackBeginCheckout({ subtotal: cart.subtotal, currency: cart.currency, itemCount: cart.itemCount });
+  }, [cart]);
   const [form, setForm] = useState({
     guestEmail: '',
     fullName: '',

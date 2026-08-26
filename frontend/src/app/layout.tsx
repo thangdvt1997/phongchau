@@ -1,10 +1,11 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { AuthProvider } from '@/context/AuthContext';
 import { CartProvider } from '@/context/CartContext';
 import { CurrencyProvider } from '@/context/CurrencyContext';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { Analytics } from '@/components/Analytics';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://37.49.225.142:8730';
 const SITE_NAME = 'Phong Chau';
@@ -18,6 +19,11 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
+  manifest: '/manifest.json',
+  icons: {
+    icon: '/logo-icon.png',
+    apple: '/logo-icon.png',
+  },
   openGraph: {
     type: 'website',
     siteName: SITE_NAME,
@@ -33,6 +39,14 @@ export const metadata: Metadata = {
   },
 };
 
+// Next.js 14 split viewport/themeColor out of the Metadata export into their own API —
+// setting themeColor inside `metadata` above is a silent no-op on this version.
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#293d92',
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -43,6 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
+        <Analytics />
         <AuthProvider>
           <CurrencyProvider>
             <CartProvider>

@@ -21,6 +21,7 @@ export class AdminService {
       expiredBatchCount,
       upcomingExpiryCount,
       topProductsRaw,
+      cartAbandonment,
     ] = await Promise.all([
       this.prisma.order.aggregate({
         where: { paymentStatus: PaymentStatus.PAID, createdAt: { gte: since } },
@@ -41,6 +42,7 @@ export class AdminService {
         orderBy: { _sum: { quantity: 'desc' } },
         take: 5,
       }),
+      this.countCartAbandonment(since),
     ]);
 
     const revenue = Number(revenueAgg._sum.grandTotal ?? 0);
@@ -74,6 +76,18 @@ export class AdminService {
       countryCounts.set(country, (countryCounts.get(country) ?? 0) + 1);
     }
 
+    // Spec section 34 (Analytics) — internal funnel metrics. cartAbandonmentRate is the
+    // real thing: fraction of non-empty carts touched in the window with no matching Order
+    // (same userId) placed after the cart was last updated. checkoutAbandonmentRate would
+    // ideally be scoped to "started checkout" specifically, but that's a frontend-only
+    // `begin_checkout` analytics event (see frontend/src/lib/analytics.ts) that is never
+    // persisted server-side — there's no DB row that marks "checkout was started" to query
+    // against. Rather than fabricate a more precise number than the data supports, this
+    // reuses the exact same cart-vs-order comparison as its proxy; see
+    // countCartAbandonment() below for the full rationale.
+    const cartAbandonmentRate = cartAbandonment.eligible > 0 ? cartAbandonment.abandoned / cartAbandonment.eligible : 0;
+    const checkoutAbandonmentRate = cartAbandonmentRate;
+
     return {
       revenue,
       ordersCount,
@@ -89,6 +103,46 @@ export class AdminService {
         expiredBatchCount,
         upcomingExpiryCount,
       },
+      cartAbandonmentRate,
+      checkoutAbandonmentRate,
+    };
+  }
+
+  /**
+   * Cart abandonment proxy (spec section 34): there is no explicit "checkout started" or
+   * "cart abandoned" flag anywhere in the schema (see model Cart/CartItem in
+   * prisma/schema.prisma), so this infers it — a cart counts as abandoned if it has at
+   * least one item, was touched within the window, belongs to a signed-in user (guest
+   * carts have no userId to join against, only a sessionId, so they're excluded from both
+   * the numerator and denominator rather than silently mis-scored), and that user has NO
+   * Order created at/after the cart's updatedAt. Prisma's query API can't express that
+   * "no later Order exists" anti-join in one relational query, so — same rationale as
+   * countLowStock() — this drops to raw SQL with NOT EXISTS. Column/table names are
+   * unquoted-case-sensitive, matching Prisma's generated camelCase columns and @@map'd
+   * snake_case table names verbatim.
+   */
+  private async countCartAbandonment(since: Date): Promise<{ eligible: number; abandoned: number }> {
+    const [eligibleRows, abandonedRows] = await Promise.all([
+      this.prisma.$queryRaw<{ count: bigint }[]>`
+        SELECT COUNT(*)::bigint as count FROM carts c
+        WHERE c."updatedAt" >= ${since}
+          AND c."userId" IS NOT NULL
+          AND EXISTS (SELECT 1 FROM cart_items ci WHERE ci."cartId" = c.id)
+      `,
+      this.prisma.$queryRaw<{ count: bigint }[]>`
+        SELECT COUNT(*)::bigint as count FROM carts c
+        WHERE c."updatedAt" >= ${since}
+          AND c."userId" IS NOT NULL
+          AND EXISTS (SELECT 1 FROM cart_items ci WHERE ci."cartId" = c.id)
+          AND NOT EXISTS (
+            SELECT 1 FROM orders o
+            WHERE o."userId" = c."userId" AND o."createdAt" >= c."updatedAt"
+          )
+      `,
+    ]);
+    return {
+      eligible: Number(eligibleRows[0]?.count ?? 0),
+      abandoned: Number(abandonedRows[0]?.count ?? 0),
     };
   }
 

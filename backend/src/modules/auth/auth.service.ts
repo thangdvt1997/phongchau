@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { Role } from '@prisma/client';
+import { NotificationsService } from '../notifications/notifications.service';
 import { RegisterDto } from './dto/register.dto';
 import { RegisterB2bDto } from './dto/register-b2b.dto';
 import { LoginDto } from './dto/login.dto';
@@ -36,6 +37,7 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
     private readonly config: ConfigService,
+    private readonly notifications: NotificationsService,
   ) {}
 
   async register(dto: RegisterDto) {
@@ -52,6 +54,7 @@ export class AuthService {
       select: SAFE_USER_SELECT,
     });
     const tokens = await this.issueTokens(user.id, user.role);
+    await this.sendWelcomeNotification(user.id, user.fullName);
     return { user, ...tokens };
   }
 
@@ -86,6 +89,7 @@ export class AuthService {
     });
 
     const tokens = await this.issueTokens(user.id, user.role);
+    await this.sendWelcomeNotification(user.id, user.fullName);
     return {
       user,
       ...tokens,
@@ -151,6 +155,16 @@ export class AuthService {
 
   async me(userId: string) {
     return this.prisma.user.findUnique({ where: { id: userId }, select: SAFE_USER_SELECT });
+  }
+
+  /** Notification failures must never block registration — see NotificationsService's contract. */
+  private async sendWelcomeNotification(userId: string, fullName: string): Promise<void> {
+    try {
+      await this.notifications.notify('user.welcome', { userId, data: { fullName } });
+    } catch {
+      // Swallow — notify() never throws in practice, but this is defensive redundancy
+      // matching the convention used elsewhere in the codebase (e.g. RfqService).
+    }
   }
 
   private async assertEmailFree(email: string) {

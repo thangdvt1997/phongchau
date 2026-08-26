@@ -1,0 +1,16 @@
+{
+  "name": "Phong Chau — Agricultural Products, Wholesale & Export",
+  "short_name": "Phong Chau",
+  "description": "Vietnamese agricultural products, wholesale B2B, OEM/ODM private label, and export logistics.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#ffffff",
+  "theme_color": "#293d92",
+  "icons": [
+    {
+      "src": "/logo-icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

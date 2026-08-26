@@ -1,14 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ProductVariant } from '@/lib/types';
 import { formatMoney, convertDisplay } from '@/lib/format';
 import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/context/CurrencyContext';
+import { trackAddToCart, trackViewItem } from '@/lib/analytics';
 
-export function AddToCartPanel({ variants, productSlug }: { variants: ProductVariant[]; productSlug: string }) {
+export function AddToCartPanel({
+  variants,
+  productSlug,
+  productId,
+  productName,
+  currency,
+}: {
+  variants: ProductVariant[];
+  productSlug: string;
+  productId: string;
+  productName: string;
+  currency: string;
+}) {
   const [selectedId, setSelectedId] = useState(variants.find((v) => v.isDefault)?.id ?? variants[0]?.id);
   const [quantity, setQuantity] = useState(1);
   const [status, setStatus] = useState<'idle' | 'adding' | 'added' | 'error'>('idle');
@@ -17,6 +30,19 @@ export function AddToCartPanel({ variants, productSlug }: { variants: ProductVar
   const router = useRouter();
 
   const selected = variants.find((v) => v.id === selectedId);
+
+  // AddToCartPanel is the only client component rendered on the product detail page
+  // (products/[slug]/page.tsx is a server component), so it's the simplest correct place
+  // to fire the GA4/Meta/TikTok `view_item` event on mount — one fire per page load,
+  // guarded with a ref rather than an empty-deps effect since `selected` may briefly be
+  // undefined depending on variants ordering.
+  const viewTrackedRef = useRef(false);
+  useEffect(() => {
+    if (viewTrackedRef.current || !selected) return;
+    viewTrackedRef.current = true;
+    trackViewItem({ id: productId, name: productName, price: selected.price, currency });
+  }, [selected, productId, productName, currency]);
+
   if (!selected) return null;
 
   // DISPLAY-only conversion — variant prices are always VND today; the customer is
@@ -31,6 +57,13 @@ export function AddToCartPanel({ variants, productSlug }: { variants: ProductVar
     try {
       await addItem(selected!.id, quantity);
       setStatus('added');
+      trackAddToCart({
+        productId,
+        name: productName,
+        price: selected!.price,
+        currency,
+        quantity,
+      });
     } catch {
       setStatus('error');
     }

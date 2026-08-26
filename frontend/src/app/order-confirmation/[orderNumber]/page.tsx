@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { serverFetch } from '@/lib/server-api';
 import { formatMoney } from '@/lib/format';
+import { PurchaseTracker } from '@/components/PurchaseTracker';
 
 interface OrderTrack {
   orderNumber: string;
@@ -20,6 +21,7 @@ export default async function OrderConfirmationPage({ params }: { params: { orde
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-16 text-center">
+      <PurchaseTracker orderNumber={order.orderNumber} grandTotal={order.grandTotal} currency={order.currency} />
       <h1 className="text-3xl font-bold text-brand-700">Thank you for your order!</h1>
       <p className="mt-2 text-gray-600">
         Order <span className="font-semibold">{order.orderNumber}</span> has been placed.

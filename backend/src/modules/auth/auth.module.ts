@@ -6,9 +6,10 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { RolesGuard } from '../../common/guards/roles.guard';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
-  imports: [ConfigModule, PassportModule, JwtModule.register({})],
+  imports: [ConfigModule, PassportModule, JwtModule.register({}), NotificationsModule],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, RolesGuard],
   exports: [AuthService],

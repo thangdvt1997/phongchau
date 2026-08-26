@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { InventoryTxnType } from '@prisma/client';
+import { MarketingAutomationService } from '../marketing/marketing-automation.service';
 import { AdjustInventoryDto } from './dto/adjust-inventory.dto';
 import { InventoryQueryDto } from './dto/inventory-query.dto';
 
@@ -11,7 +12,10 @@ import { InventoryQueryDto } from './dto/inventory-query.dto';
  */
 @Injectable()
 export class InventoryService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly marketingAutomation: MarketingAutomationService,
+  ) {}
 
   /** Sum across all warehouses of (quantityOnHand - quantityReserved). */
   async getAvailableStock(productVariantId: string): Promise<number> {
@@ -170,7 +174,7 @@ export class InventoryService {
       throw new BadRequestException('reference is required for DAMAGE and EXPIRE adjustments');
     }
 
-    return this.prisma.$transaction(async (tx) => {
+    const updated = await this.prisma.$transaction(async (tx) => {
       let inventory = await tx.inventory.findFirst({
         where: { productVariantId, warehouseId, batchId: null },
       });
@@ -191,7 +195,7 @@ export class InventoryService {
         }
       }
 
-      const updated = await tx.inventory.update({
+      const updatedRow = await tx.inventory.update({
         where: { id: inventory.id },
         data: { quantityOnHand },
       });
@@ -205,7 +209,27 @@ export class InventoryService {
         },
       });
 
-      return updated;
+      return updatedRow;
     });
+
+    if (type === 'IN' || type === 'ADJUST') {
+      // Fire-and-forget: a notification hiccup must never break the inventory
+      // adjustment that has already committed above. quantityReserved is
+      // untouched by this method, so the total-available delta across all
+      // warehouses equals exactly the `quantity` just added to this one.
+      this.notifyBackInStockIfNeeded(productVariantId, quantity).catch(() => undefined);
+    }
+
+    return updated;
+  }
+
+  private async notifyBackInStockIfNeeded(productVariantId: string, quantityAdded: number): Promise<void> {
+    const newAvailable = await this.getAvailableStock(productVariantId);
+    const previousAvailable = newAvailable - quantityAdded;
+    await this.marketingAutomation.notifyBackInStockIfNeeded(
+      productVariantId,
+      previousAvailable,
+      newAvailable,
+    );
   }
 }

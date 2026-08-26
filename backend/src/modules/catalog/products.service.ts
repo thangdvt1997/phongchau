@@ -2,6 +2,7 @@ import { BadRequestException, Inject, Injectable, NotFoundException } from '@nes
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { STORAGE_SERVICE, StorageService } from '../../common/interfaces/storage.interface';
 import { ImageType, Prisma, ProductStatus } from '@prisma/client';
+import { MarketingAutomationService } from '../marketing/marketing-automation.service';
 import { generateUniqueSlug } from './utils/slug.util';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -25,6 +26,7 @@ export class ProductsService {
   constructor(
     private readonly prisma: PrismaService,
     @Inject(STORAGE_SERVICE) private readonly storage: StorageService,
+    private readonly marketingAutomation: MarketingAutomationService,
   ) {}
 
   // ---------- Public ----------
@@ -358,6 +360,14 @@ export class ProductsService {
         }
       }
     });
+
+    if (scalars.basePrice !== undefined) {
+      // Fire-and-forget: a marketing-notification hiccup must never surface as a
+      // failure of the product update that triggered it.
+      this.marketingAutomation
+        .notifyPriceDropIfNeeded(id, Number(existing.basePrice), Number(scalars.basePrice))
+        .catch(() => undefined);
+    }
 
     return this.adminFindOne(id);
   }

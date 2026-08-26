@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { AuthService } from './auth.service';
 import { PrismaService } from '../../common/prisma/prisma.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import { Role } from '@prisma/client';
 
 describe('AuthService', () => {
@@ -11,6 +12,7 @@ describe('AuthService', () => {
   let prisma: any;
   let jwt: JwtService;
   let config: ConfigService;
+  let notifications: { notify: jest.Mock };
 
   const CONFIG_VALUES: Record<string, string> = {
     'jwt.accessSecret': 'test-access-secret',
@@ -35,7 +37,13 @@ describe('AuthService', () => {
     };
     jwt = new JwtService({});
     config = { get: (key: string) => CONFIG_VALUES[key] } as unknown as ConfigService;
-    service = new AuthService(prisma as unknown as PrismaService, jwt, config);
+    notifications = { notify: jest.fn().mockResolvedValue(undefined) };
+    service = new AuthService(
+      prisma as unknown as PrismaService,
+      jwt,
+      config,
+      notifications as unknown as NotificationsService,
+    );
   });
 
   describe('register', () => {
@@ -67,6 +75,10 @@ describe('AuthService', () => {
       expect(result.accessToken).toBeDefined();
       expect(result.refreshToken).toBeDefined();
       expect(prisma.refreshToken.create).toHaveBeenCalled();
+      expect(notifications.notify).toHaveBeenCalledWith(
+        'user.welcome',
+        expect.objectContaining({ userId: 'u1' }),
+      );
     });
   });
 

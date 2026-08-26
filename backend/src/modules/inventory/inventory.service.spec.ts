@@ -1,15 +1,20 @@
 import { BadRequestException } from '@nestjs/common';
 import { InventoryService } from './inventory.service';
 import { PrismaService } from '../../common/prisma/prisma.service';
+import { MarketingAutomationService } from '../marketing/marketing-automation.service';
 
 describe('InventoryService', () => {
   let service: InventoryService;
   let prisma: any;
+  let marketingAutomation: { notifyBackInStockIfNeeded: jest.Mock };
 
   beforeEach(() => {
     prisma = {
       inventory: {
-        findMany: jest.fn(),
+        // adjust()'s back-in-stock hook is fire-and-forget and calls
+        // getAvailableStock() (-> findMany) after commit; default to an empty
+        // result so that async tail doesn't throw in tests that don't care about it.
+        findMany: jest.fn().mockResolvedValue([]),
         findFirst: jest.fn(),
         create: jest.fn(),
         update: jest.fn(),
@@ -25,7 +30,11 @@ describe('InventoryService', () => {
       },
       $transaction: jest.fn((cb: any) => cb(prisma)),
     };
-    service = new InventoryService(prisma as unknown as PrismaService);
+    marketingAutomation = { notifyBackInStockIfNeeded: jest.fn().mockResolvedValue(undefined) };
+    service = new InventoryService(
+      prisma as unknown as PrismaService,
+      marketingAutomation as unknown as MarketingAutomationService,
+    );
   });
 
   describe('getAvailableStock', () => {

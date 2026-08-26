@@ -83,6 +83,7 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
+              priority
             />
           </div>
           {product.images && product.images.length > 1 && (
@@ -115,7 +116,13 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
           {product.shortDescription && <p className="mt-4 text-gray-600">{product.shortDescription}</p>}
 
           <div className="mt-6">
-            <AddToCartPanel variants={product.variants} productSlug={product.slug} />
+            <AddToCartPanel
+              variants={product.variants}
+              productSlug={product.slug}
+              productId={product.id}
+              productName={product.name}
+              currency={product.currency}
+            />
           </div>
         </div>
       </div>

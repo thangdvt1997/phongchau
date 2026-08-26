@@ -36,6 +36,7 @@ export default function AccountPage() {
   const [orders, setOrders] = useState<OrderSummary[]>([]);
   const [rfqs, setRfqs] = useState<RfqSummary[]>([]);
   const [oemRequests, setOemRequests] = useState<OemSummary[]>([]);
+  const [dataLoading, setDataLoading] = useState(true);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -45,9 +46,12 @@ export default function AccountPage() {
 
   useEffect(() => {
     if (!user) return;
-    apiClient.get('/orders').then(({ data }) => setOrders(data.items));
-    apiClient.get('/rfq').then(({ data }) => setRfqs(data.items ?? data));
-    apiClient.get('/oem').then(({ data }) => setOemRequests(data.items ?? data));
+    setDataLoading(true);
+    Promise.all([
+      apiClient.get('/orders').then(({ data }) => setOrders(data.items)),
+      apiClient.get('/rfq').then(({ data }) => setRfqs(data.items ?? data)),
+      apiClient.get('/oem').then(({ data }) => setOemRequests(data.items ?? data)),
+    ]).finally(() => setDataLoading(false));
   }, [user]);
 
   if (!user) return null;
@@ -69,7 +73,9 @@ export default function AccountPage() {
 
       <section className="mt-10">
         <h2 className="text-lg font-semibold text-gray-900">Order History</h2>
-        {orders.length === 0 ? (
+        {dataLoading ? (
+          <p className="mt-2 text-sm text-gray-500">Loading orders...</p>
+        ) : orders.length === 0 ? (
           <p className="mt-2 text-sm text-gray-500">No orders yet.</p>
         ) : (
           <div className="mt-4 divide-y divide-gray-100 rounded-lg border border-gray-200">
@@ -100,7 +106,9 @@ export default function AccountPage() {
             New RFQ
           </Link>
         </div>
-        {rfqs.length === 0 ? (
+        {dataLoading ? (
+          <p className="mt-2 text-sm text-gray-500">Loading RFQs...</p>
+        ) : rfqs.length === 0 ? (
           <p className="mt-2 text-sm text-gray-500">No RFQs yet.</p>
         ) : (
           <div className="mt-4 divide-y divide-gray-100 rounded-lg border border-gray-200">
@@ -121,7 +129,9 @@ export default function AccountPage() {
             New OEM/ODM Request
           </Link>
         </div>
-        {oemRequests.length === 0 ? (
+        {dataLoading ? (
+          <p className="mt-2 text-sm text-gray-500">Loading OEM/ODM requests...</p>
+        ) : oemRequests.length === 0 ? (
           <p className="mt-2 text-sm text-gray-500">No OEM/ODM requests yet.</p>
         ) : (
           <div className="mt-4 divide-y divide-gray-100 rounded-lg border border-gray-200">
