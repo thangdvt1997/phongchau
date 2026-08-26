@@ -18,7 +18,7 @@ export function ProductCard({ product }: { product: ProductListItem }) {
   return (
     <Link
       href={`/products/${product.slug}`}
-      className="group flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white transition hover:shadow-md"
+      className="group flex flex-col overflow-hidden rounded-xl2 border border-gray-100 bg-white shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-soft"
     >
       <div className="relative aspect-square w-full overflow-hidden bg-gray-100">
         <Image
@@ -26,17 +26,17 @@ export function ProductCard({ product }: { product: ProductListItem }) {
           alt={product.name}
           fill
           sizes="(max-width: 768px) 50vw, 25vw"
-          className="object-cover transition group-hover:scale-105"
+          className="object-cover transition duration-500 group-hover:scale-105"
         />
         {product.isOrganic && (
-          <span className="absolute left-2 top-2 rounded bg-brand-600 px-2 py-0.5 text-xs font-medium text-white">
+          <span className="absolute left-2 top-2 rounded-full bg-brand-600 px-2.5 py-0.5 text-xs font-medium text-white shadow-card">
             Organic
           </span>
         )}
       </div>
       <div className="flex flex-1 flex-col gap-1 p-4">
         {product.category && (
-          <span className="text-xs uppercase tracking-wide text-gray-500">{product.category}</span>
+          <span className="text-xs font-medium uppercase tracking-wide text-gray-500">{product.category}</span>
         )}
         <h3 className="line-clamp-2 font-medium text-gray-900">{product.name}</h3>
         {product.origin && <p className="text-xs text-gray-500">Origin: {product.origin}</p>}

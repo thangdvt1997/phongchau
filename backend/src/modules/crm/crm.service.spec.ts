@@ -1,7 +1,7 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { CrmService, STAFF_ROLES } from './crm.service';
 import { PrismaService } from '../../common/prisma/prisma.service';
-import { LeadSource, LeadStatus, Role } from '@prisma/client';
+import { LeadActivityType, LeadSource, LeadStatus, Role } from '@prisma/client';
 
 describe('CrmService', () => {
   let service: CrmService;
@@ -16,10 +16,16 @@ describe('CrmService', () => {
         update: jest.fn(),
         count: jest.fn(),
       },
+      leadActivity: {
+        create: jest.fn(),
+        findUnique: jest.fn(),
+        update: jest.fn(),
+      },
       user: {
         findUnique: jest.fn(),
         findMany: jest.fn(),
       },
+      $transaction: jest.fn((ops: Promise<unknown>[]) => Promise.all(ops)),
     };
     service = new CrmService(prisma as unknown as PrismaService);
   });
@@ -152,6 +158,132 @@ describe('CrmService', () => {
       expect(prisma.lead.update).toHaveBeenCalledWith(
         expect.objectContaining({ where: { id: 'l1' }, data: { assigneeId: null } }),
       );
+    });
+
+    it('logs a STATUS_CHANGE activity atomically via $transaction when status actually changes', async () => {
+      prisma.lead.findUnique.mockResolvedValue({ id: 'l1', status: LeadStatus.NEW, assigneeId: null });
+      prisma.lead.update.mockResolvedValue({ id: 'l1', status: LeadStatus.CONTACTED });
+
+      await service.update('l1', { status: LeadStatus.CONTACTED }, 'author-1');
+
+      expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+      expect(prisma.leadActivity.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            leadId: 'l1',
+            authorId: 'author-1',
+            type: LeadActivityType.STATUS_CHANGE,
+            content: 'Status changed from NEW to CONTACTED',
+          }),
+        }),
+      );
+    });
+
+    it('does not log a STATUS_CHANGE activity or use $transaction for a no-op status "change"', async () => {
+      prisma.lead.findUnique.mockResolvedValue({ id: 'l1', status: LeadStatus.NEW, assigneeId: null });
+      prisma.lead.update.mockResolvedValue({ id: 'l1', status: LeadStatus.NEW });
+
+      await service.update('l1', { status: LeadStatus.NEW });
+
+      expect(prisma.$transaction).not.toHaveBeenCalled();
+      expect(prisma.leadActivity.create).not.toHaveBeenCalled();
+    });
+
+    it('does not log a STATUS_CHANGE activity when only assigneeId changes', async () => {
+      prisma.lead.findUnique.mockResolvedValue({ id: 'l1', status: LeadStatus.NEW });
+      prisma.user.findUnique.mockResolvedValue({ id: 'u1', role: Role.SALES });
+      prisma.lead.update.mockResolvedValue({ id: 'l1', assigneeId: 'u1' });
+
+      await service.update('l1', { assigneeId: 'u1' });
+
+      expect(prisma.$transaction).not.toHaveBeenCalled();
+      expect(prisma.leadActivity.create).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('getLeadDetail', () => {
+    it('throws NotFoundException when the lead does not exist', async () => {
+      prisma.lead.findUnique.mockResolvedValue(null);
+      await expect(service.getLeadDetail('missing')).rejects.toBeInstanceOf(NotFoundException);
+    });
+
+    it('returns the lead with its activity timeline included', async () => {
+      const lead = { id: 'l1', activities: [{ id: 'a1' }] };
+      prisma.lead.findUnique.mockResolvedValue(lead);
+
+      const result = await service.getLeadDetail('l1');
+
+      expect(result).toBe(lead);
+      expect(prisma.lead.findUnique).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: 'l1' },
+          include: expect.objectContaining({
+            activities: expect.objectContaining({ orderBy: { createdAt: 'desc' } }),
+          }),
+        }),
+      );
+    });
+  });
+
+  describe('addActivity', () => {
+    it('throws NotFoundException when the lead does not exist', async () => {
+      prisma.lead.findUnique.mockResolvedValue(null);
+      await expect(
+        service.addActivity('missing', 'author-1', { type: LeadActivityType.NOTE, content: 'hi' } as any),
+      ).rejects.toBeInstanceOf(NotFoundException);
+      expect(prisma.leadActivity.create).not.toHaveBeenCalled();
+    });
+
+    it('creates a LeadActivity row scoped to the lead and author', async () => {
+      prisma.lead.findUnique.mockResolvedValue({ id: 'l1' });
+      prisma.leadActivity.create.mockResolvedValue({ id: 'a1' });
+
+      await service.addActivity('l1', 'author-1', { type: LeadActivityType.CALL, content: 'Called customer' } as any);
+
+      expect(prisma.leadActivity.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            leadId: 'l1',
+            authorId: 'author-1',
+            type: LeadActivityType.CALL,
+            content: 'Called customer',
+          }),
+        }),
+      );
+    });
+  });
+
+  describe('completeTask', () => {
+    it('throws NotFoundException when the activity does not exist', async () => {
+      prisma.leadActivity.findUnique.mockResolvedValue(null);
+      await expect(service.completeTask('missing')).rejects.toBeInstanceOf(NotFoundException);
+    });
+
+    it('rejects completing a non-TASK activity', async () => {
+      prisma.leadActivity.findUnique.mockResolvedValue({ id: 'a1', type: LeadActivityType.NOTE, completedAt: null });
+      await expect(service.completeTask('a1')).rejects.toBeInstanceOf(BadRequestException);
+      expect(prisma.leadActivity.update).not.toHaveBeenCalled();
+    });
+
+    it('sets completedAt on an open TASK activity', async () => {
+      prisma.leadActivity.findUnique.mockResolvedValue({ id: 'a1', type: LeadActivityType.TASK, completedAt: null });
+      prisma.leadActivity.update.mockResolvedValue({ id: 'a1', completedAt: new Date() });
+
+      await service.completeTask('a1');
+
+      expect(prisma.leadActivity.update).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { id: 'a1' }, data: expect.objectContaining({ completedAt: expect.any(Date) }) }),
+      );
+    });
+
+    it('is idempotent when the TASK activity is already completed', async () => {
+      const already = { id: 'a1', type: LeadActivityType.TASK, completedAt: new Date('2026-01-01') };
+      prisma.leadActivity.findUnique.mockResolvedValue(already);
+
+      const result = await service.completeTask('a1');
+
+      expect(result).toBe(already);
+      expect(prisma.leadActivity.update).not.toHaveBeenCalled();
     });
   });
 });

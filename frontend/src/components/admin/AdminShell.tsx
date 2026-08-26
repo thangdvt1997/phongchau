@@ -17,6 +17,7 @@ const NAV = [
   { href: '/admin/oem', label: 'OEM/ODM Requests' },
   { href: '/admin/b2b', label: 'B2B Companies' },
   { href: '/admin/leads', label: 'Leads' },
+  { href: '/admin/support', label: 'Support' },
   { href: '/admin/blog', label: 'Blog / CMS' },
   { href: '/admin/currency', label: 'Currency' },
 ];

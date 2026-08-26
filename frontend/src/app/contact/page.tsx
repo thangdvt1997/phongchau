@@ -1,7 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { apiClient } from '@/lib/api-client';
+
+const INPUT_CLASS =
+  'mt-1 w-full rounded-lg border border-gray-300 px-3 py-2.5 shadow-sm transition focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500';
 
 export default function ContactPage() {
   const [form, setForm] = useState({ fullName: '', email: '', phone: '', companyName: '', message: '' });
@@ -25,86 +29,119 @@ export default function ContactPage() {
 
   if (submitted) {
     return (
-      <div className="mx-auto max-w-lg px-6 py-16 text-center">
-        <h1 className="text-2xl font-bold text-brand-700">Message Sent</h1>
+      <div className="mx-auto max-w-lg px-6 py-24 text-center">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-brand-50 text-brand-600">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="h-7 w-7" aria-hidden="true">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.8}
+              d="M16.704 5.29a1 1 0 010 1.415l-7.5 7.5a1 1 0 01-1.415 0l-3.5-3.5a1 1 0 111.415-1.415L8.5 12.086l6.79-6.795a1 1 0 011.414 0z"
+            />
+          </svg>
+        </div>
+        <h1 className="mt-6 text-2xl font-bold text-gray-900">Message Sent</h1>
         <p className="mt-2 text-gray-600">Thanks for reaching out — our team will respond shortly.</p>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-lg px-6 py-16">
-      <h1 className="text-2xl font-bold text-gray-900">Contact Us</h1>
-      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-        <div>
-          <label htmlFor="contact-fullname" className="text-sm font-medium text-gray-700">
-            Full name
-          </label>
-          <input
-            id="contact-fullname"
-            required
-            placeholder="Full name"
-            value={form.fullName}
-            onChange={(e) => update('fullName', e.target.value)}
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
-          />
+    <div className="mx-auto grid max-w-5xl grid-cols-1 gap-0 overflow-hidden px-6 py-16 md:grid-cols-2 md:gap-12 md:py-24">
+      <div className="relative order-2 hidden overflow-hidden rounded-xl2 shadow-lifted md:order-1 md:block">
+        <Image
+          src="/images/business/modern-office.jpg"
+          alt="Modern office workspace"
+          fill
+          sizes="40vw"
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-brand-900/80 to-transparent" />
+        <div className="absolute bottom-0 p-8 text-white">
+          <p className="text-lg font-semibold">We usually reply within one business day</p>
+          <p className="mt-2 text-sm text-brand-100">
+            Sales, wholesale, and export documentation questions welcome.
+          </p>
         </div>
-        <div>
-          <label htmlFor="contact-email" className="text-sm font-medium text-gray-700">
-            Email
-          </label>
-          <input
-            id="contact-email"
-            type="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={(e) => update('email', e.target.value)}
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
-          />
-        </div>
-        <div>
-          <label htmlFor="contact-phone" className="text-sm font-medium text-gray-700">
-            Phone
-          </label>
-          <input
-            id="contact-phone"
-            placeholder="Phone"
-            value={form.phone}
-            onChange={(e) => update('phone', e.target.value)}
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
-          />
-        </div>
-        <div>
-          <label htmlFor="contact-company" className="text-sm font-medium text-gray-700">
-            Company (optional)
-          </label>
-          <input
-            id="contact-company"
-            placeholder="Company (optional)"
-            value={form.companyName}
-            onChange={(e) => update('companyName', e.target.value)}
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
-          />
-        </div>
-        <div>
-          <label htmlFor="contact-message" className="text-sm font-medium text-gray-700">
-            Message
-          </label>
-          <textarea
-            id="contact-message"
-            required
-            placeholder="Message"
-            rows={4}
-            value={form.message}
-            onChange={(e) => update('message', e.target.value)}
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
-          />
-        </div>
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        <button type="submit" className="w-full rounded-md bg-brand-600 px-4 py-2.5 font-semibold text-white">
-          Send Message
-        </button>
-      </form>
+      </div>
+
+      <div className="order-1 md:order-2">
+        <p className="section-eyebrow">Get In Touch</p>
+        <h1 className="mt-2 text-3xl font-bold text-gray-900">Contact Us</h1>
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          <div>
+            <label htmlFor="contact-fullname" className="text-sm font-medium text-gray-700">
+              Full name
+            </label>
+            <input
+              id="contact-fullname"
+              required
+              placeholder="Full name"
+              value={form.fullName}
+              onChange={(e) => update('fullName', e.target.value)}
+              className={INPUT_CLASS}
+            />
+          </div>
+          <div>
+            <label htmlFor="contact-email" className="text-sm font-medium text-gray-700">
+              Email
+            </label>
+            <input
+              id="contact-email"
+              type="email"
+              placeholder="Email"
+              value={form.email}
+              onChange={(e) => update('email', e.target.value)}
+              className={INPUT_CLASS}
+            />
+          </div>
+          <div>
+            <label htmlFor="contact-phone" className="text-sm font-medium text-gray-700">
+              Phone
+            </label>
+            <input
+              id="contact-phone"
+              placeholder="Phone"
+              value={form.phone}
+              onChange={(e) => update('phone', e.target.value)}
+              className={INPUT_CLASS}
+            />
+          </div>
+          <div>
+            <label htmlFor="contact-company" className="text-sm font-medium text-gray-700">
+              Company (optional)
+            </label>
+            <input
+              id="contact-company"
+              placeholder="Company (optional)"
+              value={form.companyName}
+              onChange={(e) => update('companyName', e.target.value)}
+              className={INPUT_CLASS}
+            />
+          </div>
+          <div>
+            <label htmlFor="contact-message" className="text-sm font-medium text-gray-700">
+              Message
+            </label>
+            <textarea
+              id="contact-message"
+              required
+              placeholder="Message"
+              rows={4}
+              value={form.message}
+              onChange={(e) => update('message', e.target.value)}
+              className={INPUT_CLASS}
+            />
+          </div>
+          {error && <p className="text-sm text-red-600">{error}</p>}
+          <button
+            type="submit"
+            className="w-full rounded-lg bg-brand-600 px-4 py-3 font-semibold text-white transition hover:bg-brand-700"
+          >
+            Send Message
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

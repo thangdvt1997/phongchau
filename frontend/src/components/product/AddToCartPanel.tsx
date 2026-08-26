@@ -70,7 +70,7 @@ export function AddToCartPanel({
   }
 
   return (
-    <div className="rounded-lg border border-gray-200 p-6">
+    <div className="rounded-xl2 border border-gray-100 bg-white p-6 shadow-card">
       {showConverted ? (
         <>
           <p className="text-2xl font-bold text-brand-700">
@@ -92,10 +92,10 @@ export function AddToCartPanel({
             <button
               key={v.id}
               onClick={() => setSelectedId(v.id)}
-              className={`rounded-md border px-3 py-1.5 text-sm ${
+              className={`rounded-md border px-3 py-1.5 text-sm transition ${
                 v.id === selectedId
                   ? 'border-brand-600 bg-brand-50 text-brand-700'
-                  : 'border-gray-300 text-gray-600'
+                  : 'border-gray-300 text-gray-600 hover:border-brand-300'
               }`}
             >
               {[v.weightLabel, v.packagingLabel, v.gradeLabel].filter(Boolean).join(' / ') || v.sku}
@@ -118,12 +118,12 @@ export function AddToCartPanel({
           min={1}
           value={quantity}
           onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))}
-          className="w-20 rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="w-20 rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
         />
         <button
           onClick={handleAddToCart}
           disabled={!inStock || status === 'adding'}
-          className="flex-1 flex items-center justify-center gap-1.5 rounded-md bg-brand-600 px-4 py-2.5 font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
+          className="flex-1 flex items-center justify-center gap-1.5 rounded-md bg-brand-600 px-4 py-2.5 font-semibold text-white transition hover:bg-brand-700 disabled:opacity-50"
         >
           {status === 'adding' ? (
             'Adding...'

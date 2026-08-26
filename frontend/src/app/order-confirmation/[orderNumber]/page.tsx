@@ -2,11 +2,14 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { serverFetch } from '@/lib/server-api';
 import { formatMoney } from '@/lib/format';
+import { buildVietqrImageUrl } from '@/lib/vietqr';
 import { PurchaseTracker } from '@/components/PurchaseTracker';
 
 interface OrderTrack {
   orderNumber: string;
   status: string;
+  paymentStatus: string;
+  paymentProvider: string | null;
   grandTotal: number;
   currency: string;
   items: { productNameSnapshot: string; quantity: number; lineTotal: number }[];
@@ -19,6 +22,11 @@ export default async function OrderConfirmationPage({ params }: { params: { orde
   });
   if (!order) notFound();
 
+  const needsVietqr = order.paymentProvider === 'VIETQR' && order.paymentStatus !== 'PAID';
+  const vietqrImageUrl = needsVietqr
+    ? buildVietqrImageUrl({ amountVnd: order.grandTotal, orderNumber: order.orderNumber })
+    : null;
+
   return (
     <div className="mx-auto max-w-2xl px-6 py-16 text-center">
       <PurchaseTracker orderNumber={order.orderNumber} grandTotal={order.grandTotal} currency={order.currency} />
@@ -26,6 +34,47 @@ export default async function OrderConfirmationPage({ params }: { params: { orde
       <p className="mt-2 text-gray-600">
         Order <span className="font-semibold">{order.orderNumber}</span> has been placed.
       </p>
+
+      {vietqrImageUrl && (
+        <div className="mt-8 rounded-lg border border-brand-200 bg-brand-50 p-6 text-left">
+          <p className="text-center text-sm font-medium text-gray-700">
+            Quét mã QR bằng ứng dụng ngân hàng bất kỳ để thanh toán, hoặc chuyển khoản thủ công theo
+            thông tin bên dưới.
+          </p>
+          <div className="mt-4 flex justify-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={vietqrImageUrl}
+              alt={`VietQR payment code for order ${order.orderNumber}`}
+              width={300}
+              height={300}
+              className="rounded-md border border-gray-200 bg-white"
+            />
+          </div>
+          <dl className="mx-auto mt-4 max-w-xs space-y-1 text-sm text-gray-700">
+            <div className="flex justify-between">
+              <dt className="text-gray-500">Bank</dt>
+              <dd className="font-medium">TPBank</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-gray-500">Account number</dt>
+              <dd className="font-medium">{process.env.NEXT_PUBLIC_VIETQR_ACCOUNT_NO}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-gray-500">Account name</dt>
+              <dd className="font-medium">{process.env.NEXT_PUBLIC_VIETQR_ACCOUNT_NAME}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-gray-500">Amount</dt>
+              <dd className="font-medium">{formatMoney(order.grandTotal, order.currency)}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-gray-500">Transfer note</dt>
+              <dd className="font-medium">{order.orderNumber}</dd>
+            </div>
+          </dl>
+        </div>
+      )}
 
       <div className="mt-8 rounded-lg border border-gray-200 p-6 text-left">
         <p className="font-semibold text-gray-800">Status: {order.status}</p>

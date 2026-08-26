@@ -183,7 +183,12 @@ export class OrdersService {
   async trackByOrderNumber(orderNumber: string, email?: string) {
     const order = await this.prisma.order.findUnique({
       where: { orderNumber },
-      include: { statusHistory: { orderBy: { createdAt: 'asc' } }, shipments: { include: { tracking: true } } },
+      include: {
+        items: true,
+        statusHistory: { orderBy: { createdAt: 'asc' } },
+        shipments: { include: { tracking: true } },
+        payments: { orderBy: { createdAt: 'desc' }, take: 1, select: { provider: true } },
+      },
     });
     if (!order) {
       throw new NotFoundException('Order not found');
@@ -192,7 +197,11 @@ export class OrdersService {
     if (ownerEmail && email && ownerEmail.toLowerCase() !== email.toLowerCase()) {
       throw new NotFoundException('Order not found');
     }
-    return order;
+    // Flatten to a single paymentProvider field (the tracking endpoint's response is
+    // consumer-facing — no need to expose the full payments[] history here). paymentStatus
+    // is already a direct column on Order and needs no extra work.
+    const { payments, ...rest } = order;
+    return { ...rest, paymentProvider: payments[0]?.provider ?? null };
   }
 
   async reorder(user: AuthenticatedUser, orderId: string) {

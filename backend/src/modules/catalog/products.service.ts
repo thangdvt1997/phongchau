@@ -3,6 +3,7 @@ import { PrismaService } from '../../common/prisma/prisma.service';
 import { STORAGE_SERVICE, StorageService } from '../../common/interfaces/storage.interface';
 import { ImageType, Prisma, ProductStatus } from '@prisma/client';
 import { MarketingAutomationService } from '../marketing/marketing-automation.service';
+import { SearchService } from '../search/search.service';
 import { generateUniqueSlug } from './utils/slug.util';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -27,6 +28,7 @@ export class ProductsService {
     private readonly prisma: PrismaService,
     @Inject(STORAGE_SERVICE) private readonly storage: StorageService,
     private readonly marketingAutomation: MarketingAutomationService,
+    private readonly searchService: SearchService,
   ) {}
 
   // ---------- Public ----------
@@ -34,6 +36,33 @@ export class ProductsService {
   async listPublic(query: ProductQueryDto) {
     const page = query.page ?? 1;
     const pageSize = Math.min(query.pageSize ?? 20, 100);
+
+    // Search-first read path: when there's a free-text query and none of the
+    // filters below (brand/packaging/moq/grade/isOrganic/isFeatured/inStock)
+    // that SearchService.searchProducts() doesn't understand are in play, try
+    // OpenSearch. `searchProducts()` returns `null` — never throws — whenever
+    // OpenSearch is disabled, unreachable, or errors for any reason; that `null`
+    // is the signal to fall through unchanged to the Postgres `contains` logic
+    // below, which remains the permanent fallback (not just a migration path).
+    if (query.q && !this.hasSearchUnsupportedFilters(query)) {
+      const searchResult = await this.searchService
+        .searchProducts({
+          query: query.q,
+          categorySlug: query.categorySlug,
+          originId: query.originId,
+          certificationId: query.certificationId,
+          minPrice: query.priceMin,
+          maxPrice: query.priceMax,
+          page,
+          pageSize,
+        })
+        .catch(() => null);
+
+      if (searchResult) {
+        return this.listFromSearchResult(searchResult, page, pageSize);
+      }
+      // else: OpenSearch unavailable — fall through to Postgres search below.
+    }
 
     const where: Prisma.ProductWhereInput = { status: ProductStatus.ACTIVE };
 
@@ -321,7 +350,12 @@ export class ProductsService {
       return product;
     });
 
-    return this.adminFindOne(created.id);
+    const result = await this.adminFindOne(created.id);
+    // Fire-and-forget, same idiom as MarketingAutomationService's hooks: an
+    // OpenSearch indexing hiccup must never surface as a failure of the product
+    // create that triggered it (indexProduct() itself never throws either way).
+    this.searchService.indexProduct(created.id).catch(() => undefined);
+    return result;
   }
 
   async update(id: string, dto: UpdateProductDto) {
@@ -369,6 +403,12 @@ export class ProductsService {
         .catch(() => undefined);
     }
 
+    // Fire-and-forget: re-index (or, if status moved off ACTIVE, de-index) the
+    // product — covers status transitions (e.g. DRAFT/PENDING_REVIEW -> ACTIVE
+    // "publish", or ACTIVE -> ARCHIVED) as well as ordinary field edits. See
+    // SearchService.indexProduct() for the ACTIVE-status guard.
+    this.searchService.indexProduct(id).catch(() => undefined);
+
     return this.adminFindOne(id);
   }
 
@@ -382,6 +422,8 @@ export class ProductsService {
         'Cannot delete this product: it is referenced by orders/RFQs/reviews or similar records. Set status=ARCHIVED instead.',
       );
     }
+    // Fire-and-forget: remove from the search index too, same never-throws idiom.
+    this.searchService.deleteProduct(id).catch(() => undefined);
     return { success: true };
   }
 
@@ -504,6 +546,47 @@ export class ProductsService {
   }
 
   // ---------- Internals ----------
+
+  /** Filters ProductQueryDto supports that SearchService.searchProducts() does not
+   * (its param set is intentionally limited to query/categorySlug/originId/
+   * certificationId/minPrice/maxPrice — see search.service.ts). If any of these
+   * are set alongside a free-text `q`, we skip the OpenSearch path entirely and
+   * go straight to Postgres, which handles every filter correctly — better than
+   * silently ignoring a filter the caller asked for. */
+  private hasSearchUnsupportedFilters(query: ProductQueryDto): boolean {
+    return (
+      query.brandId !== undefined ||
+      query.packaging !== undefined ||
+      query.moq !== undefined ||
+      query.grade !== undefined ||
+      query.isOrganic !== undefined ||
+      query.isFeatured !== undefined ||
+      query.inStock !== undefined
+    );
+  }
+
+  /** Fetches the full Postgres rows for the ids OpenSearch returned, re-sorted to
+   * match OpenSearch's relevance order (Postgres `findMany({ where: { id: { in } } })`
+   * does not preserve `in`-list order). */
+  private async listFromSearchResult(
+    searchResult: { ids: string[]; total: number },
+    page: number,
+    pageSize: number,
+  ) {
+    const { ids, total } = searchResult;
+    if (ids.length === 0) {
+      return { items: [], total, page, pageSize };
+    }
+
+    const rows = await this.prisma.product.findMany({
+      where: { id: { in: ids }, status: ProductStatus.ACTIVE },
+      include: this.listInclude(),
+    });
+    const byId = new Map(rows.map((row) => [row.id, row]));
+    const ordered = ids.map((id) => byId.get(id)).filter((row): row is (typeof rows)[number] => !!row);
+
+    return { items: ordered.map((p) => this.toListItem(p)), total, page, pageSize };
+  }
 
   private listInclude(): Prisma.ProductInclude {
     return {

@@ -135,6 +135,7 @@ enum OrderStatus {
 enum PaymentProviderType {
   COD
   BANK_TRANSFER
+  VIETQR
   VNPAY
   MOMO
   ZALOPAY
@@ -248,6 +249,41 @@ enum LeadSource {
   LOGISTICS_QUOTE
 }
 
+enum LeadActivityType {
+  NOTE
+  CALL
+  EMAIL
+  MEETING
+  STATUS_CHANGE
+  TASK
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING_ON_CUSTOMER
+  RESOLVED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TicketCategory {
+  ORDER
+  PRODUCT
+  PAYMENT
+  SHIPPING
+  RFQ
+  OEM
+  ACCOUNT
+  OTHER
+}
+
 // ---------- Identity ----------
 
 model User {
@@ -278,7 +314,11 @@ model User {
   auditLogs         AuditLog[]
   notifications     Notification[]
   leads             Lead[]        @relation("LeadAssignee")
+  leadActivities    LeadActivity[]
   blogs             Blog[]
+  supportTickets    SupportTicket[]
+  assignedTickets   SupportTicket[] @relation("TicketAssignee")
+  ticketMessages    TicketMessage[]
 
   @@index([companyId])
   @@map("users")
@@ -790,6 +830,7 @@ model Order {
   statusHistory        OrderStatusHistory[]
   payments             Payment[]
   shipments            Shipment[]
+  supportTickets       SupportTicket[]
 
   @@index([userId])
   @@index([companyId])
@@ -1103,8 +1144,74 @@ model Lead {
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 
+  activities   LeadActivity[]
+
   @@index([status])
   @@map("leads")
+}
+
+// Timeline entries (notes/calls/emails/meetings/tasks) logged against a Lead, powering the
+// CRM detail view alongside the Kanban board in AdminLeadsPage. A STATUS_CHANGE activity is
+// auto-logged by CrmService whenever board drag-and-drop changes a lead's status, so the
+// timeline stays a complete audit trail without the caller having to log it separately.
+model LeadActivity {
+  id          String           @id @default(uuid())
+  leadId      String
+  lead        Lead             @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  authorId    String?
+  author      User?            @relation(fields: [authorId], references: [id])
+  type        LeadActivityType @default(NOTE)
+  content     String
+  dueAt       DateTime?
+  completedAt DateTime?
+  createdAt   DateTime         @default(now())
+
+  @@index([leadId])
+  @@map("lead_activities")
+}
+
+// ---------- Customer Service (CSM) ----------
+
+model SupportTicket {
+  id           String         @id @default(uuid())
+  ticketNumber String         @unique
+  userId       String?
+  user         User?          @relation(fields: [userId], references: [id])
+  guestEmail   String?
+  guestName    String?
+  subject      String
+  category     TicketCategory @default(OTHER)
+  priority     TicketPriority @default(MEDIUM)
+  status       TicketStatus   @default(OPEN)
+  orderId      String?
+  order        Order?         @relation(fields: [orderId], references: [id])
+  assigneeId   String?
+  assignee     User?          @relation("TicketAssignee", fields: [assigneeId], references: [id])
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  resolvedAt   DateTime?
+
+  messages     TicketMessage[]
+
+  @@index([status])
+  @@index([userId])
+  @@index([assigneeId])
+  @@map("support_tickets")
+}
+
+model TicketMessage {
+  id            String        @id @default(uuid())
+  ticketId      String
+  ticket        SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  senderId      String?
+  sender        User?         @relation(fields: [senderId], references: [id])
+  isFromStaff   Boolean       @default(false)
+  message       String
+  attachmentUrl String?
+  createdAt     DateTime      @default(now())
+
+  @@index([ticketId])
+  @@map("ticket_messages")
 }
 
 // ---------- Currency ----------

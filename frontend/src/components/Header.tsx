@@ -13,6 +13,7 @@ const NAV_LINKS = [
   { href: '/rfq', label: 'Request Quote' },
   { href: '/oem', label: 'OEM / Private Label' },
   { href: '/logistics', label: 'Logistics' },
+  { href: '/account/support', label: 'Support' },
   { href: '/about', label: 'About Us' },
   { href: '/blog', label: 'News' },
   { href: '/contact', label: 'Contact' },

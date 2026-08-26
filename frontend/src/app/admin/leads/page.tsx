@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { apiClient } from '@/lib/api-client';
 import { formatRelativeTime } from '@/lib/format';
 
@@ -268,7 +269,12 @@ export default function AdminLeadsPage() {
                         } ${busyLeadId === lead.id ? 'opacity-60' : ''}`}
                       >
                         <div className="flex items-start justify-between gap-2">
-                          <p className="text-sm font-medium text-gray-900">{lead.fullName}</p>
+                          <Link
+                            href={`/admin/leads/${lead.id}`}
+                            className="text-sm font-medium text-gray-900 hover:text-brand-700 hover:underline"
+                          >
+                            {lead.fullName}
+                          </Link>
                           <span className="shrink-0 rounded-full bg-brand-50 px-2 py-0.5 text-[10px] font-medium text-brand-700">
                             {formatEnumLabel(lead.source)}
                           </span>

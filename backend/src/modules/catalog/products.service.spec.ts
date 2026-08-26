@@ -2,6 +2,7 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { MarketingAutomationService } from '../marketing/marketing-automation.service';
+import { SearchService } from '../search/search.service';
 import { ProductStatus } from '@prisma/client';
 
 describe('ProductsService', () => {
@@ -9,6 +10,7 @@ describe('ProductsService', () => {
   let prisma: any;
   let storage: any;
   let marketingAutomation: { notifyPriceDropIfNeeded: jest.Mock };
+  let searchService: { indexProduct: jest.Mock; deleteProduct: jest.Mock; searchProducts: jest.Mock };
 
   beforeEach(() => {
     prisma = {
@@ -63,10 +65,16 @@ describe('ProductsService', () => {
       delete: jest.fn(),
     };
     marketingAutomation = { notifyPriceDropIfNeeded: jest.fn().mockResolvedValue(undefined) };
+    searchService = {
+      indexProduct: jest.fn().mockResolvedValue(undefined),
+      deleteProduct: jest.fn().mockResolvedValue(undefined),
+      searchProducts: jest.fn().mockResolvedValue(null),
+    };
     service = new ProductsService(
       prisma as unknown as PrismaService,
       storage,
       marketingAutomation as unknown as MarketingAutomationService,
+      searchService as unknown as SearchService,
     );
   });
 

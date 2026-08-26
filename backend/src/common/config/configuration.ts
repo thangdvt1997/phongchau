@@ -29,4 +29,13 @@ export default () => ({
       secretKey: process.env.PAYMENT_STRIPE_SECRET_KEY,
     },
   },
+  search: {
+    // Inert-until-configured, same convention as payments above: OPENSEARCH_ENABLED
+    // defaults to false, so SearchService is a complete no-op (never throws, never
+    // connects) unless explicitly turned on. See ROADMAP.md "Elasticsearch/OpenSearch".
+    opensearch: {
+      enabled: process.env.OPENSEARCH_ENABLED === 'true',
+      node: process.env.OPENSEARCH_NODE ?? 'http://opensearch:9200',
+    },
+  },
 });

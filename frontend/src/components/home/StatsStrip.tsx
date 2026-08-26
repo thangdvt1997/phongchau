@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 const STATS = [
   { value: '5', label: 'Sourcing Regions' },
   { value: '8', label: 'Product Lines' },
@@ -9,12 +11,22 @@ const STATS = [
 
 export function StatsStrip() {
   return (
-    <section className="bg-brand-700 py-12 text-white">
-      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-6 text-center sm:grid-cols-3 lg:grid-cols-6">
+    <section className="relative overflow-hidden bg-brand-800 py-16 text-white">
+      <div className="absolute inset-0">
+        <Image
+          src="/images/facility/warehouse.jpg"
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover opacity-25"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-brand-900/95 via-brand-800/90 to-brand-800/95" />
+      </div>
+      <div className="relative mx-auto grid max-w-7xl grid-cols-2 gap-8 px-6 text-center sm:grid-cols-3 lg:grid-cols-6">
         {STATS.map((stat) => (
           <div key={stat.label}>
-            <p className="text-3xl font-bold">{stat.value}</p>
-            <p className="mt-1 text-sm text-brand-100">{stat.label}</p>
+            <p className="font-display text-4xl font-semibold">{stat.value}</p>
+            <p className="mt-2 text-sm text-brand-100">{stat.label}</p>
           </div>
         ))}
       </div>

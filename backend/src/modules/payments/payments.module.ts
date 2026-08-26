@@ -10,6 +10,7 @@ import { PaymentsController } from './payments.controller';
 import { PaymentsService } from './payments.service';
 import { CodPaymentProvider } from './providers/cod.provider';
 import { BankTransferPaymentProvider } from './providers/bank-transfer.provider';
+import { VietqrPaymentProvider } from './providers/vietqr.provider';
 import { VnpayPaymentProvider } from './providers/vnpay.provider';
 import { StripePaymentProvider } from './providers/stripe.provider';
 
@@ -19,6 +20,7 @@ import { StripePaymentProvider } from './providers/stripe.provider';
   providers: [
     CodPaymentProvider,
     BankTransferPaymentProvider,
+    VietqrPaymentProvider,
     VnpayPaymentProvider,
     StripePaymentProvider,
     RolesGuard,
@@ -27,16 +29,24 @@ import { StripePaymentProvider } from './providers/stripe.provider';
       useFactory: (
         cod: CodPaymentProvider,
         bank: BankTransferPaymentProvider,
+        vietqr: VietqrPaymentProvider,
         vnpay: VnpayPaymentProvider,
         stripe: StripePaymentProvider,
       ) =>
         new Map<PaymentProviderType, PaymentProvider>([
           [cod.type, cod],
           [bank.type, bank],
+          [vietqr.type, vietqr],
           [vnpay.type, vnpay],
           [stripe.type, stripe],
         ]),
-      inject: [CodPaymentProvider, BankTransferPaymentProvider, VnpayPaymentProvider, StripePaymentProvider],
+      inject: [
+        CodPaymentProvider,
+        BankTransferPaymentProvider,
+        VietqrPaymentProvider,
+        VnpayPaymentProvider,
+        StripePaymentProvider,
+      ],
     },
     PaymentsService,
   ],

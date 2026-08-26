@@ -95,6 +95,12 @@ describe('Cart + Checkout (e2e)', () => {
     expect(trackRes.status).toBe(200);
     expect(trackRes.body.orderNumber).toBe(orderNumber);
     expect(trackRes.body.guestEmail).toBe(guestEmail);
+    // Regression guard: the order-confirmation page renders `order.items.map(...)` directly,
+    // so this field must actually be populated, not just present-but-undefined.
+    expect(Array.isArray(trackRes.body.items)).toBe(true);
+    expect(trackRes.body.items.length).toBeGreaterThan(0);
+    expect(trackRes.body).toHaveProperty('paymentProvider');
+    expect(trackRes.body).toHaveProperty('paymentStatus');
 
     // 6. GET /cart with the same session header -> now empty (checkout clears cart items).
     const afterCart = await request(server).get(`${API_PREFIX}/cart`).set(CART_SESSION_HEADER, sessionId);

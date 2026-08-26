@@ -23,6 +23,8 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 import { MarketingAutomationModule } from './modules/marketing/marketing.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { CrmModule } from './modules/crm/crm.module';
+import { SupportModule } from './modules/support/support.module';
+import { SearchModule } from './modules/search/search.module';
 
 @Module({
   imports: [
@@ -49,6 +51,8 @@ import { CrmModule } from './modules/crm/crm.module';
     MarketingAutomationModule,
     AdminModule,
     CrmModule,
+    SupportModule,
+    SearchModule,
   ],
 })
 export class AppModule {}

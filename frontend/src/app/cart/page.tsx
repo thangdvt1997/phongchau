@@ -15,9 +15,12 @@ export default function CartPage() {
 
   if (!cart || cart.items.length === 0) {
     return (
-      <div className="mx-auto max-w-4xl px-6 py-16 text-center">
+      <div className="mx-auto max-w-4xl px-6 py-24 text-center">
         <h1 className="text-2xl font-bold text-gray-900">Your cart is empty</h1>
-        <Link href="/products" className="mt-4 inline-block text-brand-700 hover:underline">
+        <Link
+          href="/products"
+          className="mt-5 inline-block rounded-lg bg-brand-600 px-6 py-3 font-semibold text-white transition hover:bg-brand-700"
+        >
           Continue shopping &rarr;
         </Link>
       </div>
@@ -25,18 +28,18 @@ export default function CartPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-10">
+    <div className="mx-auto max-w-4xl px-6 py-10 md:py-16">
       <h1 className="text-2xl font-bold text-gray-900">Shopping Cart</h1>
-      <div className="mt-6 divide-y divide-gray-200 border-y border-gray-200">
+      <div className="mt-6 divide-y divide-gray-100 rounded-xl2 border border-gray-100 bg-white shadow-card">
         {cart.items.map((item) => (
-          <div key={item.id} className="flex items-center justify-between gap-4 py-4">
+          <div key={item.id} className="flex items-center justify-between gap-4 p-5">
             <div>
               <p className="font-medium text-gray-900">{item.productName}</p>
               <p className="text-sm text-gray-500">
                 {[item.weightLabel, item.packagingLabel].filter(Boolean).join(' / ')} — SKU {item.sku}
               </p>
               {item.priceSource !== 'BASE_PRICE' && (
-                <p className="text-xs text-brand-600">
+                <p className="mt-1 text-xs font-medium text-brand-600">
                   {item.priceSource === 'CUSTOMER_PRICE' ? 'Your contract price' : 'Wholesale tier price'}
                 </p>
               )}
@@ -51,12 +54,14 @@ export default function CartPage() {
                 min={1}
                 value={item.quantity}
                 onChange={(e) => updateItem(item.id, Math.max(1, Number(e.target.value)))}
-                className="w-16 rounded-md border border-gray-300 px-2 py-1 text-sm"
+                className="w-16 rounded-md border border-gray-300 px-2 py-1.5 text-sm shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
               />
-              <p className="w-28 text-right font-medium">{formatMoney(item.lineTotal, item.currency)}</p>
+              <p className="w-28 text-right font-semibold text-gray-900">
+                {formatMoney(item.lineTotal, item.currency)}
+              </p>
               <button
                 onClick={() => removeItem(item.id)}
-                className="text-sm text-red-500 hover:underline"
+                className="text-sm font-medium text-red-500 hover:text-red-600 hover:underline"
               >
                 Remove
               </button>
@@ -65,8 +70,8 @@ export default function CartPage() {
         ))}
       </div>
 
-      <div className="mt-6 flex justify-end">
-        <div className="w-full max-w-xs space-y-2">
+      <div className="mt-8 flex justify-end">
+        <div className="w-full max-w-xs space-y-2 rounded-xl2 border border-gray-100 bg-white p-6 shadow-card">
           <div className="flex justify-between font-semibold text-gray-900">
             <span>Subtotal</span>
             <span>{formatMoney(cart.subtotal, cart.currency)}</span>
@@ -80,7 +85,7 @@ export default function CartPage() {
           <p className="text-xs text-gray-400">Shipping and taxes calculated at checkout.</p>
           <Link
             href="/checkout"
-            className="block rounded-md bg-brand-600 px-4 py-3 text-center font-semibold text-white hover:bg-brand-700"
+            className="block rounded-lg bg-brand-600 px-4 py-3 text-center font-semibold text-white transition hover:bg-brand-700"
           >
             Proceed to Checkout
           </Link>

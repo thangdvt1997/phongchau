@@ -8,6 +8,9 @@ import { apiClient } from '@/lib/api-client';
 import { formatMoney } from '@/lib/format';
 import { trackBeginCheckout } from '@/lib/analytics';
 
+const INPUT_CLASS =
+  'mt-1 w-full rounded-lg border border-gray-300 px-3 py-2.5 shadow-sm transition focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500';
+
 export default function CheckoutPage() {
   const { user } = useAuth();
   const { cart } = useCart();
@@ -74,7 +77,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-10">
+    <div className="mx-auto max-w-3xl px-6 py-10 md:py-16">
       <h1 className="text-2xl font-bold text-gray-900">Checkout</h1>
       <form onSubmit={handleSubmit} className="mt-6 space-y-6">
         {!user && (
@@ -88,12 +91,12 @@ export default function CheckoutPage() {
               required
               value={form.guestEmail}
               onChange={(e) => update('guestEmail', e.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+              className={INPUT_CLASS}
             />
           </div>
         )}
 
-        <fieldset className="space-y-4 rounded-lg border border-gray-200 p-4">
+        <fieldset className="space-y-4 rounded-xl2 border border-gray-100 bg-white p-6 shadow-card">
           <legend className="px-2 text-sm font-semibold text-gray-700">Shipping Address</legend>
           <div>
             <label htmlFor="checkout-fullname" className="text-sm font-medium text-gray-700">
@@ -105,7 +108,7 @@ export default function CheckoutPage() {
               placeholder="Full name"
               value={form.fullName}
               onChange={(e) => update('fullName', e.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+              className={INPUT_CLASS}
             />
           </div>
           <div>
@@ -118,7 +121,7 @@ export default function CheckoutPage() {
               placeholder="Phone"
               value={form.phone}
               onChange={(e) => update('phone', e.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+              className={INPUT_CLASS}
             />
           </div>
           <div>
@@ -131,7 +134,7 @@ export default function CheckoutPage() {
               placeholder="Address"
               value={form.line1}
               onChange={(e) => update('line1', e.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+              className={INPUT_CLASS}
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -145,7 +148,7 @@ export default function CheckoutPage() {
                 placeholder="City"
                 value={form.city}
                 onChange={(e) => update('city', e.target.value)}
-                className="mt-1 rounded-md border border-gray-300 px-3 py-2"
+                className={INPUT_CLASS}
               />
             </div>
             <div>
@@ -157,7 +160,7 @@ export default function CheckoutPage() {
                 placeholder="Postal code"
                 value={form.postalCode}
                 onChange={(e) => update('postalCode', e.target.value)}
-                className="mt-1 rounded-md border border-gray-300 px-3 py-2"
+                className={INPUT_CLASS}
               />
             </div>
           </div>
@@ -171,12 +174,12 @@ export default function CheckoutPage() {
               placeholder="Country"
               value={form.country}
               onChange={(e) => update('country', e.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+              className={INPUT_CLASS}
             />
           </div>
         </fieldset>
 
-        <fieldset className="rounded-lg border border-gray-200 p-4">
+        <fieldset className="rounded-xl2 border border-gray-100 bg-white p-6 shadow-card">
           <legend className="px-2 text-sm font-semibold text-gray-700">Payment</legend>
           <label htmlFor="checkout-payment-provider" className="sr-only">
             Payment method
@@ -185,10 +188,11 @@ export default function CheckoutPage() {
             id="checkout-payment-provider"
             value={form.paymentProvider}
             onChange={(e) => update('paymentProvider', e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2"
+            className={INPUT_CLASS}
           >
             <option value="COD">Cash on Delivery</option>
             <option value="BANK_TRANSFER">Bank Transfer</option>
+            <option value="VIETQR">VietQR (quét mã QR chuyển khoản)</option>
           </select>
         </fieldset>
 
@@ -201,11 +205,11 @@ export default function CheckoutPage() {
             value={form.couponCode}
             onChange={(e) => update('couponCode', e.target.value)}
             placeholder="e.g. WELCOME10"
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+            className={INPUT_CLASS}
           />
         </div>
 
-        <div className="flex justify-between border-t border-gray-200 pt-4 text-lg font-semibold">
+        <div className="flex justify-between rounded-xl2 border border-gray-100 bg-white p-6 text-lg font-semibold shadow-card">
           <span>Subtotal</span>
           <span>{formatMoney(cart.subtotal, cart.currency)}</span>
         </div>
@@ -215,7 +219,7 @@ export default function CheckoutPage() {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full rounded-md bg-brand-600 px-4 py-3 font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
+          className="w-full rounded-lg bg-brand-600 px-4 py-3.5 font-semibold text-white transition hover:bg-brand-700 disabled:opacity-50"
         >
           {submitting ? 'Placing order...' : 'Place Order'}
         </button>

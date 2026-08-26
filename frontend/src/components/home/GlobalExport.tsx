@@ -11,13 +11,16 @@ const EXPORT_CAPABILITIES = [
 
 export function GlobalExport() {
   return (
-    <section className="mx-auto max-w-7xl px-6 py-16">
-      <h2 className="text-center text-2xl font-bold text-gray-900">Export-Ready, Worldwide</h2>
-      <p className="mx-auto mt-2 max-w-2xl text-center text-gray-600">
-        Every product ships with an HS code, a defined MOQ, and export documentation —
-        ready to move under the Incoterms and shipping method your business requires.
-      </p>
-      <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+    <section className="mx-auto max-w-7xl px-6 py-16 md:py-24">
+      <div className="text-center">
+        <p className="section-eyebrow">Worldwide Shipping</p>
+        <h2 className="mt-2 text-3xl font-bold text-gray-900">Export-Ready, Worldwide</h2>
+        <p className="mx-auto mt-3 max-w-2xl text-gray-600">
+          Every product ships with an HS code, a defined MOQ, and export documentation —
+          ready to move under the Incoterms and shipping method your business requires.
+        </p>
+      </div>
+      <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
         {EXPORT_CAPABILITIES.map((m) => (
           <span
             key={m}

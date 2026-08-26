@@ -1,8 +1,9 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
-import { LeadSource, LeadStatus, Role } from '@prisma/client';
+import { LeadActivityType, LeadSource, LeadStatus, Role } from '@prisma/client';
 import { CreateContactLeadDto } from './dto/create-contact-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
+import { AddLeadActivityDto } from './dto/add-lead-activity.dto';
 
 // Roles eligible to be a Lead's assignee. Deliberately narrower than AdminShell's
 // full admin-nav role list (which also lets WAREHOUSE_STAFF into the admin panel) —
@@ -98,7 +99,7 @@ export class CrmService {
     });
   }
 
-  async update(id: string, dto: UpdateLeadDto) {
+  async update(id: string, dto: UpdateLeadDto, actorId?: string) {
     const lead = await this.prisma.lead.findUnique({ where: { id } });
     if (!lead) throw new NotFoundException('Lead not found');
 
@@ -116,10 +117,82 @@ export class CrmService {
     if (dto.status !== undefined) data.status = dto.status;
     if (dto.assigneeId !== undefined) data.assigneeId = dto.assigneeId;
 
-    return this.prisma.lead.update({
-      where: { id },
-      data,
-      include: { assignee: { select: { id: true, fullName: true } }, rfq: { select: { rfqNumber: true } } },
+    const include = {
+      assignee: { select: { id: true, fullName: true } },
+      rfq: { select: { rfqNumber: true } },
+    } as const;
+
+    // A real status change gets logged as a STATUS_CHANGE timeline entry, atomically
+    // with the lead update, so the activity timeline is a complete audit trail without
+    // every caller having to remember to log it. A no-op "change" to the same status
+    // (idempotent, see `update`'s callers) does not warrant a timeline entry.
+    const statusChanged = dto.status !== undefined && dto.status !== lead.status;
+    if (statusChanged) {
+      const [updated] = await this.prisma.$transaction([
+        this.prisma.lead.update({ where: { id }, data, include }),
+        this.prisma.leadActivity.create({
+          data: {
+            leadId: id,
+            authorId: actorId ?? null,
+            type: LeadActivityType.STATUS_CHANGE,
+            content: `Status changed from ${lead.status} to ${dto.status}`,
+          },
+        }),
+      ]);
+      return updated;
+    }
+
+    return this.prisma.lead.update({ where: { id }, data, include });
+  }
+
+  /** Lead detail view: the lead plus its full activity timeline (newest first), assignee, and RFQ. */
+  async getLeadDetail(leadId: string) {
+    const lead = await this.prisma.lead.findUnique({
+      where: { id: leadId },
+      include: {
+        assignee: { select: { id: true, fullName: true, email: true } },
+        rfq: { select: { id: true, rfqNumber: true, status: true } },
+        activities: {
+          orderBy: { createdAt: 'desc' },
+          include: { author: { select: { id: true, fullName: true } } },
+        },
+      },
+    });
+    if (!lead) throw new NotFoundException('Lead not found');
+    return lead;
+  }
+
+  /** Logs a manual timeline entry (note/call/email/meeting/task) against a lead. */
+  async addActivity(leadId: string, authorId: string, dto: AddLeadActivityDto) {
+    const lead = await this.prisma.lead.findUnique({ where: { id: leadId } });
+    if (!lead) throw new NotFoundException('Lead not found');
+
+    return this.prisma.leadActivity.create({
+      data: {
+        leadId,
+        authorId,
+        type: dto.type,
+        content: dto.content,
+        dueAt: dto.dueAt ? new Date(dto.dueAt) : undefined,
+      },
+      include: { author: { select: { id: true, fullName: true } } },
+    });
+  }
+
+  /** Marks a TASK-type activity as done. Idempotent if already completed. */
+  async completeTask(activityId: string) {
+    const activity = await this.prisma.leadActivity.findUnique({ where: { id: activityId } });
+    if (!activity) throw new NotFoundException('Activity not found');
+    if (activity.type !== LeadActivityType.TASK) {
+      throw new BadRequestException('Only TASK activities can be marked complete');
+    }
+    if (activity.completedAt) {
+      return activity;
+    }
+
+    return this.prisma.leadActivity.update({
+      where: { id: activityId },
+      data: { completedAt: new Date() },
     });
   }
 }
