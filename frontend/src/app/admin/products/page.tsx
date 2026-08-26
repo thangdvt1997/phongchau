@@ -66,12 +66,20 @@ export default function AdminProductsPage() {
     <div>
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900">Products</h1>
-        <Link
-          href="/admin/products/new"
-          className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
-        >
-          New Product
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/admin/products/import"
+            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+          >
+            Import Products
+          </Link>
+          <Link
+            href="/admin/products/new"
+            className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
+          >
+            New Product
+          </Link>
+        </div>
       </div>
 
       <div className="mt-6 flex flex-wrap gap-3">

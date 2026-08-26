@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -7,18 +8,22 @@ import {
   Patch,
   Post,
   Query,
+  Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
 import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
+import { Response } from 'express';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CatalogService } from './catalog.service';
 import { ProductsService } from './products.service';
+import { ProductImportService } from './product-import.service';
 import { CreateCategoryDto, UpdateCategoryDto } from './dto/category.dto';
 import { CreateBrandDto, UpdateBrandDto } from './dto/brand.dto';
 import { CreateOriginDto, UpdateOriginDto } from './dto/origin.dto';
@@ -29,7 +34,11 @@ import { AdminProductQueryDto } from './dto/admin-product-query.dto';
 import { UploadProductImageDto } from './dto/upload-product-image.dto';
 import { UploadProductDocumentDto } from './dto/upload-product-document.dto';
 import { CreateProductBatchDto } from './dto/create-product-batch.dto';
-import { documentUploadOptions, imageUploadOptions } from '../../common/utils/file-upload.util';
+import {
+  csvImportUploadOptions,
+  documentUploadOptions,
+  imageUploadOptions,
+} from '../../common/utils/file-upload.util';
 
 @ApiTags('admin/catalog')
 @ApiBearerAuth()
@@ -40,6 +49,7 @@ export class CatalogAdminController {
   constructor(
     private readonly catalogService: CatalogService,
     private readonly productsService: ProductsService,
+    private readonly productImportService: ProductImportService,
   ) {}
 
   // ---------- Categories ----------
@@ -175,6 +185,28 @@ export class CatalogAdminController {
   @Delete('products/:id')
   deleteProduct(@Param('id') id: string) {
     return this.productsService.remove(id);
+  }
+
+  // ---------- Product bulk import (CSV/Excel) ----------
+
+  @Get('products/import/template')
+  async downloadImportTemplate(@Res() res: Response) {
+    const buffer = this.productImportService.generateTemplate();
+    res.set({
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Disposition': 'attachment; filename="product-import-template.xlsx"',
+    });
+    res.send(buffer);
+  }
+
+  @Post('products/import')
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('file', { ...csvImportUploadOptions, storage: memoryStorage() }))
+  importProducts(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('file is required');
+    }
+    return this.productImportService.import(file.buffer);
   }
 
   // ---------- Product images ----------

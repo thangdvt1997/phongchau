@@ -6,6 +6,7 @@ import { CatalogController } from './catalog.controller';
 import { CatalogAdminController } from './catalog-admin.controller';
 import { CatalogService } from './catalog.service';
 import { ProductsService } from './products.service';
+import { ProductImportService } from './product-import.service';
 
 // NOTE: CommonModule is imported explicitly (not relied upon as @Global())
 // because ProductsService injects STORAGE_SERVICE for image/document uploads
@@ -19,7 +20,7 @@ import { ProductsService } from './products.service';
 @Module({
   imports: [CommonModule, MarketingAutomationModule, SearchModule],
   controllers: [CatalogController, CatalogAdminController],
-  providers: [CatalogService, ProductsService],
+  providers: [CatalogService, ProductsService, ProductImportService],
   exports: [ProductsService, CatalogService],
 })
 export class CatalogModule {}

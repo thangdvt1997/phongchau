@@ -6,6 +6,11 @@ export const MAX_UPLOAD_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
 
 const IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const DOCUMENT_MIME_TYPES = ['application/pdf'];
+const CSV_IMPORT_MIME_TYPES = [
+  'text/csv',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+];
 
 function mimeTypeFileFilter(allowed: string[]): MulterOptions['fileFilter'] {
   return (_req, file, callback) => {
@@ -37,4 +42,10 @@ export const documentUploadOptions: MulterOptions = {
 export const paymentProofUploadOptions: MulterOptions = {
   limits: { fileSize: MAX_UPLOAD_FILE_SIZE_BYTES },
   fileFilter: mimeTypeFileFilter([...IMAGE_MIME_TYPES, ...DOCUMENT_MIME_TYPES]),
+};
+
+/** FileInterceptor options for the product bulk-import file: CSV or Excel (.xlsx/.xls), capped at MAX_UPLOAD_FILE_SIZE_BYTES. */
+export const csvImportUploadOptions: MulterOptions = {
+  limits: { fileSize: MAX_UPLOAD_FILE_SIZE_BYTES },
+  fileFilter: mimeTypeFileFilter(CSV_IMPORT_MIME_TYPES),
 };
