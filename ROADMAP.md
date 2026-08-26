@@ -30,11 +30,26 @@ RBAC — all backed by a schema designed to extend without breaking changes.
   (`backend/src/modules/payments/providers/`) are structurally complete but disabled — flip
   `PAYMENT_VNPAY_ENABLED`/`PAYMENT_STRIPE_ENABLED` once real sandbox/production keys exist. Not
   started — needs real gateway credentials.
+- **VietQR bank transfer** ✅ done, real and enabled by default (no gateway keys needed).
+  `backend/src/modules/payments/providers/vietqr.provider.ts` + `frontend/src/lib/vietqr.ts` build
+  a scannable QR (`img.vietqr.io`) client-side from the bank BIN + account number
+  (`VIETQR_BANK_BIN`/`VIETQR_ACCOUNT_NO`/`VIETQR_ACCOUNT_NAME` in `.env` — currently TPBank
+  01294064001). No webhook exists for a bank-account QR, so payment confirmation is still manual
+  (admin marks-paid, same as `BANK_TRANSFER`) — a real bank-API webhook remains future work.
 
 ## P2 — Growth
 - **CRM pipeline UI** ✅ done. `backend/src/modules/crm/` — `board()`/`assignableStaff()`/`update()`
   endpoints (role/FK-validated) backing a native-HTML5-drag-and-drop Kanban at `/admin/leads`,
   covering all `LeadStatus` columns. `Lead` rows still originate from RFQ submissions as before.
+  Extended with a full lead detail view (`/admin/leads/[id]`) showing a `LeadActivity` timeline
+  (notes/calls/emails/meetings/tasks), auto-logging a `STATUS_CHANGE` entry whenever the board
+  moves a lead, so the timeline is a complete audit trail without every caller remembering to
+  log it.
+- **Customer service (CSM) ticketing** ✅ done. `backend/src/modules/support/` — `SupportTicket`
+  + `TicketMessage`, a status machine (OPEN/IN_PROGRESS/WAITING_ON_CUSTOMER/RESOLVED/CLOSED) that
+  auto-flips on reply, customer-facing pages under `/account/support` (guests can also open a
+  ticket with just an email), and an admin queue at `/admin/support`. Cross-user ticket access
+  returns 404, not 403, so a ticket's existence is never leaked by ID guessing.
 - **Marketing automation** ✅ done. `backend/src/modules/marketing/marketing-automation.service.ts`
   — welcome email, abandoned cart, back-in-stock, price-drop, review request, and win-back
   triggers, `@Cron()`-scheduled via `@nestjs/schedule`. Dedup reuses the existing `Notification`
@@ -47,8 +62,15 @@ RBAC — all backed by a schema designed to extend without breaking changes.
   + `frontend/src/lib/analytics.ts` add env-gated GA4/GTM/Meta Pixel/TikTok Pixel loaders and
   view_item/add_to_cart/begin_checkout/purchase funnel events — fully inert with no IDs configured
   (`NEXT_PUBLIC_GA4_MEASUREMENT_ID` etc. in `.env`), same pattern as the disabled payment providers.
-- **Elasticsearch/OpenSearch**: catalog search in `CatalogModule` is plain Postgres `contains`
-  filtering — fine at P0 volume, swap in real search once the catalog grows. Not started.
+- **OpenSearch product search** ✅ done. `backend/src/modules/search/` wraps the
+  `@opensearch-project/opensearch` client; `ProductsService` fire-and-forget indexes on
+  create/update/delete, `CatalogService`'s `?q=` search tries OpenSearch first and falls back
+  unconditionally to the original Postgres `contains` filtering whenever OpenSearch is disabled,
+  unreachable, or returns an error — that fallback is permanent, not a migration shim. Runs as a
+  single-node `opensearchproject/opensearch:2` container with a 256MB heap (shared test server);
+  reindex via `POST /admin/search/reindex`. `backend`'s `depends_on: opensearch` is intentionally
+  NOT health-gated, so a crashed/OOM'd/slow-starting OpenSearch never blocks the backend/storefront
+  from starting.
 
 ## P3 — Enterprise
 - **ERP / accounting / POS integrations**: `docs/Pormt.docx` section 41 calls for
