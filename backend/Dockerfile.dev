@@ -1,0 +1,14 @@
+FROM node:20-bookworm-slim
+WORKDIR /app
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+COPY package.json ./
+RUN npm install
+COPY . .
+RUN npx prisma generate
+EXPOSE 4000
+# Both `nest build` and `nest start --watch` reproducibly report success ("0 errors" / exit 0)
+# in this environment while silently emitting nothing to dist/ — confirmed with DEBUG=* and a
+# clean container (no useful diagnostic output at all). Plain `tsc -p tsconfig.build.json`
+# works correctly every time, so package.json's build/start:dev scripts call tsc directly
+# instead of going through @nestjs/cli. Restart the container after edits during dev here.
+CMD ["sh", "-c", "npx prisma generate && npm run build && node dist/main.js"]

@@ -1,0 +1,14 @@
+{
+  "name": "phongchau",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "docker compose up --build",
+    "test:backend": "npm run test --workspace backend",
+    "test:backend:e2e": "npm run test:e2e --workspace backend",
+    "test:frontend": "npm run test --workspace frontend"
+  }
+}
