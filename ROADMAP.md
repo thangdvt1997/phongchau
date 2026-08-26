@@ -32,16 +32,23 @@ RBAC — all backed by a schema designed to extend without breaking changes.
   started — needs real gateway credentials.
 
 ## P2 — Growth
-- **CRM pipeline UI**: `Lead` rows are created automatically from RFQ submissions
-  (`backend/src/modules/rfq/rfq.service.ts`), but there's no admin lead board/kanban yet.
-- **Marketing automation**: abandoned cart, back-in-stock, price-drop, and win-back emails —
-  `NotificationsService.notify()` (`backend/src/modules/notifications/`) is the hook point; needs
-  a scheduler (BullMQ is already a dependency) to trigger these on a cadence.
-- **Advanced analytics**: `AdminService.getDashboardOverview()` covers revenue/AOV/top
-  products/countries. GA4/GSC/GTM/Meta/TikTok Pixel wiring and cart/checkout funnel analytics are
-  not implemented.
+- **CRM pipeline UI** ✅ done. `backend/src/modules/crm/` — `board()`/`assignableStaff()`/`update()`
+  endpoints (role/FK-validated) backing a native-HTML5-drag-and-drop Kanban at `/admin/leads`,
+  covering all `LeadStatus` columns. `Lead` rows still originate from RFQ submissions as before.
+- **Marketing automation** ✅ done. `backend/src/modules/marketing/marketing-automation.service.ts`
+  — welcome email, abandoned cart, back-in-stock, price-drop, review request, and win-back
+  triggers, `@Cron()`-scheduled via `@nestjs/schedule`. Dedup reuses the existing `Notification`
+  log table (no new schema) via exact `event` + time-window + JSON-path matching — see
+  `hasRecentNotification()` if adding a new trigger. Stock-transfer/cycle-count completions do not
+  fire back-in-stock (only `InventoryService.adjust()`'s IN/ADJUST path does); revisit if that gap
+  matters.
+- **Advanced analytics** ✅ done, display/tracking layer only. `AdminService.getDashboardOverview()`
+  still covers revenue/AOV/top products/countries server-side. `frontend/src/components/Analytics.tsx`
+  + `frontend/src/lib/analytics.ts` add env-gated GA4/GTM/Meta Pixel/TikTok Pixel loaders and
+  view_item/add_to_cart/begin_checkout/purchase funnel events — fully inert with no IDs configured
+  (`NEXT_PUBLIC_GA4_MEASUREMENT_ID` etc. in `.env`), same pattern as the disabled payment providers.
 - **Elasticsearch/OpenSearch**: catalog search in `CatalogModule` is plain Postgres `contains`
-  filtering — fine at P0 volume, swap in real search once the catalog grows.
+  filtering — fine at P0 volume, swap in real search once the catalog grows. Not started.
 
 ## P3 — Enterprise
 - **ERP / accounting / POS integrations**: `docs/Pormt.docx` section 41 calls for
