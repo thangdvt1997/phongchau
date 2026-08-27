@@ -10,6 +10,8 @@ import {
   BlogCategory,
 } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import * as fs from 'fs';
+import * as path from 'path';
 
 const prisma = new PrismaClient();
 
@@ -116,6 +118,7 @@ async function main() {
     variants: { sku: string; weightLabel: string; packagingLabel: string; gradeLabel: string; price: number }[];
     moq: string;
     hsCode: string;
+    imageUrls: string[];
   }
 
   // ---------- Bulk catalog generator ----------
@@ -132,6 +135,184 @@ async function main() {
       .replace(/[̀-ͯ]/g, '')
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
+  }
+
+  // ---------- Product images ----------
+  // Real, product-accurate photos (replacing the old random picsum.photos placeholders).
+  // Sourced from Unsplash (unsplash.com/license — free for commercial use, no attribution
+  // required) and committed under ./seed-images/<category-key-or-_generic>/<file>.jpg, one photo
+  // per *product line* (not per SKU/grade — grade variants of the same line, e.g. Cashew W180 vs
+  // W320, are visually identical). At seed time we copy each source file into the storage
+  // service's upload directory under a flat, deterministic filename: LocalStorageService
+  // (backend/src/common/services/local-storage.service.ts) and UploadsController
+  // (backend/src/modules/uploads/uploads.controller.ts) only ever read/write a single flat
+  // filename directly under UPLOAD_DIR — the route is `GET /api/v1/uploads/:fileName`, a single
+  // path segment, so a nested subdirectory would 404 — so we replicate that exact convention here
+  // (same env vars, same URL shape) instead of going through Nest's DI container, which this
+  // standalone script doesn't have.
+  const uploadDir = process.env.UPLOAD_DIR ?? './uploads';
+  const publicBaseUrl = process.env.PUBLIC_BASE_URL ?? 'http://localhost:8730';
+  const seedImagesDir = path.join(__dirname, 'seed-images');
+  fs.mkdirSync(uploadDir, { recursive: true });
+
+  const publishedImageCache = new Map<string, string>();
+
+  // Copies seed-images/<dir>/<fileBaseName> into UPLOAD_DIR under a flat "seed-<dir>-<file>" name
+  // and returns the public URL UploadsController will serve it at. Idempotent across repeated
+  // seed runs (same source -> same destination filename -> overwritten, not duplicated).
+  function publishSeedImage(dir: string, fileBaseName: string): string {
+    const cacheKey = `${dir}/${fileBaseName}`;
+    const cached = publishedImageCache.get(cacheKey);
+    if (cached) return cached;
+    const srcPath = path.join(seedImagesDir, dir, fileBaseName);
+    const destFileName = `seed-${dir.toLowerCase()}-${fileBaseName}`;
+    const destPath = path.join(uploadDir, destFileName);
+    fs.copyFileSync(srcPath, destPath);
+    const url = `${publicBaseUrl}/api/v1/uploads/${destFileName}`;
+    publishedImageCache.set(cacheKey, url);
+    return url;
+  }
+
+  // One sourced photo per product line per bulk category. Grade variants within a line
+  // intentionally share the same photo. Where two lines look visually identical (e.g. "Salted
+  // Roasted Cashew" vs "Roasted Cashew Nut"), they intentionally point at the same file rather
+  // than forcing an artificial second photo. Keys are `slugify(line)`.
+  const bulkLineImage: Record<string, Record<string, string>> = {
+    CASHEW2: {
+      'roasted-cashew-nut': 'roasted-cashew-nut.jpg',
+      'raw-cashew-nut': 'raw-cashew-nut.jpg',
+      'salted-roasted-cashew': 'roasted-cashew-nut.jpg',
+      'honey-roasted-cashew': 'honey-roasted-cashew.jpg',
+      'wasabi-coated-cashew': 'wasabi-coated-cashew.jpg',
+      'cashew-nut-pieces': 'cashew-nut-pieces.jpg',
+    },
+    PEANUT: {
+      'raw-peanut-kernel': 'raw-peanut-kernel.jpg',
+      'roasted-peanut': 'roasted-peanut.jpg',
+      'coated-peanut': 'coated-peanut.jpg',
+      'peanut-kernel-split': 'peanut-kernel-split.jpg',
+    },
+    MACA: {
+      'raw-macadamia-nut': 'raw-macadamia-nut.jpg',
+      'roasted-macadamia-nut': 'roasted-macadamia-nut.jpg',
+      'salted-macadamia': 'roasted-macadamia-nut.jpg',
+    },
+    COFFEE2: {
+      'robusta-coffee-beans': 'coffee-beans-roasted.jpg',
+      'arabica-washed-coffee-beans': 'coffee-beans-roasted.jpg',
+      'arabica-natural-coffee-beans': 'coffee-beans-roasted.jpg',
+      'arabica-honey-coffee-beans': 'coffee-beans-roasted.jpg',
+      'culi-robusta-coffee-beans': 'coffee-beans-roasted.jpg',
+      'instant-coffee-3-in-1': 'instant-coffee-3-in-1.jpg',
+      'instant-black-coffee': 'instant-black-coffee.jpg',
+    },
+    PEPPER2: {
+      'black-pepper': 'black-pepper.jpg',
+      'white-pepper': 'white-pepper.jpg',
+      'red-pepper': 'red-pepper.jpg',
+      'green-pepper-dried': 'green-pepper-dried.jpg',
+      'green-pepper-pickled': 'green-pepper-pickled.jpg',
+      'pepper-powder': 'pepper-powder.jpg',
+    },
+    RICE2: {
+      'jasmine-rice': 'white-rice.jpg',
+      'st25-fragrant-rice': 'white-rice.jpg',
+      'white-glutinous-rice': 'white-glutinous-rice.jpg',
+      'black-glutinous-rice': 'black-glutinous-rice.jpg',
+      'brown-rice': 'brown-rice.jpg',
+      'japonica-rice': 'white-rice.jpg',
+      'broken-rice': 'white-rice.jpg',
+    },
+    COCONUT2: {
+      'desiccated-coconut': 'desiccated-coconut.jpg',
+      'coconut-milk-powder': 'coconut-milk-powder.jpg',
+      'coconut-oil': 'coconut-oil.jpg',
+      'coconut-water-canned': 'coconut-water-canned.jpg',
+      'coconut-sugar': 'coconut-sugar.jpg',
+      'coconut-cream': 'coconut-cream.jpg',
+      'coconut-charcoal-briquette': 'coconut-charcoal-briquette.jpg',
+    },
+    DRIED: {
+      'dried-mango': 'dried-mango.jpg',
+      'dried-banana': 'dried-banana.jpg',
+      'dried-jackfruit': 'dried-jackfruit.jpg',
+      'dried-pineapple': 'dried-pineapple.jpg',
+      'dried-dragon-fruit': 'mixed-dried-fruit.jpg',
+      'dried-longan': 'dried-longan.jpg',
+      'dried-lychee': 'dried-longan.jpg',
+      'mixed-dried-fruit': 'mixed-dried-fruit.jpg',
+    },
+    FROZEN: {
+      'frozen-durian': 'frozen-durian.jpg',
+      'frozen-mango': 'frozen-mango.jpg',
+      'frozen-jackfruit': 'frozen-jackfruit.jpg',
+      'frozen-okra': 'frozen-okra.jpg',
+      'frozen-edamame': 'frozen-edamame.jpg',
+      'frozen-sweet-corn': 'frozen-sweet-corn.jpg',
+      'frozen-passion-fruit-puree': 'frozen-passion-fruit-puree.jpg',
+      'frozen-dragon-fruit': 'frozen-dragon-fruit.jpg',
+    },
+    HERBS: {
+      cinnamon: 'cinnamon.jpg',
+      'star-anise': 'star-anise.jpg',
+      turmeric: 'turmeric.jpg',
+      'dried-ginger': 'dried-ginger.jpg',
+      chili: 'chili.jpg',
+      cardamom: 'cardamom.jpg',
+      lemongrass: 'lemongrass.jpg',
+      'bay-leaf': 'bay-leaf.jpg',
+    },
+    TEA: {
+      'green-tea': 'green-tea.jpg',
+      'lotus-tea': 'lotus-tea.jpg',
+      'artichoke-tea': 'artichoke-tea.jpg',
+      'moringa-tea': 'moringa-tea.jpg',
+      'ginger-tea-blend': 'ginger-tea-blend.jpg',
+    },
+    HONEY: {
+      'longan-flower-honey': 'honey-jar.jpg',
+      'forest-wild-honey': 'honey-jar.jpg',
+      'rubber-flower-honey': 'honey-jar.jpg',
+      'royal-jelly': 'royal-jelly.jpg',
+      'bee-propolis': 'bee-propolis.jpg',
+    },
+    SNACK: {
+      'coconut-candy': 'coconut-candy.jpg',
+      'cashew-brittle': 'cashew-brittle.jpg',
+      'sesame-peanut-candy': 'sesame-peanut-candy.jpg',
+      'ginger-candy': 'ginger-candy.jpg',
+      'rice-paper-chips': 'rice-paper-chips.jpg',
+    },
+    FRESH: {
+      'fresh-dragon-fruit': 'fresh-dragon-fruit.jpg',
+      'fresh-mango-cat-chu': 'fresh-mango-cat-chu.jpg',
+      'fresh-pomelo': 'fresh-pomelo.jpg',
+      'fresh-ginger': 'fresh-ginger.jpg',
+      'fresh-garlic': 'fresh-garlic.jpg',
+    },
+  };
+
+  // Last-resort fallback (never picsum.photos) if a line's photo is missing from disk for any
+  // reason — cycles through a few generic "grains/spices/nuts in bulk" shots.
+  const genericFallbackFiles = ['grains-bags.jpg', 'spices-bowls.jpg', 'nuts-mix.jpg'];
+  let genericFallbackIdx = 0;
+
+  function getLineImageUrls(categoryKey: string, line: string): string[] {
+    const lineSlug = slugify(line);
+    const fileBaseName = bulkLineImage[categoryKey]?.[lineSlug];
+    let url: string;
+    if (fileBaseName && fs.existsSync(path.join(seedImagesDir, categoryKey, fileBaseName))) {
+      url = publishSeedImage(categoryKey, fileBaseName);
+    } else {
+      // eslint-disable-next-line no-console
+      console.warn(`No sourced photo for ${categoryKey}:${lineSlug} — using generic fallback.`);
+      const fallbackFile = genericFallbackFiles[genericFallbackIdx % genericFallbackFiles.length];
+      genericFallbackIdx += 1;
+      url = publishSeedImage('_generic', fallbackFile);
+    }
+    // Same photo for both gallery slots is fine — grade/SKU variants of one product line are
+    // visually identical, per the task's guidance.
+    return [url, url];
   }
 
   type UnitProfile = 'dry' | 'liquid' | 'frozen' | 'snack';
@@ -177,20 +358,26 @@ async function main() {
     moq: string;
   }
 
+  // Price ranges below are grounded in researched Aug-2026 Vietnamese wholesale/export market
+  // data (cashew W320 FOB ~$3.2-3.6/kg, robusta coffee ~96,800 VND/kg farm-gate, black pepper
+  // FOB ~$5,990-6,520/ton, 5%-broken rice FOB ~$360-415/ton, star anise wholesale ~$2.9-8.9/kg,
+  // at ~26,100 VND/USD) with a retail markup applied over the bulk/FOB floor to represent the
+  // packaged small-pack price a buyer sees on this site — not a literal per-SKU quote, since
+  // real catalogs price by grade tier too, not by individually re-verified line item.
   const bulkConfigs: BulkCategoryConfig[] = [
     {
       key: 'CASHEW2', categoryId: catCashew.id, originId: origins.binhphuoc.id, hsCode: '0801.32', unit: 'dry',
       certPool: ['HACCP', 'ISO22000', 'GLOBALGAP', 'ORGANIC'],
       lines: ['Roasted Cashew Nut', 'Raw Cashew Nut', 'Salted Roasted Cashew', 'Honey Roasted Cashew', 'Wasabi Coated Cashew', 'Cashew Nut Pieces'],
       grades: ['W180', 'W210', 'W240', 'W320', 'W450', 'SW', 'LWP', 'DW', 'SP', 'BB'],
-      priceMin: 140000, priceMax: 320000, cap: 40, moq: '1 x 20FT container',
+      priceMin: 150000, priceMax: 340000, cap: 40, moq: '1 x 20FT container',
     },
     {
       key: 'PEANUT', categoryId: catPeanut.id, originId: origins.tayninh.id, hsCode: '1202.42', unit: 'dry',
       certPool: ['HACCP', 'ISO22000', 'VIETGAP'],
       lines: ['Raw Peanut Kernel', 'Roasted Peanut', 'Coated Peanut', 'Peanut Kernel Split'],
       grades: ['24/28', '28/32', '34/38', '38/42', '40/50', 'Blanched', 'Split'],
-      priceMin: 45000, priceMax: 90000, cap: 20, moq: '5 tonnes',
+      priceMin: 40000, priceMax: 90000, cap: 20, moq: '5 tonnes',
     },
     {
       key: 'MACA', categoryId: catMacadamia.id, originId: origins.lamdong.id, hsCode: '0802.61', unit: 'dry',
@@ -204,77 +391,77 @@ async function main() {
       certPool: ['ISO22000', 'VIETGAP', 'ORGANIC', 'FDA'],
       lines: ['Robusta Coffee Beans', 'Arabica Washed Coffee Beans', 'Arabica Natural Coffee Beans', 'Arabica Honey Coffee Beans', 'Culi Robusta Coffee Beans', 'Instant Coffee 3-in-1', 'Instant Black Coffee'],
       grades: ['Grade 1', 'Grade 2', 'Screen 16', 'Screen 18', 'Specialty', 'Fine Robusta'],
-      priceMin: 75000, priceMax: 180000, cap: 30, moq: '500kg',
+      priceMin: 100000, priceMax: 230000, cap: 30, moq: '500kg',
     },
     {
       key: 'PEPPER2', categoryId: catPepper.id, originId: origins.phuquoc.id, hsCode: '0904.11', unit: 'dry',
       certPool: ['HACCP', 'BRC', 'HALAL'],
       lines: ['Black Pepper', 'White Pepper', 'Red Pepper', 'Green Pepper (Dried)', 'Green Pepper (Pickled)', 'Pepper Powder'],
       grades: ['500GL', '550GL', '570GL', 'Grade A', 'Grade B', 'ASTA'],
-      priceMin: 140000, priceMax: 260000, cap: 25, moq: '1 tonne',
+      priceMin: 165000, priceMax: 290000, cap: 25, moq: '1 tonne',
     },
     {
       key: 'RICE2', categoryId: catRice.id, originId: origins.angiang.id, hsCode: '1006.30', unit: 'dry',
       certPool: ['VIETGAP', 'ISO22000', 'GLOBALGAP'],
       lines: ['Jasmine Rice', 'ST25 Fragrant Rice', 'White Glutinous Rice', 'Black Glutinous Rice', 'Brown Rice', 'Japonica Rice', 'Broken Rice'],
       grades: ['5% Broken', '10% Broken', '15% Broken', '25% Broken', '100% Broken', 'Premium'],
-      priceMin: 16000, priceMax: 32000, cap: 30, moq: '20 tonnes',
+      priceMin: 17000, priceMax: 40000, cap: 30, moq: '20 tonnes',
     },
     {
       key: 'COCONUT2', categoryId: catCoconut.id, originId: origins.bentre.id, hsCode: '0801.11', unit: 'dry',
       certPool: ['HACCP', 'ORGANIC', 'ISO22000'],
       lines: ['Desiccated Coconut', 'Coconut Milk Powder', 'Coconut Oil', 'Coconut Water (Canned)', 'Coconut Sugar', 'Coconut Cream', 'Coconut Charcoal Briquette'],
       grades: ['Fine High-Fat', 'Fine Low-Fat', 'Medium Desiccated', 'Coarse Desiccated', 'Virgin Cold-Pressed', 'RBD Grade', 'Organic'],
-      priceMin: 55000, priceMax: 140000, cap: 30, moq: '1 x 20FT container',
+      priceMin: 60000, priceMax: 220000, cap: 30, moq: '1 x 20FT container',
     },
     {
       key: 'DRIED', categoryId: catDried.id, originId: origins.tiengiang.id, hsCode: '0813.40', unit: 'dry',
       certPool: ['HACCP', 'ISO22000', 'FDA'],
       lines: ['Dried Mango', 'Dried Banana', 'Dried Jackfruit', 'Dried Pineapple', 'Dried Dragon Fruit', 'Dried Longan', 'Dried Lychee', 'Mixed Dried Fruit'],
       grades: ['Natural (No Sugar)', 'Lightly Sweetened', 'Sun-Dried', 'Low-Temp Dried', 'Premium Select'],
-      priceMin: 85000, priceMax: 220000, cap: 30, moq: '500kg',
+      priceMin: 85000, priceMax: 230000, cap: 30, moq: '500kg',
     },
     {
       key: 'FROZEN', categoryId: catFrozen.id, originId: origins.tiengiang.id, hsCode: '0811.90', unit: 'frozen',
       certPool: ['HACCP', 'BRC', 'FDA'],
       lines: ['Frozen Durian', 'Frozen Mango', 'Frozen Jackfruit', 'Frozen Okra', 'Frozen Edamame', 'Frozen Sweet Corn', 'Frozen Passion Fruit Puree', 'Frozen Dragon Fruit'],
       grades: ['IQF Whole', 'IQF Diced', 'IQF Sliced', 'IQF Puree'],
-      priceMin: 60000, priceMax: 190000, cap: 24, moq: '1 x reefer container',
+      priceMin: 65000, priceMax: 280000, cap: 24, moq: '1 x reefer container',
     },
     {
       key: 'HERBS', categoryId: catHerbsSpices.id, originId: origins.yenbai.id, hsCode: '0910.99', unit: 'dry',
       certPool: ['HACCP', 'ORGANIC', 'ISO22000'],
       lines: ['Cinnamon', 'Star Anise', 'Turmeric', 'Dried Ginger', 'Chili', 'Cardamom', 'Lemongrass', 'Bay Leaf'],
       grades: ['Whole', 'Ground/Powder', 'Split', 'Sifted', 'Organic'],
-      priceMin: 40000, priceMax: 160000, cap: 30, moq: '500kg',
+      priceMin: 45000, priceMax: 240000, cap: 30, moq: '500kg',
     },
     {
       key: 'TEA', categoryId: catTea.id, originId: origins.thainguyen.id, hsCode: '0902.20', unit: 'dry',
       certPool: ['ISO22000', 'ORGANIC', 'VIETGAP'],
       lines: ['Green Tea', 'Lotus Tea', 'Artichoke Tea', 'Moringa Tea', 'Ginger Tea Blend'],
       grades: ['Grade A Leaf', 'Grade B Leaf', 'Bud & Leaf', 'Tea Bag Cut'],
-      priceMin: 70000, priceMax: 220000, cap: 16, moq: '300kg',
+      priceMin: 75000, priceMax: 260000, cap: 16, moq: '300kg',
     },
     {
       key: 'HONEY', categoryId: catHoney.id, originId: origins.daklak.id, hsCode: '0409.00', unit: 'liquid',
       certPool: ['HACCP', 'ORGANIC', 'FDA'],
       lines: ['Longan Flower Honey', 'Forest Wild Honey', 'Rubber Flower Honey', 'Royal Jelly', 'Bee Propolis'],
       grades: ['Raw Unfiltered', 'Filtered', 'Crystallization-Resistant', 'Organic Certified'],
-      priceMin: 90000, priceMax: 260000, cap: 12, moq: '200kg',
+      priceMin: 130000, priceMax: 380000, cap: 12, moq: '200kg',
     },
     {
       key: 'SNACK', categoryId: catProcessed.id, originId: origins.bentre.id, hsCode: '1704.90', unit: 'snack',
       certPool: ['HACCP', 'ISO22000', 'FDA'],
       lines: ['Coconut Candy', 'Cashew Brittle', 'Sesame Peanut Candy', 'Ginger Candy', 'Rice Paper Chips'],
       grades: ['Original', 'Pandan', 'Durian', 'Ginger', 'Sesame', 'Mixed Nut'],
-      priceMin: 35000, priceMax: 90000, cap: 20, moq: '2000 units',
+      priceMin: 28000, priceMax: 75000, cap: 20, moq: '2000 units',
     },
     {
       key: 'FRESH', categoryId: catFreshAgri.id, originId: origins.tiengiang.id, hsCode: '0810.90', unit: 'dry',
       certPool: ['GLOBALGAP', 'VIETGAP', 'HACCP'],
       lines: ['Fresh Dragon Fruit', 'Fresh Mango (Cat Chu)', 'Fresh Pomelo', 'Fresh Ginger', 'Fresh Garlic'],
       grades: ['Class 1 Export', 'Class 2 Standard'],
-      priceMin: 20000, priceMax: 55000, cap: 10, moq: '1 x reefer container',
+      priceMin: 18000, priceMax: 50000, cap: 10, moq: '1 x reefer container',
     },
   ];
 
@@ -314,6 +501,7 @@ async function main() {
           basePrice,
           moq: cfg.moq,
           hsCode: cfg.hsCode,
+          imageUrls: getLineImageUrls(cfg.key, line),
           variants: variantsForUnit(cfg.unit, sku, basePrice),
         });
       });
@@ -332,6 +520,7 @@ async function main() {
       basePrice: 220000,
       moq: '1 x 20FT container',
       hsCode: '0801.32',
+      imageUrls: getLineImageUrls('CASHEW2', 'Roasted Cashew Nut'),
       variants: [
         { sku: 'CASHEW-W320-500G', weightLabel: '500g', packagingLabel: 'Vacuum Bag', gradeLabel: 'W320', price: 120000 },
         { sku: 'CASHEW-W320-25KG', weightLabel: '25kg', packagingLabel: 'Carton', gradeLabel: 'W320', price: 5200000 },
@@ -347,6 +536,7 @@ async function main() {
       basePrice: 250000,
       moq: '1 x 20FT container',
       hsCode: '0801.32',
+      imageUrls: getLineImageUrls('CASHEW2', 'Raw Cashew Nut'),
       variants: [
         { sku: 'CASHEW-W240-1KG', weightLabel: '1kg', packagingLabel: 'Vacuum Bag', gradeLabel: 'W240', price: 250000 },
         { sku: 'CASHEW-W240-25KG', weightLabel: '25kg', packagingLabel: 'Carton', gradeLabel: 'W240', price: 6000000 },
@@ -359,12 +549,13 @@ async function main() {
       categoryId: catCoffee.id,
       originId: origins.daklak.id,
       certCodes: ['ISO22000', 'VIETGAP'],
-      basePrice: 95000,
+      basePrice: 105000,
       moq: '500kg',
       hsCode: '0901.21',
+      imageUrls: getLineImageUrls('COFFEE2', 'Robusta Coffee Beans'),
       variants: [
-        { sku: 'COFFEE-ROBUSTA-500G', weightLabel: '500g', packagingLabel: 'Bag', gradeLabel: 'Grade 1', price: 95000 },
-        { sku: 'COFFEE-ROBUSTA-25KG', weightLabel: '25kg', packagingLabel: 'Carton', gradeLabel: 'Grade 1', price: 4300000 },
+        { sku: 'COFFEE-ROBUSTA-500G', weightLabel: '500g', packagingLabel: 'Bag', gradeLabel: 'Grade 1', price: 105000 },
+        { sku: 'COFFEE-ROBUSTA-25KG', weightLabel: '25kg', packagingLabel: 'Carton', gradeLabel: 'Grade 1', price: 4600000 },
       ],
     },
     {
@@ -374,12 +565,13 @@ async function main() {
       categoryId: catCoffee.id,
       originId: origins.daklak.id,
       certCodes: ['ORGANIC', 'FDA'],
-      basePrice: 145000,
+      basePrice: 165000,
       moq: '500kg',
       hsCode: '0901.11',
+      imageUrls: getLineImageUrls('COFFEE2', 'Arabica Washed Coffee Beans'),
       variants: [
-        { sku: 'COFFEE-ARABICA-500G', weightLabel: '500g', packagingLabel: 'Bag', gradeLabel: 'Specialty', price: 145000 },
-        { sku: 'COFFEE-ARABICA-25KG', weightLabel: '25kg', packagingLabel: 'Carton', gradeLabel: 'Specialty', price: 6800000 },
+        { sku: 'COFFEE-ARABICA-500G', weightLabel: '500g', packagingLabel: 'Bag', gradeLabel: 'Specialty', price: 165000 },
+        { sku: 'COFFEE-ARABICA-25KG', weightLabel: '25kg', packagingLabel: 'Carton', gradeLabel: 'Specialty', price: 7500000 },
       ],
     },
     {
@@ -392,6 +584,7 @@ async function main() {
       basePrice: 180000,
       moq: '1 tonne',
       hsCode: '0904.11',
+      imageUrls: getLineImageUrls('PEPPER2', 'Black Pepper'),
       variants: [
         { sku: 'PEPPER-BLACK-250G', weightLabel: '250g', packagingLabel: 'Jar', gradeLabel: 'Grade A', price: 60000 },
         { sku: 'PEPPER-BLACK-25KG', weightLabel: '25kg', packagingLabel: 'Bag', gradeLabel: 'Grade A', price: 4500000 },
@@ -407,6 +600,7 @@ async function main() {
       basePrice: 220000,
       moq: '1 tonne',
       hsCode: '0904.12',
+      imageUrls: getLineImageUrls('PEPPER2', 'White Pepper'),
       variants: [
         { sku: 'PEPPER-WHITE-250G', weightLabel: '250g', packagingLabel: 'Jar', gradeLabel: 'Premium', price: 75000 },
         { sku: 'PEPPER-WHITE-25KG', weightLabel: '25kg', packagingLabel: 'Bag', gradeLabel: 'Premium', price: 5500000 },
@@ -419,12 +613,13 @@ async function main() {
       categoryId: catRice.id,
       originId: origins.angiang.id,
       certCodes: ['VIETGAP', 'ISO22000'],
-      basePrice: 22000,
+      basePrice: 24000,
       moq: '20 tonnes',
       hsCode: '1006.30',
+      imageUrls: getLineImageUrls('RICE2', 'Jasmine Rice'),
       variants: [
-        { sku: 'RICE-JASMINE-5KG', weightLabel: '5kg', packagingLabel: 'Bag', gradeLabel: '5% Broken', price: 110000 },
-        { sku: 'RICE-JASMINE-50KG', weightLabel: '50kg', packagingLabel: 'Bag', gradeLabel: '5% Broken', price: 1050000 },
+        { sku: 'RICE-JASMINE-5KG', weightLabel: '5kg', packagingLabel: 'Bag', gradeLabel: '5% Broken', price: 120000 },
+        { sku: 'RICE-JASMINE-50KG', weightLabel: '50kg', packagingLabel: 'Bag', gradeLabel: '5% Broken', price: 1150000 },
       ],
     },
     {
@@ -437,6 +632,7 @@ async function main() {
       basePrice: 65000,
       moq: '1 x 20FT container',
       hsCode: '0801.11',
+      imageUrls: getLineImageUrls('COCONUT2', 'Desiccated Coconut'),
       variants: [
         { sku: 'COCONUT-DRIED-1KG', weightLabel: '1kg', packagingLabel: 'Vacuum Bag', gradeLabel: 'Fine', price: 65000 },
         { sku: 'COCONUT-DRIED-25KG', weightLabel: '25kg', packagingLabel: 'Carton', gradeLabel: 'Fine', price: 1500000 },
@@ -447,10 +643,25 @@ async function main() {
   const products: SeedProduct[] = [...handCurated, ...generateBulkProducts()];
   console.log(`Seeding ${products.length} products...`);
 
+  // Normally this upsert's `update` is `{}` (a no-op) so re-running the seed never clobbers an
+  // admin's manual edits made via /admin/products. Set RESYNC_IMAGES_AND_PRICES=true for a
+  // one-time re-sync of just the generated image/price data onto already-existing rows (e.g.
+  // after correcting the price formulas or swapping in real product photography) — this is a
+  // deliberate, explicit opt-in, not the default seeding behavior.
+  const resyncImagesAndPrices = process.env.RESYNC_IMAGES_AND_PRICES === 'true';
+
   for (const p of products) {
     const product = await prisma.product.upsert({
       where: { slug: p.slug },
-      update: {},
+      update: resyncImagesAndPrices
+        ? {
+            basePrice: p.basePrice,
+            images: {
+              deleteMany: {},
+              create: p.imageUrls.map((url, position) => ({ url, position, type: 'GALLERY' as const })),
+            },
+          }
+        : {},
       create: {
         sku: p.sku,
         name: p.name,
@@ -475,10 +686,7 @@ async function main() {
         seoTitle: `${p.name} | Phong Chau Export`,
         seoDescription: `Buy ${p.name} wholesale or for export. MOQ ${p.moq}. Certifications: ${p.certCodes.join(', ')}.`,
         images: {
-          create: [
-            { url: `https://picsum.photos/seed/${p.sku}-1/800/800`, position: 0, type: 'GALLERY' },
-            { url: `https://picsum.photos/seed/${p.sku}-2/800/800`, position: 1, type: 'GALLERY' },
-          ],
+          create: p.imageUrls.map((url, position) => ({ url, position, type: 'GALLERY' })),
         },
         documents: {
           create: [
@@ -505,6 +713,14 @@ async function main() {
       },
       include: { variants: true },
     });
+
+    if (resyncImagesAndPrices) {
+      for (const v of p.variants) {
+        await prisma.productVariant
+          .update({ where: { sku: v.sku }, data: { price: v.price } })
+          .catch(() => undefined);
+      }
+    }
 
     // Inventory in both warehouses for every variant.
     for (const variant of product.variants) {

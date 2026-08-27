@@ -4,7 +4,7 @@ cd /root/phongchau
 echo "=== extracting sync archive ==="
 mkdir -p /root/phongchau_new
 tar -xzf /root/phongchau_sync.tar.gz -C /root/phongchau_new
-rsync -a --delete --exclude node_modules --exclude .git --exclude .next --exclude dist --exclude backend/uploads /root/phongchau_new/ /root/phongchau/
+rsync -a --delete --exclude node_modules --exclude .git --exclude .next --exclude dist --exclude backend/uploads --exclude .env /root/phongchau_new/ /root/phongchau/
 rm -rf /root/phongchau_new /root/phongchau_sync.tar.gz
 
 echo "=== backend: npm install ==="

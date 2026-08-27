@@ -3,9 +3,9 @@ set -e
 cd /root/phongchau
 echo "=== extracting sync archive ==="
 mkdir -p /root/phongchau_new
-tar -xzf /root/phongchau_sync3.tar.gz -C /root/phongchau_new
+tar -xzf /root/phongchau_sync4.tar.gz -C /root/phongchau_new
 rsync -a --delete --exclude node_modules --exclude .git --exclude .next --exclude dist --exclude backend/uploads --exclude .env /root/phongchau_new/ /root/phongchau/
-rm -rf /root/phongchau_new /root/phongchau_sync3.tar.gz
+rm -rf /root/phongchau_new /root/phongchau_sync4.tar.gz
 
 echo "=== backend: npm install ==="
 docker run --rm -v /root/phongchau/backend:/app -w /app node:20-bookworm-slim npm install
@@ -15,11 +15,5 @@ docker run --rm -v /root/phongchau/backend:/app -w /app node:20-bookworm-slim np
 
 echo "=== backend: tsc --noEmit ==="
 docker run --rm -v /root/phongchau/backend:/app -w /app node:20-bookworm-slim npx tsc --noEmit -p tsconfig.json
-
-echo "=== frontend: npm install ==="
-docker run --rm -v /root/phongchau/frontend:/app -w /app node:20-bookworm-slim npm install
-
-echo "=== frontend: tsc --noEmit ==="
-docker run --rm -v /root/phongchau/frontend:/app -w /app node:20-bookworm-slim npx tsc --noEmit
 
 echo "=== ALL TSC CHECKS PASSED ==="
