@@ -102,22 +102,19 @@ deliberately distinct from the storefront. All ~24 admin pages share this stylin
 new admin page, pick the right existing group rather than adding a new top-level nav item unless
 it genuinely doesn't fit any of the six.
 
-## Known lower-priority findings from the full-site review (not yet fixed)
-A security/correctness review found 12 issues; the two critical ones (order-tracking PII leak,
-guest-checkout address IDOR) plus 5 others (dead `Order.paymentStatus`, orphaned-order-on-
-payment-failure, payment-proof IDOR, stale-RFQ-quotation acceptance, blank-address validation,
-inconsistent reference-code alphabet, and stored XSS in blog content) are fixed — see git log
-around Aug 27 2026. Three low/low-medium items remain, deliberately deferred as non-urgent:
-- `product-import.service.ts`'s per-variant loop does sequential `findUnique`/`update` calls
-  instead of a batched query, and one product group's writes aren't wrapped in a `$transaction`
-  (unlike `ProductsService.create`/`update`) — a mid-group failure can leave that product's row a
-  partial mix of new/stale fields. Fine at current import volumes; revisit if imports grow large.
-- `InventoryService.adminList()` and `AdminService`'s country-revenue breakdown fetch unbounded
-  result sets and paginate/aggregate in JS instead of using `take`/`skip` or a `groupBy` — flagged
-  as a P0-era "fine for now" tradeoff that's worth revisiting now that the catalog is 337 products.
-- `ShippingAdminService.updateShipmentStatus()` never syncs `Order.status` — marking a shipment
-  DELIVERED doesn't move its order to DELIVERED, which is a separate manual admin action and can
-  drift (and silently skips the review-request marketing trigger, which keys off `Order.status`).
+## Full-site review findings — all 12 fixed
+A security/correctness review (Aug 27 2026) found 12 issues, all now fixed — see git log around
+that date for the two commits covering this. Most severe: `GET /orders/track/:orderNumber`
+leaked any order's full detail with no real ownership check (email was optional, so omitting it
+bypassed the check entirely), and guest checkout's `shippingAddressId`/`billingAddressId`
+accepted any address UUID with no ownership check when unauthenticated (IDOR). Also fixed: dead
+`Order.paymentStatus` (never written, so dashboard revenue always read 0), orphaned orders +
+un-reverted coupon usage on a payment-gateway failure, payment-proof-upload IDOR, stale-RFQ-
+quotation acceptance after a revision was sent, blank-address server-side validation, an
+inconsistent reference-code alphabet (nanoid's default charset includes `_`/`-`), stored XSS in
+blog content, `product-import.service.ts`'s N+1 lookups + missing transaction, and two
+unbounded-fetch-then-paginate-in-JS admin queries (`InventoryService.adminList()`,
+`AdminService`'s country breakdown) replaced with DB-level pagination / a raw SQL `GROUP BY`.
 
 ## Smaller deliberate simplifications worth knowing about
 - `SeoMetadata` is not a separate polymorphic table — SEO fields are embedded directly on
