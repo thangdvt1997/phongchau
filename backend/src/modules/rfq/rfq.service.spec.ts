@@ -130,6 +130,7 @@ describe('RfqService', () => {
         create: jest.fn(),
         findUnique: jest.fn(),
         update: jest.fn(),
+        updateMany: jest.fn().mockResolvedValue({ count: 0 }),
         count: jest.fn(),
       },
       lead: { create: jest.fn() },

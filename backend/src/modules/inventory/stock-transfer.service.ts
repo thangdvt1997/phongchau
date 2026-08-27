@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { nanoid } from 'nanoid';
+import { generateCode } from '../../common/utils/code-generator.util';
 import { InventoryTxnType, StockTransferStatus } from '@prisma/client';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { CreateStockTransferDto } from './dto/create-stock-transfer.dto';
@@ -62,7 +62,7 @@ export class StockTransferService {
       throw new BadRequestException('Insufficient available stock in the source warehouse to create this transfer');
     }
 
-    const transferNumber = `TRF-${new Date().getFullYear()}-${nanoid(6).toUpperCase()}`;
+    const transferNumber = generateCode('TRF', 6);
 
     return this.prisma.stockTransfer.create({
       data: {

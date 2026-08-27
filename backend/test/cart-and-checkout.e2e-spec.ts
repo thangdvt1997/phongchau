@@ -90,8 +90,22 @@ describe('Cart + Checkout (e2e)', () => {
     expect(checkoutRes.body.redirectUrl).toBeNull();
     const orderNumber = checkoutRes.body.order.orderNumber;
 
-    // 5. GET /orders/track/:orderNumber -> 200 matching the created order.
-    const trackRes = await request(server).get(`${API_PREFIX}/orders/track/${orderNumber}`);
+    // 5. GET /orders/track/:orderNumber -> 404 with no email at all (security regression
+    // guard: this endpoint is public/unauthenticated, so a matching email is the only proof
+    // of ownership it can require — omitting it must never leak the order).
+    const trackNoEmail = await request(server).get(`${API_PREFIX}/orders/track/${orderNumber}`);
+    expect(trackNoEmail.status).toBe(404);
+
+    // 5b. Same with a wrong email -> still 404.
+    const trackWrongEmail = await request(server)
+      .get(`${API_PREFIX}/orders/track/${orderNumber}`)
+      .query({ email: 'not-the-owner@example.com' });
+    expect(trackWrongEmail.status).toBe(404);
+
+    // 5c. GET /orders/track/:orderNumber with the matching guest email -> 200.
+    const trackRes = await request(server)
+      .get(`${API_PREFIX}/orders/track/${orderNumber}`)
+      .query({ email: guestEmail });
     expect(trackRes.status).toBe(200);
     expect(trackRes.body.orderNumber).toBe(orderNumber);
     expect(trackRes.body.guestEmail).toBe(guestEmail);
@@ -191,5 +205,61 @@ describe('Cart + Checkout (e2e)', () => {
       });
 
     expect(checkoutRes.status).toBe(400);
+  });
+
+  it('security regression: a guest cannot reuse a registered customer\'s saved address by id', async () => {
+    // 1. Register a real customer and let their checkout create a saved (userId-owned) address.
+    const ownerEmail = uniqueEmail('address-owner');
+    const registerRes = await request(server).post(`${API_PREFIX}/auth/register`).send({
+      email: ownerEmail,
+      password: 'SuperSecret1!',
+      fullName: 'Address Owner',
+      phone: '0900000099',
+    });
+    expect(registerRes.status).toBe(201);
+    const ownerToken = registerRes.body.accessToken;
+
+    const ownerCart = await request(server)
+      .post(`${API_PREFIX}/cart/items`)
+      .set('Authorization', `Bearer ${ownerToken}`)
+      .send({ productVariantId: variantId, quantity: 1 });
+    expect(ownerCart.status).toBe(201);
+
+    const ownerCheckout = await request(server)
+      .post(`${API_PREFIX}/checkout`)
+      .set('Authorization', `Bearer ${ownerToken}`)
+      .send({
+        shippingAddress: {
+          fullName: 'Address Owner',
+          phone: '0900000099',
+          line1: '99 Private Street',
+          city: 'Ho Chi Minh City',
+          country: 'Vietnam',
+        },
+        paymentProvider: 'COD',
+      });
+    expect(ownerCheckout.status).toBe(201);
+    const stolenAddressId = ownerCheckout.body.order.shippingAddressId;
+    expect(typeof stolenAddressId).toBe('string');
+
+    // 2. A completely unauthenticated guest tries to check out reusing that exact address id.
+    const guestInitialCart = await request(server).get(`${API_PREFIX}/cart`);
+    const guestSessionId = guestInitialCart.headers[CART_SESSION_HEADER];
+    await request(server)
+      .post(`${API_PREFIX}/cart/items`)
+      .set(CART_SESSION_HEADER, guestSessionId)
+      .send({ productVariantId: variantId, quantity: 1 });
+
+    const idorAttempt = await request(server)
+      .post(`${API_PREFIX}/checkout`)
+      .set(CART_SESSION_HEADER, guestSessionId)
+      .send({
+        guestEmail: uniqueEmail('idor-attacker'),
+        shippingAddressId: stolenAddressId,
+        paymentProvider: 'COD',
+      });
+
+    // Must be rejected — never silently succeed using another customer's saved address.
+    expect(idorAttempt.status).toBe(404);
   });
 });

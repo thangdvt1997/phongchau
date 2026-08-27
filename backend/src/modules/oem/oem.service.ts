@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { nanoid } from 'nanoid';
+import { generateCode } from '../../common/utils/code-generator.util';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { AuthenticatedUser } from '../../common/interfaces/authenticated-user.interface';
@@ -117,7 +117,7 @@ export class OemService {
   ) {}
 
   async create(user: AuthenticatedUser, dto: CreateOemDto) {
-    const requestNumber = `OEM-${new Date().getFullYear()}-${nanoid(6).toUpperCase()}`;
+    const requestNumber = generateCode('OEM', 6);
     const oemRequest = await this.prisma.oemRequest.create({
       data: {
         requestNumber,

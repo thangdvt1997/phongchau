@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { nanoid } from 'nanoid';
+import { generateCode } from '../../common/utils/code-generator.util';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { STAFF_ROLES } from '../crm/crm.service';
@@ -101,7 +101,7 @@ export class SupportService {
       }
     }
 
-    const ticketNumber = `TCK-${new Date().getFullYear()}-${nanoid(6).toUpperCase()}`;
+    const ticketNumber = generateCode('TCK', 6);
 
     const ticket = await this.prisma.supportTicket.create({
       data: {

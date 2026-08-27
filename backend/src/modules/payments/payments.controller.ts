@@ -15,6 +15,8 @@ import { memoryStorage } from 'multer';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { AuthenticatedUser } from '../../common/interfaces/authenticated-user.interface';
 import { PaymentProviderType, Role } from '@prisma/client';
 import { STORAGE_SERVICE, StorageService } from '../../common/interfaces/storage.interface';
 import { PaymentsService } from './payments.service';
@@ -64,12 +66,16 @@ export class PaymentsController {
   @UseGuards(JwtAuthGuard)
   @Post('admin/payments/:id/proof')
   @UseInterceptors(FileInterceptor('file', { ...paymentProofUploadOptions, storage: memoryStorage() }))
-  async uploadProof(@Param('id') id: string, @UploadedFile() file?: Express.Multer.File) {
+  async uploadProof(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id') id: string,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
     if (!file) {
       throw new BadRequestException('A file is required');
     }
     const stored = await this.storage.save(file.buffer, file.originalname, file.mimetype);
-    return this.paymentsService.attachProof(id, stored.url);
+    return this.paymentsService.attachProof(id, stored.url, user.id);
   }
 
   private parseProviderType(value: string): PaymentProviderType {

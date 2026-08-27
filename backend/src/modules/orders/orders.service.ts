@@ -1,5 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { nanoid } from 'nanoid';
+import { generateCode } from '../../common/utils/code-generator.util';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { CartService } from '../cart/cart.service';
 import { InventoryService } from '../inventory/inventory.service';
@@ -57,6 +57,12 @@ export class OrdersService {
       throw err;
     }
 
+    // Hoisted so the catch block below can compensate for whichever of these already
+    // committed before a later step (most importantly the payment-gateway call, which is
+    // an external I/O call and the most likely thing to fail) threw.
+    let order: Awaited<ReturnType<typeof this.prisma.order.create>> | undefined;
+    let coupon: Awaited<ReturnType<typeof this.validateCoupon>> | null = null;
+
     try {
       const shippingAddress = await this.resolveAddress(
         user,
@@ -69,7 +75,7 @@ export class OrdersService {
         ? shippingAddress
         : await this.resolveAddress(user, dto.billingAddressId, dto.billingAddress, 'BILLING');
 
-      const coupon = dto.couponCode ? await this.validateCoupon(dto.couponCode, pricedCart.subtotal) : null;
+      coupon = dto.couponCode ? await this.validateCoupon(dto.couponCode, pricedCart.subtotal) : null;
       const discountTotal = coupon ? this.computeDiscount(coupon, pricedCart.subtotal) : 0;
 
       const weightKg = Math.max(1, pricedCart.items.reduce((sum, i) => sum + i.quantity, 0));
@@ -83,9 +89,9 @@ export class OrdersService {
 
       const taxTotal = 0; // P0: no tax engine yet; agri exports are frequently VAT-exempt anyway.
       const grandTotal = Math.max(0, pricedCart.subtotal - discountTotal) + shippingTotal + taxTotal;
-      const orderNumber = `ORD-${new Date().getFullYear()}-${nanoid(8).toUpperCase()}`;
+      const orderNumber = generateCode('ORD', 8);
 
-      const order = await this.prisma.order.create({
+      order = await this.prisma.order.create({
         data: {
           orderNumber,
           userId: user?.id,
@@ -152,6 +158,26 @@ export class OrdersService {
       for (const r of reserved) {
         await this.inventory.releaseStock(r.productVariantId, r.quantity);
       }
+      // Compensate for whatever already committed before the failure (most likely the
+      // payment-gateway call, an external I/O step) — otherwise a transient gateway error
+      // leaves a permanent ghost PENDING order the customer can never pay, and silently
+      // burns one use of a limited-use coupon with nothing to show for it.
+      if (order) {
+        await this.prisma.order
+          .update({
+            where: { id: order.id },
+            data: {
+              status: OrderStatus.CANCELLED,
+              statusHistory: { create: { status: OrderStatus.CANCELLED, note: 'Checkout failed after order creation' } },
+            },
+          })
+          .catch(() => undefined);
+      }
+      if (coupon) {
+        await this.prisma.coupon
+          .update({ where: { id: coupon.id }, data: { usedCount: { decrement: 1 } } })
+          .catch(() => undefined);
+      }
       throw err;
     }
   }
@@ -188,19 +214,26 @@ export class OrdersService {
         statusHistory: { orderBy: { createdAt: 'asc' } },
         shipments: { include: { tracking: true } },
         payments: { orderBy: { createdAt: 'desc' }, take: 1, select: { provider: true } },
+        user: { select: { email: true } },
       },
     });
     if (!order) {
       throw new NotFoundException('Order not found');
     }
-    const ownerEmail = order.guestEmail;
-    if (ownerEmail && email && ownerEmail.toLowerCase() !== email.toLowerCase()) {
+    // This endpoint is public and unauthenticated, so a matching email is the only proof of
+    // ownership available — it must be REQUIRED whenever the order has any identifiable
+    // owner (guest or registered), not merely checked when supplied. Previously `email` was
+    // optional here, which meant omitting it entirely bypassed the check and returned any
+    // order — including a registered customer's full name/phone/address/items — to anyone
+    // who merely knew (or guessed, or found in a shared link/screenshot) the order number.
+    const ownerEmail = order.guestEmail ?? order.user?.email ?? null;
+    if (ownerEmail && (!email || ownerEmail.toLowerCase() !== email.toLowerCase())) {
       throw new NotFoundException('Order not found');
     }
     // Flatten to a single paymentProvider field (the tracking endpoint's response is
     // consumer-facing — no need to expose the full payments[] history here). paymentStatus
     // is already a direct column on Order and needs no extra work.
-    const { payments, ...rest } = order;
+    const { payments, user, ...rest } = order;
     return { ...rest, paymentProvider: payments[0]?.provider ?? null };
   }
 
@@ -298,7 +331,13 @@ export class OrdersService {
   ) {
     if (addressId) {
       const address = await this.prisma.address.findUnique({ where: { id: addressId } });
-      if (!address || (user && address.userId !== user.id)) {
+      // Must match the current caller's identity exactly, in both directions: a logged-in
+      // user can only reuse their own address (address.userId === user.id), and a guest can
+      // only reuse an address with no owner at all (address.userId === null) — never another
+      // registered customer's saved address. The previous `user &&` guard skipped this check
+      // entirely for guest checkout, letting anyone POST /checkout with any address UUID and
+      // have that person's full name/phone/street address returned in the response.
+      if (!address || address.userId !== (user?.id ?? null)) {
         throw new NotFoundException('Address not found');
       }
       return address;

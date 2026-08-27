@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { nanoid } from 'nanoid';
+import { generateCode } from '../../common/utils/code-generator.util';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { AuthenticatedUser } from '../../common/interfaces/authenticated-user.interface';
@@ -115,7 +115,7 @@ export class RfqService {
   async create(user: AuthenticatedUser, dto: CreateRfqDto) {
     await this.assertProductsExist(dto.items.map((item) => item.productId));
 
-    const rfqNumber = `RFQ-${new Date().getFullYear()}-${nanoid(6).toUpperCase()}`;
+    const rfqNumber = generateCode('RFQ', 6);
     const rfq = await this.prisma.rfq.create({
       data: {
         rfqNumber,
@@ -384,6 +384,15 @@ export class RfqService {
 
     const existingCount = await this.prisma.quotation.count({ where: { rfqId: id } });
     const totalAmount = dto.items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
+
+    // Supersede any still-SENT prior quotation on this RFQ. Without this, acceptQuotation/
+    // rejectQuotation only ever check the target quotation's own status (not whether it's
+    // the RFQ's latest version), so a customer — or a stale browser tab holding an old
+    // quotation id — could still accept an outdated price after a revision was sent.
+    await this.prisma.quotation.updateMany({
+      where: { rfqId: id, status: QuotationStatus.SENT },
+      data: { status: QuotationStatus.EXPIRED },
+    });
 
     const quotation = await this.prisma.quotation.create({
       data: {

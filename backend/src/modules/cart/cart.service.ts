@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { nanoid } from 'nanoid';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { PricingService } from '../b2b/pricing.service';
 import { AuthenticatedUser } from '../../common/interfaces/authenticated-user.interface';
+import { generateCode } from '../../common/utils/code-generator.util';
 import { Prisma, RfqStatus } from '@prisma/client';
 
 // `satisfies` (not a plain `: Prisma.CartInclude` annotation) keeps the literal shape so
@@ -237,7 +237,7 @@ export class CartService {
       throw new BadRequestException('Cannot convert an empty cart to an RFQ');
     }
 
-    const rfqNumber = `RFQ-${new Date().getFullYear()}-${nanoid(6).toUpperCase()}`;
+    const rfqNumber = generateCode('RFQ', 6);
     const rfq = await this.prisma.rfq.create({
       data: {
         rfqNumber,

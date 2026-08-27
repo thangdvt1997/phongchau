@@ -17,6 +17,9 @@ describe('PaymentsService', () => {
         findUnique: jest.fn(),
         update: jest.fn(),
       },
+      order: {
+        update: jest.fn().mockResolvedValue({}),
+      },
     };
 
     codProvider = {
@@ -236,20 +239,28 @@ describe('PaymentsService', () => {
   describe('attachProof', () => {
     it('throws NotFoundException when the payment does not exist', async () => {
       prisma.payment.findUnique.mockResolvedValue(null);
-      await expect(service.attachProof('missing', 'http://x/proof.png')).rejects.toBeInstanceOf(
+      await expect(service.attachProof('missing', 'http://x/proof.png', 'u1')).rejects.toBeInstanceOf(
         NotFoundException,
       );
     });
 
-    it('stores the proof URL on the payment', async () => {
-      prisma.payment.findUnique.mockResolvedValue({ id: 'p1', amount: 100 });
+    it('throws NotFoundException (not leaked) when the payment belongs to a different user', async () => {
+      prisma.payment.findUnique.mockResolvedValue({ id: 'p1', amount: 100, order: { userId: 'someone-else' } });
+      await expect(service.attachProof('p1', 'http://x/proof.png', 'u1')).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
+      expect(prisma.payment.update).not.toHaveBeenCalled();
+    });
+
+    it('stores the proof URL on the payment when the caller owns the order', async () => {
+      prisma.payment.findUnique.mockResolvedValue({ id: 'p1', amount: 100, order: { userId: 'u1' } });
       prisma.payment.update.mockResolvedValue({
         id: 'p1',
         amount: 100,
         proofUrl: 'http://x/proof.png',
       });
 
-      const result = await service.attachProof('p1', 'http://x/proof.png');
+      const result = await service.attachProof('p1', 'http://x/proof.png', 'u1');
       expect(prisma.payment.update).toHaveBeenCalledWith({
         where: { id: 'p1' },
         data: { proofUrl: 'http://x/proof.png' },

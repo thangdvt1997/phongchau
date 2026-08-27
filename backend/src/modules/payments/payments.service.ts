@@ -80,20 +80,23 @@ export class PaymentsService {
       throw new NotFoundException(`No payment found for transactionRef ${result.transactionRef}`);
     }
 
+    const status = result.success ? PaymentStatus.PAID : PaymentStatus.FAILED;
     const updated = await this.prisma.payment.update({
       where: { id: payment.id },
-      data: { status: result.success ? PaymentStatus.PAID : PaymentStatus.FAILED },
+      data: { status },
     });
+    await this.syncOrderPaymentStatus(payment.orderId, status);
 
     return this.serialize(updated);
   }
 
   async markPaid(id: string) {
-    await this.findPaymentOrThrow(id);
+    const existing = await this.findPaymentOrThrow(id);
     const payment = await this.prisma.payment.update({
       where: { id },
       data: { status: PaymentStatus.PAID },
     });
+    await this.syncOrderPaymentStatus(existing.orderId, PaymentStatus.PAID);
     return this.serialize(payment);
   }
 
@@ -108,11 +111,39 @@ export class PaymentsService {
       where: { id },
       data: { status },
     });
+    await this.syncOrderPaymentStatus(existing.orderId, status);
     return this.serialize(payment);
   }
 
-  async attachProof(id: string, proofUrl: string) {
-    await this.findPaymentOrThrow(id);
+  /**
+   * `Order.paymentStatus` is a separate column from `Payment.status` (an order can in theory
+   * have more than one payment attempt), but nothing else in this codebase ever wrote it —
+   * every payment-status transition updated `Payment.status` alone, leaving every order stuck
+   * at its default PENDING forever regardless of real payment outcome, which made the admin
+   * dashboard's paid-revenue aggregate (`AdminService.getDashboardOverview`, filtered on
+   * `Order.paymentStatus = PAID`) permanently report zero. Keep the two in sync here, at the
+   * single choke point every payment-status change already passes through.
+   */
+  private async syncOrderPaymentStatus(orderId: string, status: PaymentStatus): Promise<void> {
+    await this.prisma.order
+      .update({ where: { id: orderId }, data: { paymentStatus: status } })
+      .catch(() => undefined);
+  }
+
+  /**
+   * `userId` is the authenticated caller uploading their own proof of transfer (see the
+   * controller's comment: this route is customer-facing despite its /admin path prefix).
+   * Without this check, any logged-in customer could overwrite proofUrl on an arbitrary
+   * payment ID belonging to a different customer's order.
+   */
+  async attachProof(id: string, proofUrl: string, userId: string) {
+    const existing = await this.prisma.payment.findUnique({
+      where: { id },
+      include: { order: { select: { userId: true } } },
+    });
+    if (!existing || existing.order.userId !== userId) {
+      throw new NotFoundException(`Payment ${id} not found`);
+    }
     const payment = await this.prisma.payment.update({
       where: { id },
       data: { proofUrl },
