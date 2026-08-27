@@ -80,9 +80,44 @@ RBAC — all backed by a schema designed to extend without breaking changes.
 - **Marketplace integrations** (Shopee, Lazada, TikTok Shop, Amazon, eBay).
 - **AI features**: recommendation engine, AI search, AI chatbot/support, AI-generated product/SEO
   copy, demand forecasting, dynamic pricing, fraud detection.
-- **Full i18n**: only `vi`/`en` are wired; the spec calls for `ja`/`ko`/`zh` too. Category/product
-  slugs already support per-locale routing conventions (`/en/products/...`, `/vi/san-pham/...`) —
-  extend the dictionary set, not the routing shape.
+- **Full i18n** ✅ `vi`/`en` done for real (see below); `ja`/`ko`/`zh` from the original spec not
+  started. Adding one is now "extend `frontend/messages/*.json` + `routing.ts`'s `locales` array",
+  not a routing-shape change — the next-intl infra already generalizes to N locales.
+
+## Vietnamese/English localization (next-intl)
+`vi` is the default locale (`/vi/...`), `en` is a fully translated secondary locale
+(`/en/...`) — `localePrefix: 'always'`, middleware-redirected from `/`. Every public page is
+translated (`frontend/messages/{vi,en}.json`); product/blog *data* (names, descriptions, HS
+codes, grade codes) is intentionally left untranslated — only static UI chrome is. `/admin/**`
+stays English-only and unprefixed on purpose: `app/layout.tsx` (providers, `<html>/<body>`) is
+untouched, `app/[locale]/layout.tsx` nests inside it rather than replacing it, and the shared
+`Header`/`Footer` detect locale from the URL path rather than depending on
+`NextIntlClientProvider` context (which only wraps the `[locale]` tree) — see the comment at the
+top of `Header.tsx` before touching either component.
+
+## Admin panel information architecture
+`frontend/components/admin/AdminShell.tsx`'s sidebar is grouped (Overview / Catalog / Sales &
+Operations / CRM / Customer Service / Content-CMS) with its own dark/teal visual identity,
+deliberately distinct from the storefront. All ~24 admin pages share this styling. If adding a
+new admin page, pick the right existing group rather than adding a new top-level nav item unless
+it genuinely doesn't fit any of the six.
+
+## Known lower-priority findings from the full-site review (not yet fixed)
+A security/correctness review found 12 issues; the two critical ones (order-tracking PII leak,
+guest-checkout address IDOR) plus 5 others (dead `Order.paymentStatus`, orphaned-order-on-
+payment-failure, payment-proof IDOR, stale-RFQ-quotation acceptance, blank-address validation,
+inconsistent reference-code alphabet, and stored XSS in blog content) are fixed — see git log
+around Aug 27 2026. Three low/low-medium items remain, deliberately deferred as non-urgent:
+- `product-import.service.ts`'s per-variant loop does sequential `findUnique`/`update` calls
+  instead of a batched query, and one product group's writes aren't wrapped in a `$transaction`
+  (unlike `ProductsService.create`/`update`) — a mid-group failure can leave that product's row a
+  partial mix of new/stale fields. Fine at current import volumes; revisit if imports grow large.
+- `InventoryService.adminList()` and `AdminService`'s country-revenue breakdown fetch unbounded
+  result sets and paginate/aggregate in JS instead of using `take`/`skip` or a `groupBy` — flagged
+  as a P0-era "fine for now" tradeoff that's worth revisiting now that the catalog is 337 products.
+- `ShippingAdminService.updateShipmentStatus()` never syncs `Order.status` — marking a shipment
+  DELIVERED doesn't move its order to DELIVERED, which is a separate manual admin action and can
+  drift (and silently skips the review-request marketing trigger, which keys off `Order.status`).
 
 ## Smaller deliberate simplifications worth knowing about
 - `SeoMetadata` is not a separate polymorphic table — SEO fields are embedded directly on
