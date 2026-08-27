@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { serverFetch } from '@/lib/server-api';
+import { sanitizeBlogContent } from '@/lib/sanitize-html';
 
 export const revalidate = 60;
 
@@ -55,7 +56,10 @@ export default async function BlogDetailPage({
           {new Date(post.publishedAt).toLocaleDateString(locale === 'vi' ? 'vi-VN' : 'en-US')}
         </p>
       )}
-      <div className="prose prose-brand mt-10 max-w-none" dangerouslySetInnerHTML={{ __html: post.content }} />
+      <div
+        className="prose prose-brand mt-10 max-w-none"
+        dangerouslySetInnerHTML={{ __html: sanitizeBlogContent(post.content) }}
+      />
     </article>
   );
 }
