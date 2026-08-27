@@ -108,24 +108,33 @@ export class InventoryService {
     if (query.warehouseId) where.warehouseId = query.warehouseId;
     if (query.productVariantId) where.productVariantId = query.productVariantId;
 
-    const rows = await this.prisma.inventory.findMany({
-      where,
-      orderBy: { updatedAt: 'desc' },
-      include: {
-        warehouse: { select: { id: true, name: true, code: true } },
-        productVariant: {
-          select: {
-            id: true,
-            sku: true,
-            weightLabel: true,
-            packagingLabel: true,
-            product: { select: { id: true, name: true, sku: true, slug: true } },
-          },
+    const include = {
+      warehouse: { select: { id: true, name: true, code: true } },
+      productVariant: {
+        select: {
+          id: true,
+          sku: true,
+          weightLabel: true,
+          packagingLabel: true,
+          product: { select: { id: true, name: true, sku: true, slug: true } },
         },
       },
-    });
+    } as const;
 
-    const mapped = rows.map((row) => {
+    const mapRow = (row: {
+      id: string;
+      productVariantId: string;
+      warehouseId: string;
+      quantityOnHand: number;
+      quantityReserved: number;
+      lowStockThreshold: number;
+      updatedAt: Date;
+      warehouse: { name: string };
+      productVariant: {
+        sku: string;
+        product: { id: string; name: string; sku: string };
+      };
+    }) => {
       const available = row.quantityOnHand - row.quantityReserved;
       return {
         id: row.id,
@@ -143,13 +152,40 @@ export class InventoryService {
         isLowStock: available <= row.lowStockThreshold,
         updatedAt: row.updatedAt,
       };
-    });
+    };
 
-    // NOTE: lowStockOnly compares two columns of the same row, which Prisma's
-    // `where` filter can't express directly (no column-to-column comparisons).
-    // Filtering + paginating in memory is fine at P0 scale; a raw SQL query
-    // would be needed if the inventory table grows large.
-    const filtered = query.lowStockOnly ? mapped.filter((row) => row.isLowStock) : mapped;
+    if (!query.lowStockOnly) {
+      // The common path: Prisma's `where` can express everything needed, so paginate at the
+      // DB level like every other admin list endpoint — this used to fetch the ENTIRE
+      // inventory table (every variant × every warehouse) on every single request regardless
+      // of requested page size.
+      const [rows, total] = await Promise.all([
+        this.prisma.inventory.findMany({
+          where,
+          orderBy: { updatedAt: 'desc' },
+          skip: (page - 1) * pageSize,
+          take: pageSize,
+          include,
+        }),
+        this.prisma.inventory.count({ where }),
+      ]);
+      return { items: rows.map(mapRow), total, page, pageSize };
+    }
+
+    // lowStockOnly compares two columns of the same row (quantityOnHand - quantityReserved
+    // <= lowStockThreshold), which Prisma's `where` can't express without a raw query.
+    // Filtering in memory is still needed here, but the fetch itself is now bounded instead
+    // of truly unbounded — low-stock rows are a small minority of the catalog in practice, so
+    // this cap comfortably covers real usage while guaranteeing the request can't scale with
+    // total inventory row count.
+    const LOW_STOCK_SCAN_CAP = 5000;
+    const rows = await this.prisma.inventory.findMany({
+      where,
+      orderBy: { updatedAt: 'desc' },
+      take: LOW_STOCK_SCAN_CAP,
+      include,
+    });
+    const filtered = rows.map(mapRow).filter((row) => row.isLowStock);
     const total = filtered.length;
     const start = (page - 1) * pageSize;
     const items = filtered.slice(start, start + pageSize);

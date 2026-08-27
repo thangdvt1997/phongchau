@@ -22,12 +22,19 @@ describe('AdminService', () => {
       orderItem: { groupBy: jest.fn().mockResolvedValue([]) },
       productVariant: { findMany: jest.fn().mockResolvedValue([]) },
       auditLog: { findMany: jest.fn().mockResolvedValue([]), count: jest.fn().mockResolvedValue(0) },
-      // Three distinct raw queries hit $queryRaw: the low-stock inventory check, the
-      // "eligible carts" count, and the "abandoned carts" (NOT EXISTS) count — distinguish
-      // them by matching on the SQL text rather than call order, so this stays correct
-      // even if getDashboardOverview's Promise.all is reordered later.
+      // Four distinct raw queries hit $queryRaw: the low-stock inventory check, the
+      // "eligible carts" count, the "abandoned carts" (NOT EXISTS) count, and the
+      // country-breakdown GROUP BY — distinguish them by matching on the SQL text rather
+      // than call order, so this stays correct even if getDashboardOverview's Promise.all
+      // is reordered later.
       $queryRaw: jest.fn().mockImplementation((strings: TemplateStringsArray) => {
         const sql = strings.join('');
+        if (sql.includes('GROUP BY a.country')) {
+          return Promise.resolve([
+            { country: 'Vietnam', count: BigInt(7) },
+            { country: 'United States', count: BigInt(2) },
+          ]);
+        }
         if (sql.includes('inventory')) return Promise.resolve([{ count: BigInt(3) }]);
         if (sql.includes('NOT EXISTS')) return Promise.resolve([{ count: BigInt(4) }]);
         return Promise.resolve([{ count: BigInt(10) }]);
@@ -57,6 +64,17 @@ describe('AdminService', () => {
     const result = await service.getDashboardOverview(30);
     expect(result.cartAbandonmentRate).toBe(0);
     expect(result.checkoutAbandonmentRate).toBe(0);
+  });
+
+  it('computes the country breakdown via a DB-level GROUP BY, not by fetching every order', async () => {
+    const result = await service.getDashboardOverview(30);
+    expect(result.countries).toEqual([
+      { country: 'Vietnam', count: 7 },
+      { country: 'United States', count: 2 },
+    ]);
+    // Regression: this used to call order.findMany() with no `take` to build the histogram
+    // in JS — confirm that path is gone.
+    expect(prisma.order.findMany).not.toHaveBeenCalled();
   });
 
   it('filters customers by role and search term', async () => {

@@ -61,6 +61,10 @@ function createPrismaMock() {
     },
     certification: {
       findUnique: jest.fn(async ({ where }: any) => certifications.get(where.code) ?? null),
+      findMany: jest.fn(async ({ where }: any) => {
+        const codes: string[] = where.code?.in ?? [];
+        return codes.map((code) => certifications.get(code)).filter(Boolean);
+      }),
     },
     product: {
       findUnique: jest.fn(async ({ where }: any) => {
@@ -100,6 +104,10 @@ function createPrismaMock() {
     },
     productVariant: {
       findUnique: jest.fn(async ({ where }: any) => variantsBySku.get(where.sku) ?? null),
+      findMany: jest.fn(async ({ where }: any) => {
+        const skus: string[] = where.sku?.in ?? [];
+        return skus.map((sku) => variantsBySku.get(sku)).filter(Boolean);
+      }),
       create: jest.fn(async ({ data }: any) => {
         const id = nextId('var');
         const variant = { id, ...data };
@@ -126,7 +134,13 @@ function createPrismaMock() {
         productCertifications.push(...data);
       }),
     },
-  };
+  } as any;
+
+  // The update-in-place path wraps its writes in $transaction; this fake just invokes the
+  // callback with the same in-memory `prisma` object standing in for the transaction client
+  // (matching the `$transaction: jest.fn((cb) => cb(prisma))` idiom used elsewhere in this
+  // codebase's tests), since there's no real DB here to actually isolate a transaction against.
+  prisma.$transaction = jest.fn(async (cb: any) => cb(prisma));
 
   return { prisma, categories, origins, certifications, productsBySku, variantsBySku, productCertifications };
 }

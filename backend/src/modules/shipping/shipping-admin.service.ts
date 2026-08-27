@@ -53,7 +53,52 @@ export class ShippingAdminService {
       },
     });
 
+    await this.syncOrderStatus(shipment.orderId, dto.status);
+
     return this.serialize(updated);
+  }
+
+  /**
+   * Keeps Order.status roughly in sync with shipment progress. Previously nothing did this, so
+   * marking a shipment DELIVERED left the order stuck at whatever status it already had —
+   * visible drift between an order and its own shipment tracking, and it silently prevented
+   * MarketingAutomationService's review-request cron (which keys off Order.status) from ever
+   * firing for that order. For the common case of a single shipment, the order simply mirrors
+   * that shipment's status. For a multi-shipment order, only advance to DELIVERED once every
+   * shipment has reached DELIVERED — any other combination is too ambiguous to collapse into
+   * one order-level status, so it's left alone rather than guessed at.
+   */
+  private async syncOrderStatus(orderId: string, shipmentStatus: OrderStatus): Promise<void> {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      select: { status: true, shipments: { select: { status: true } } },
+    });
+    if (!order) return;
+
+    const terminalStatuses: OrderStatus[] = [OrderStatus.CANCELLED, OrderStatus.REFUNDED, OrderStatus.DELIVERED];
+    if (terminalStatuses.includes(order.status)) return; // never resurrect a terminal order
+
+    let nextStatus: OrderStatus | null = null;
+    if (order.shipments.length <= 1) {
+      nextStatus = shipmentStatus;
+    } else if (
+      shipmentStatus === OrderStatus.DELIVERED &&
+      order.shipments.every((s) => s.status === OrderStatus.DELIVERED)
+    ) {
+      nextStatus = OrderStatus.DELIVERED;
+    }
+
+    if (!nextStatus || nextStatus === order.status) return;
+
+    await this.prisma.order
+      .update({
+        where: { id: orderId },
+        data: {
+          status: nextStatus,
+          statusHistory: { create: { status: nextStatus, note: 'Synced from shipment tracking update' } },
+        },
+      })
+      .catch(() => undefined);
   }
 
   async listShipments(query: ListShipmentsQueryDto) {

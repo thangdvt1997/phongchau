@@ -65,16 +65,7 @@ export class AdminService {
       };
     });
 
-    const countriesRaw = await this.prisma.order.findMany({
-      where: { createdAt: { gte: since } },
-      select: { shippingAddress: { select: { country: true } } },
-    });
-    const countryCounts = new Map<string, number>();
-    for (const o of countriesRaw) {
-      const country = o.shippingAddress?.country;
-      if (!country) continue;
-      countryCounts.set(country, (countryCounts.get(country) ?? 0) + 1);
-    }
+    const countries = await this.countryBreakdown(since);
 
     // Spec section 34 (Analytics) — internal funnel metrics. cartAbandonmentRate is the
     // real thing: fraction of non-empty carts touched in the window with no matching Order
@@ -97,7 +88,7 @@ export class AdminService {
       rfqsCount,
       b2bLeadsCount: pendingB2bCount,
       topProducts,
-      countries: Array.from(countryCounts.entries()).map(([country, count]) => ({ country, count })),
+      countries,
       inventory: {
         lowStockCount,
         expiredBatchCount,
@@ -144,6 +135,26 @@ export class AdminService {
       eligible: Number(eligibleRows[0]?.count ?? 0),
       abandoned: Number(abandonedRows[0]?.count ?? 0),
     };
+  }
+
+  /**
+   * Previously this fetched every Order in the window (with its shippingAddress relation)
+   * just to build a country histogram in a JS Map — at P0 scale that's a handful of rows, but
+   * it scales linearly with total order volume forever, with no `take` cap. `Order` has no
+   * direct `country` column (it lives on the related `Address`), so a Prisma `groupBy` can't
+   * express this in one query either — same rationale as countLowStock()/
+   * countCartAbandonment(), this does the aggregation in Postgres via a join + GROUP BY.
+   */
+  private async countryBreakdown(since: Date): Promise<{ country: string; count: number }[]> {
+    const rows = await this.prisma.$queryRaw<{ country: string; count: bigint }[]>`
+      SELECT a.country as country, COUNT(*)::bigint as count
+      FROM orders o
+      JOIN addresses a ON o."shippingAddressId" = a.id
+      WHERE o."createdAt" >= ${since}
+      GROUP BY a.country
+      ORDER BY count DESC
+    `;
+    return rows.map((r) => ({ country: r.country, count: Number(r.count) }));
   }
 
   private async countLowStock(): Promise<number> {

@@ -18,6 +18,7 @@ describe('InventoryService', () => {
         findFirst: jest.fn(),
         create: jest.fn(),
         update: jest.fn(),
+        count: jest.fn().mockResolvedValue(0),
       },
       inventoryTransaction: {
         create: jest.fn(),
@@ -194,6 +195,51 @@ describe('InventoryService', () => {
         where: { id: 'inv1' },
         data: { quantityOnHand: 8 },
       });
+    });
+  });
+
+  describe('adminList', () => {
+    // Regression: this used to fetch the entire inventory table on every request regardless
+    // of page size, then paginate in memory. It must now paginate at the DB level for the
+    // common (non-lowStockOnly) path.
+    it('paginates at the DB level (skip/take + a separate count) when lowStockOnly is not set', async () => {
+      prisma.inventory.findMany.mockResolvedValue([]);
+      prisma.inventory.count.mockResolvedValue(42);
+
+      const result = await service.adminList({ page: 2, pageSize: 10 } as any);
+
+      expect(prisma.inventory.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ skip: 10, take: 10 }),
+      );
+      expect(prisma.inventory.count).toHaveBeenCalled();
+      expect(result.total).toBe(42);
+    });
+
+    it('filters lowStockOnly in memory against a bounded fetch, not the full table', async () => {
+      prisma.inventory.findMany.mockResolvedValue([
+        {
+          id: 'i1', productVariantId: 'v1', warehouseId: 'w1',
+          quantityOnHand: 5, quantityReserved: 0, lowStockThreshold: 10, updatedAt: new Date(),
+          warehouse: { name: 'Main' },
+          productVariant: { sku: 'SKU1', product: { id: 'p1', name: 'Product 1', sku: 'P1' } },
+        },
+        {
+          id: 'i2', productVariantId: 'v2', warehouseId: 'w1',
+          quantityOnHand: 500, quantityReserved: 0, lowStockThreshold: 10, updatedAt: new Date(),
+          warehouse: { name: 'Main' },
+          productVariant: { sku: 'SKU2', product: { id: 'p2', name: 'Product 2', sku: 'P2' } },
+        },
+      ]);
+
+      const result = await service.adminList({ page: 1, pageSize: 20, lowStockOnly: true } as any);
+
+      expect(prisma.inventory.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ take: 5000 }),
+      );
+      expect(prisma.inventory.count).not.toHaveBeenCalled();
+      expect(result.items).toHaveLength(1);
+      expect(result.items[0].productVariantId).toBe('v1');
+      expect(result.total).toBe(1);
     });
   });
 });

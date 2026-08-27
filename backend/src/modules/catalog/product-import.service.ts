@@ -264,6 +264,7 @@ export class ProductImportService {
     }
 
     // Certifications: semicolon-separated codes; unknown codes warn and are skipped.
+    // Resolved via one batched findMany rather than a sequential findUnique per code.
     const certificationIds: string[] = [];
     const certCodesRaw = this.str(d.certCodes);
     if (certCodesRaw) {
@@ -271,9 +272,12 @@ export class ProductImportService {
         .split(';')
         .map((c) => c.trim())
         .filter(Boolean);
+      const foundCerts = codes.length
+        ? await this.prisma.certification.findMany({ where: { code: { in: codes } } })
+        : [];
+      const certByCode = new Map(foundCerts.map((c) => [c.code, c]));
       for (const code of codes) {
-        // eslint-disable-next-line no-await-in-loop
-        const cert = await this.prisma.certification.findUnique({ where: { code } });
+        const cert = certByCode.get(code);
         if (cert) {
           certificationIds.push(cert.id);
         } else {
@@ -319,6 +323,14 @@ export class ProductImportService {
       return null;
     }
 
+    // Batched once for the whole group, rather than one findUnique per variant row below —
+    // an import of N products with M variants each used to cost N*M sequential round trips
+    // just to check which variant SKUs already exist.
+    const existingVariants = await this.prisma.productVariant.findMany({
+      where: { sku: { in: validVariants.map((v) => v.sku) } },
+    });
+    const existingVariantBySku = new Map(existingVariants.map((v) => [v.sku, v]));
+
     const existing = await this.prisma.product.findUnique({ where: { sku } });
 
     if (!existing) {
@@ -360,77 +372,82 @@ export class ProductImportService {
       return { created: true, variantsCreated: validVariants.length, variantsUpdated: 0 };
     }
 
-    // Existing product: update-in-place, then upsert each variant individually by
-    // sku (mirrors ProductsService.update()'s intent, but keyed by sku rather than
-    // id since an import file never carries internal variant ids).
-    await this.prisma.product.update({
-      where: { id: existing.id },
-      data: {
-        name,
-        status,
-        categoryId: category.id,
-        originId,
-        shortDescription,
-        fullDescription,
-        moq,
-        hsCode,
-        isOrganic,
-        isFeatured,
-        basePrice,
-      },
-    });
-
-    if (certCodesRaw) {
-      await this.prisma.productCertification.deleteMany({
-        where: { productId: existing.id, certificationId: { notIn: certificationIds } },
-      });
-      if (certificationIds.length) {
-        await this.prisma.productCertification.createMany({
-          data: certificationIds.map((certificationId) => ({ productId: existing.id, certificationId })),
-          skipDuplicates: true,
-        });
-      }
-    }
-
+    // Existing product: update-in-place, then upsert each variant individually by sku
+    // (mirrors ProductsService.update()'s intent, but keyed by sku rather than id since an
+    // import file never carries internal variant ids). Wrapped in one transaction — mirroring
+    // ProductsService.create()/update()'s own use of nested/transactional writes — so a
+    // mid-group failure (e.g. a variant-sku collision on a different product) can't leave
+    // this product's row half-updated with some variants written and others not.
     let groupVariantsCreated = 0;
     let groupVariantsUpdated = 0;
-    for (const v of validVariants) {
-      // eslint-disable-next-line no-await-in-loop
-      const existingVariant = await this.prisma.productVariant.findUnique({ where: { sku: v.sku } });
-      if (existingVariant) {
-        if (existingVariant.productId !== existing.id) {
-          errors.push({
-            row: v.rowNum,
-            message: `variantSku "${v.sku}" already belongs to a different product; skipped`,
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.product.update({
+        where: { id: existing.id },
+        data: {
+          name,
+          status,
+          categoryId: category.id,
+          originId,
+          shortDescription,
+          fullDescription,
+          moq,
+          hsCode,
+          isOrganic,
+          isFeatured,
+          basePrice,
+        },
+      });
+
+      if (certCodesRaw) {
+        await tx.productCertification.deleteMany({
+          where: { productId: existing.id, certificationId: { notIn: certificationIds } },
+        });
+        if (certificationIds.length) {
+          await tx.productCertification.createMany({
+            data: certificationIds.map((certificationId) => ({ productId: existing.id, certificationId })),
+            skipDuplicates: true,
           });
-          continue;
         }
-        // eslint-disable-next-line no-await-in-loop
-        await this.prisma.productVariant.update({
-          where: { id: existingVariant.id },
-          data: {
-            price: v.price,
-            weightLabel: v.weightLabel,
-            packagingLabel: v.packagingLabel,
-            gradeLabel: v.gradeLabel,
-          },
-        });
-        groupVariantsUpdated += 1;
-      } else {
-        // eslint-disable-next-line no-await-in-loop
-        await this.prisma.productVariant.create({
-          data: {
-            productId: existing.id,
-            sku: v.sku,
-            price: v.price,
-            weightLabel: v.weightLabel,
-            packagingLabel: v.packagingLabel,
-            gradeLabel: v.gradeLabel,
-          },
-        });
-        groupVariantsCreated += 1;
       }
-    }
+
+      for (const v of validVariants) {
+        const existingVariant = existingVariantBySku.get(v.sku);
+        if (existingVariant) {
+          if (existingVariant.productId !== existing.id) {
+            errors.push({
+              row: v.rowNum,
+              message: `variantSku "${v.sku}" already belongs to a different product; skipped`,
+            });
+            continue;
+          }
+          // eslint-disable-next-line no-await-in-loop
+          await tx.productVariant.update({
+            where: { id: existingVariant.id },
+            data: {
+              price: v.price,
+              weightLabel: v.weightLabel,
+              packagingLabel: v.packagingLabel,
+              gradeLabel: v.gradeLabel,
+            },
+          });
+          groupVariantsUpdated += 1;
+        } else {
+          // eslint-disable-next-line no-await-in-loop
+          await tx.productVariant.create({
+            data: {
+              productId: existing.id,
+              sku: v.sku,
+              price: v.price,
+              weightLabel: v.weightLabel,
+              packagingLabel: v.packagingLabel,
+              gradeLabel: v.gradeLabel,
+            },
+          });
+          groupVariantsCreated += 1;
+        }
+      }
+    });
 
     return { created: false, variantsCreated: groupVariantsCreated, variantsUpdated: groupVariantsUpdated };
   }
