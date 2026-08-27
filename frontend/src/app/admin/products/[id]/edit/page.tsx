@@ -24,19 +24,23 @@ export default function EditProductPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-2xl font-bold text-gray-900">Edit Product</h1>
-        <Link href="/admin/products" className="text-sm text-gray-500 hover:underline">
+        <Link href="/admin/products" className="text-sm font-medium text-gray-500 hover:text-gray-700 hover:underline">
           Back to products
         </Link>
       </div>
-      <div className="mt-6">
+      <div>
         {loading ? (
           <p className="text-sm text-gray-500">Loading product...</p>
         ) : error || !product ? (
-          <p className="text-sm text-red-600">{error ?? 'Product not found.'}</p>
+          <div className="rounded-xl2 border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+            {error ?? 'Product not found.'}
+          </div>
         ) : (
-          <ProductForm productId={productId} initialProduct={product} />
+          <div className="rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+            <ProductForm productId={productId} initialProduct={product} />
+          </div>
         )}
       </div>
     </div>

@@ -77,7 +77,7 @@ export default function AdminProductImportPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Import Products</h1>
           <p className="mt-1 text-sm text-gray-500">
@@ -85,18 +85,18 @@ export default function AdminProductImportPage() {
             variant, grouped by product SKU.
           </p>
         </div>
-        <Link href="/admin/products" className="text-sm font-medium text-brand-700 hover:underline">
+        <Link href="/admin/products" className="text-sm font-medium text-teal-700 hover:text-teal-800 hover:underline">
           Back to Products
         </Link>
       </div>
 
-      <div className="mt-6 rounded-md border border-gray-200 bg-white p-6">
+      <div className="rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
         <div className="flex flex-wrap items-center gap-3">
           <button
             type="button"
             onClick={handleDownloadTemplate}
             disabled={downloading}
-            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50"
           >
             {downloading ? 'Preparing template...' : 'Download template'}
           </button>
@@ -114,54 +114,56 @@ export default function AdminProductImportPage() {
             type="button"
             onClick={handleImport}
             disabled={!file || uploading}
-            className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
+            className="inline-flex items-center justify-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
           >
             {uploading ? 'Importing...' : 'Upload & Import'}
           </button>
         </div>
 
-        {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+        {error && (
+          <div className="mt-4 rounded-xl2 border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{error}</div>
+        )}
       </div>
 
       {result && (
         <div className="mt-6 space-y-6">
-          <div className="grid grid-cols-2 gap-4 rounded-md border border-gray-200 bg-white p-6 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 rounded-xl2 border border-gray-200 bg-white p-6 shadow-card sm:grid-cols-4">
             <div>
-              <p className="text-xs font-medium uppercase text-gray-500">Products created</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Products created</p>
               <p className="mt-1 text-2xl font-bold text-gray-900">{result.productsCreated}</p>
             </div>
             <div>
-              <p className="text-xs font-medium uppercase text-gray-500">Products updated</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Products updated</p>
               <p className="mt-1 text-2xl font-bold text-gray-900">{result.productsUpdated}</p>
             </div>
             <div>
-              <p className="text-xs font-medium uppercase text-gray-500">Variants created</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Variants created</p>
               <p className="mt-1 text-2xl font-bold text-gray-900">{result.variantsCreated}</p>
             </div>
             <div>
-              <p className="text-xs font-medium uppercase text-gray-500">Variants updated</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Variants updated</p>
               <p className="mt-1 text-2xl font-bold text-gray-900">{result.variantsUpdated}</p>
             </div>
           </div>
 
           {result.errors.length > 0 && (
             <div>
-              <h2 className="text-sm font-semibold text-red-700">
+              <h2 className="text-sm font-semibold text-rose-700">
                 Errors ({result.errors.length}) — these rows were skipped
               </h2>
-              <div className="mt-2 overflow-x-auto rounded-md border border-red-200">
+              <div className="mt-2 overflow-hidden rounded-xl2 border border-rose-200 shadow-card">
                 <table className="w-full text-sm">
-                  <thead className="bg-red-50">
-                    <tr className="text-left text-red-700">
-                      <th className="px-4 py-2 font-medium">Row</th>
-                      <th className="px-4 py-2 font-medium">Message</th>
+                  <thead className="bg-rose-50">
+                    <tr className="text-left text-xs font-semibold uppercase tracking-wide text-rose-700">
+                      <th className="px-4 py-2.5">Row</th>
+                      <th className="px-4 py-2.5">Message</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-red-100">
+                  <tbody className="divide-y divide-rose-100">
                     {result.errors.map((e, i) => (
                       <tr key={i}>
-                        <td className="px-4 py-2 text-gray-600">{e.row}</td>
-                        <td className="px-4 py-2 text-gray-800">{e.message}</td>
+                        <td className="px-4 py-2.5 text-gray-600">{e.row}</td>
+                        <td className="px-4 py-2.5 text-gray-800">{e.message}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -175,19 +177,19 @@ export default function AdminProductImportPage() {
               <h2 className="text-sm font-semibold text-amber-700">
                 Warnings ({result.warnings.length}) — these rows still imported
               </h2>
-              <div className="mt-2 overflow-x-auto rounded-md border border-amber-200">
+              <div className="mt-2 overflow-hidden rounded-xl2 border border-amber-200 shadow-card">
                 <table className="w-full text-sm">
                   <thead className="bg-amber-50">
-                    <tr className="text-left text-amber-700">
-                      <th className="px-4 py-2 font-medium">Row</th>
-                      <th className="px-4 py-2 font-medium">Message</th>
+                    <tr className="text-left text-xs font-semibold uppercase tracking-wide text-amber-700">
+                      <th className="px-4 py-2.5">Row</th>
+                      <th className="px-4 py-2.5">Message</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-amber-100">
                     {result.warnings.map((w, i) => (
                       <tr key={i}>
-                        <td className="px-4 py-2 text-gray-600">{w.row}</td>
-                        <td className="px-4 py-2 text-gray-800">{w.message}</td>
+                        <td className="px-4 py-2.5 text-gray-600">{w.row}</td>
+                        <td className="px-4 py-2.5 text-gray-800">{w.message}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -197,7 +199,9 @@ export default function AdminProductImportPage() {
           )}
 
           {result.errors.length === 0 && result.warnings.length === 0 && (
-            <p className="text-sm text-green-700">Import completed with no errors or warnings.</p>
+            <div className="rounded-xl2 border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
+              Import completed with no errors or warnings.
+            </div>
           )}
         </div>
       )}

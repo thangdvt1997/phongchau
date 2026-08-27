@@ -63,7 +63,7 @@ interface CycleCount {
 }
 
 function inputCls() {
-  return 'rounded-md border border-gray-300 px-3 py-2 text-sm';
+  return 'rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500';
 }
 
 function extractErrorMessage(err: any, fallback: string): string {
@@ -364,13 +364,13 @@ export default function AdminInventoryPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900">Inventory &amp; Warehouses</h1>
+      <h1 className="mb-6 text-2xl font-bold text-gray-900">Inventory &amp; Warehouses</h1>
 
       <section className="mt-6">
         <h2 className="text-lg font-semibold text-gray-900">Warehouses</h2>
         <form
           onSubmit={handleCreateWarehouse}
-          className="mt-3 flex flex-wrap items-end gap-3 rounded-md border border-gray-200 p-4"
+          className="mt-3 flex flex-wrap items-end gap-3 rounded-xl2 border border-gray-200 bg-white p-4 shadow-card"
         >
           <input
             aria-label="Warehouse name"
@@ -398,39 +398,39 @@ export default function AdminInventoryPage() {
           <button
             type="submit"
             disabled={warehouseSubmitting}
-            className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+            className="inline-flex items-center justify-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
           >
             Add Warehouse
           </button>
         </form>
 
-        {warehouseError && <p className="mt-3 text-sm text-red-600">{warehouseError}</p>}
+        {warehouseError && <p className="mt-3 text-sm text-rose-600">{warehouseError}</p>}
 
         {warehouses.length === 0 ? (
           <p className="mt-4 text-sm text-gray-500">No warehouses yet.</p>
         ) : (
-          <div className="mt-4 overflow-x-auto rounded-md border border-gray-200">
+          <div className="mt-4 overflow-x-auto rounded-xl2 border border-gray-200 bg-white shadow-card">
             <table className="w-full text-sm">
               <thead className="bg-gray-50">
-                <tr className="text-left text-gray-500">
-                  <th className="px-4 py-2 font-medium">Name</th>
-                  <th className="px-4 py-2 font-medium">Code</th>
-                  <th className="px-4 py-2 font-medium">Address</th>
-                  <th className="px-4 py-2 font-medium">Default</th>
-                  <th className="px-4 py-2 font-medium" />
+                <tr className="text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  <th className="px-4 py-2.5">Name</th>
+                  <th className="px-4 py-2.5">Code</th>
+                  <th className="px-4 py-2.5">Address</th>
+                  <th className="px-4 py-2.5">Default</th>
+                  <th className="px-4 py-2.5" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {warehouses.map((w) => (
-                  <tr key={w.id}>
-                    <td className="px-4 py-2 font-medium text-gray-800">{w.name}</td>
-                    <td className="px-4 py-2 text-gray-600">{w.code}</td>
-                    <td className="px-4 py-2 text-gray-600">{w.address ?? '—'}</td>
-                    <td className="px-4 py-2 text-gray-600">{w.isDefault ? 'Yes' : 'No'}</td>
-                    <td className="px-4 py-2 text-right">
+                  <tr key={w.id} className="transition-colors hover:bg-gray-50">
+                    <td className="px-4 py-2.5 font-medium text-gray-800">{w.name}</td>
+                    <td className="px-4 py-2.5 text-gray-600">{w.code}</td>
+                    <td className="px-4 py-2.5 text-gray-600">{w.address ?? '—'}</td>
+                    <td className="px-4 py-2.5 text-gray-600">{w.isDefault ? 'Yes' : 'No'}</td>
+                    <td className="px-4 py-2.5 text-right">
                       <button
                         onClick={() => handleDeleteWarehouse(w.id)}
-                        className="font-medium text-red-600 hover:underline"
+                        className="font-medium text-rose-600 hover:text-rose-700 hover:underline"
                       >
                         Delete
                       </button>
@@ -452,38 +452,38 @@ export default function AdminInventoryPage() {
           </label>
         </div>
 
-        {inventoryError && <p className="mt-3 text-sm text-red-600">{inventoryError}</p>}
+        {inventoryError && <p className="mt-3 text-sm text-rose-600">{inventoryError}</p>}
 
         {inventoryLoading ? (
           <p className="mt-4 text-sm text-gray-500">Loading inventory...</p>
         ) : inventory.length === 0 ? (
           <p className="mt-4 text-sm text-gray-500">No inventory records yet.</p>
         ) : (
-          <div className="mt-4 overflow-x-auto rounded-md border border-gray-200">
+          <div className="mt-4 overflow-x-auto rounded-xl2 border border-gray-200 bg-white shadow-card">
             <table className="w-full text-sm">
               <thead className="bg-gray-50">
-                <tr className="text-left text-gray-500">
-                  <th className="px-4 py-2 font-medium">Product</th>
-                  <th className="px-4 py-2 font-medium">Variant SKU</th>
-                  <th className="px-4 py-2 font-medium">Warehouse</th>
-                  <th className="px-4 py-2 font-medium">On Hand</th>
-                  <th className="px-4 py-2 font-medium">Reserved</th>
-                  <th className="px-4 py-2 font-medium">Available</th>
-                  <th className="px-4 py-2 font-medium">Status</th>
+                <tr className="text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  <th className="px-4 py-2.5">Product</th>
+                  <th className="px-4 py-2.5">Variant SKU</th>
+                  <th className="px-4 py-2.5">Warehouse</th>
+                  <th className="px-4 py-2.5">On Hand</th>
+                  <th className="px-4 py-2.5">Reserved</th>
+                  <th className="px-4 py-2.5">Available</th>
+                  <th className="px-4 py-2.5">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {inventory.map((row) => (
-                  <tr key={row.id} className={row.isLowStock ? 'bg-red-50' : undefined}>
-                    <td className="px-4 py-2 text-gray-800">{row.productName}</td>
-                    <td className="px-4 py-2 text-gray-600">{row.variantSku}</td>
-                    <td className="px-4 py-2 text-gray-600">{row.warehouseName}</td>
-                    <td className="px-4 py-2 text-gray-600">{row.quantityOnHand}</td>
-                    <td className="px-4 py-2 text-gray-600">{row.quantityReserved}</td>
-                    <td className="px-4 py-2 text-gray-600">{row.available}</td>
-                    <td className="px-4 py-2">
+                  <tr key={row.id} className={`transition-colors hover:bg-gray-50 ${row.isLowStock ? 'bg-rose-50' : ''}`}>
+                    <td className="px-4 py-2.5 text-gray-800">{row.productName}</td>
+                    <td className="px-4 py-2.5 text-gray-600">{row.variantSku}</td>
+                    <td className="px-4 py-2.5 text-gray-600">{row.warehouseName}</td>
+                    <td className="px-4 py-2.5 text-gray-600">{row.quantityOnHand}</td>
+                    <td className="px-4 py-2.5 text-gray-600">{row.quantityReserved}</td>
+                    <td className="px-4 py-2.5 text-gray-600">{row.available}</td>
+                    <td className="px-4 py-2.5">
                       {row.isLowStock ? (
-                        <span className="font-medium text-red-600">Low stock</span>
+                        <span className="font-medium text-rose-600">Low stock</span>
                       ) : (
                         <span className="text-gray-500">OK</span>
                       )}
@@ -498,7 +498,7 @@ export default function AdminInventoryPage() {
 
       <section className="mt-10">
         <h2 className="text-lg font-semibold text-gray-900">Adjust Stock</h2>
-        <form onSubmit={handleAdjust} className="mt-3 flex flex-wrap items-end gap-3 rounded-md border border-gray-200 p-4">
+        <form onSubmit={handleAdjust} className="mt-3 flex flex-wrap items-end gap-3 rounded-xl2 border border-gray-200 bg-white p-4 shadow-card">
           <div>
             <label htmlFor="adjust-variant-search" className="text-xs font-medium text-gray-600">Variant SKU or ID</label>
             <input
@@ -575,20 +575,20 @@ export default function AdminInventoryPage() {
           <button
             type="submit"
             disabled={adjustSubmitting}
-            className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+            className="inline-flex items-center justify-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
           >
             {adjustSubmitting ? 'Adjusting...' : 'Adjust Stock'}
           </button>
         </form>
-        {adjustError && <p className="mt-3 text-sm text-red-600">{adjustError}</p>}
-        {adjustSuccess && <p className="mt-3 text-sm text-green-700">{adjustSuccess}</p>}
+        {adjustError && <p className="mt-3 text-sm text-rose-600">{adjustError}</p>}
+        {adjustSuccess && <p className="mt-3 text-sm text-emerald-700">{adjustSuccess}</p>}
       </section>
 
       <section className="mt-10">
         <h2 className="text-lg font-semibold text-gray-900">Stock Transfers</h2>
         <form
           onSubmit={handleCreateTransfer}
-          className="mt-3 flex flex-wrap items-end gap-3 rounded-md border border-gray-200 p-4"
+          className="mt-3 flex flex-wrap items-end gap-3 rounded-xl2 border border-gray-200 bg-white p-4 shadow-card"
         >
           <div>
             <label htmlFor="transfer-variant-search" className="text-xs font-medium text-gray-600">
@@ -669,51 +669,51 @@ export default function AdminInventoryPage() {
           <button
             type="submit"
             disabled={transferSubmitting}
-            className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+            className="inline-flex items-center justify-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
           >
             {transferSubmitting ? 'Creating...' : 'Create Transfer'}
           </button>
         </form>
-        {transferError && <p className="mt-3 text-sm text-red-600">{transferError}</p>}
-        {transferSuccess && <p className="mt-3 text-sm text-green-700">{transferSuccess}</p>}
-        {transferActionError && <p className="mt-3 text-sm text-red-600">{transferActionError}</p>}
-        {transfersError && <p className="mt-3 text-sm text-red-600">{transfersError}</p>}
+        {transferError && <p className="mt-3 text-sm text-rose-600">{transferError}</p>}
+        {transferSuccess && <p className="mt-3 text-sm text-emerald-700">{transferSuccess}</p>}
+        {transferActionError && <p className="mt-3 text-sm text-rose-600">{transferActionError}</p>}
+        {transfersError && <p className="mt-3 text-sm text-rose-600">{transfersError}</p>}
 
         {transfersLoading ? (
           <p className="mt-4 text-sm text-gray-500">Loading transfers...</p>
         ) : transfers.length === 0 ? (
           <p className="mt-4 text-sm text-gray-500">No stock transfers yet.</p>
         ) : (
-          <div className="mt-4 overflow-x-auto rounded-md border border-gray-200">
+          <div className="mt-4 overflow-x-auto rounded-xl2 border border-gray-200 bg-white shadow-card">
             <table className="w-full text-sm">
               <thead className="bg-gray-50">
-                <tr className="text-left text-gray-500">
-                  <th className="px-4 py-2 font-medium">Number</th>
-                  <th className="px-4 py-2 font-medium">Variant SKU</th>
-                  <th className="px-4 py-2 font-medium">From → To</th>
-                  <th className="px-4 py-2 font-medium">Quantity</th>
-                  <th className="px-4 py-2 font-medium">Status</th>
-                  <th className="px-4 py-2 font-medium">Created</th>
-                  <th className="px-4 py-2 font-medium" />
+                <tr className="text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  <th className="px-4 py-2.5">Number</th>
+                  <th className="px-4 py-2.5">Variant SKU</th>
+                  <th className="px-4 py-2.5">From → To</th>
+                  <th className="px-4 py-2.5">Quantity</th>
+                  <th className="px-4 py-2.5">Status</th>
+                  <th className="px-4 py-2.5">Created</th>
+                  <th className="px-4 py-2.5" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {transfers.map((t) => (
-                  <tr key={t.id}>
-                    <td className="px-4 py-2 text-gray-800">{t.transferNumber}</td>
-                    <td className="px-4 py-2 text-gray-600">{t.variantSku}</td>
-                    <td className="px-4 py-2 text-gray-600">
+                  <tr key={t.id} className="transition-colors hover:bg-gray-50">
+                    <td className="px-4 py-2.5 text-gray-800">{t.transferNumber}</td>
+                    <td className="px-4 py-2.5 text-gray-600">{t.variantSku}</td>
+                    <td className="px-4 py-2.5 text-gray-600">
                       {t.fromWarehouseName} → {t.toWarehouseName}
                     </td>
-                    <td className="px-4 py-2 text-gray-600">{t.quantity}</td>
-                    <td className="px-4 py-2 text-gray-600">{t.status}</td>
-                    <td className="px-4 py-2 text-gray-600">{new Date(t.createdAt).toLocaleDateString()}</td>
-                    <td className="px-4 py-2 text-right">
+                    <td className="px-4 py-2.5 text-gray-600">{t.quantity}</td>
+                    <td className="px-4 py-2.5 text-gray-600">{t.status}</td>
+                    <td className="px-4 py-2.5 text-gray-600">{new Date(t.createdAt).toLocaleDateString()}</td>
+                    <td className="px-4 py-2.5 text-right">
                       <div className="flex justify-end gap-3">
                         {t.status === 'PENDING' && (
                           <button
                             onClick={() => handleMarkInTransit(t.id)}
-                            className="font-medium text-brand-700 hover:underline"
+                            className="font-medium text-teal-700 hover:text-teal-800 hover:underline"
                           >
                             Mark In-Transit
                           </button>
@@ -721,7 +721,7 @@ export default function AdminInventoryPage() {
                         {(t.status === 'PENDING' || t.status === 'IN_TRANSIT') && (
                           <button
                             onClick={() => handleCompleteTransfer(t.id)}
-                            className="font-medium text-green-700 hover:underline"
+                            className="font-medium text-emerald-700 hover:text-emerald-800 hover:underline"
                           >
                             Complete
                           </button>
@@ -729,7 +729,7 @@ export default function AdminInventoryPage() {
                         {(t.status === 'PENDING' || t.status === 'IN_TRANSIT') && (
                           <button
                             onClick={() => handleCancelTransfer(t.id)}
-                            className="font-medium text-red-600 hover:underline"
+                            className="font-medium text-rose-600 hover:text-rose-700 hover:underline"
                           >
                             Cancel
                           </button>
@@ -748,7 +748,7 @@ export default function AdminInventoryPage() {
         <h2 className="text-lg font-semibold text-gray-900">Cycle Counts</h2>
         <form
           onSubmit={handleStartCycleCount}
-          className="mt-3 flex flex-wrap items-end gap-3 rounded-md border border-gray-200 p-4"
+          className="mt-3 flex flex-wrap items-end gap-3 rounded-xl2 border border-gray-200 bg-white p-4 shadow-card"
         >
           <div>
             <label htmlFor="cyclecount-warehouse" className="text-xs font-medium text-gray-600">
@@ -785,44 +785,44 @@ export default function AdminInventoryPage() {
           <button
             type="submit"
             disabled={cycleCountSubmitting}
-            className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+            className="inline-flex items-center justify-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
           >
             {cycleCountSubmitting ? 'Starting...' : 'Start Count'}
           </button>
         </form>
-        {cycleCountError && <p className="mt-3 text-sm text-red-600">{cycleCountError}</p>}
-        {cycleCountSuccess && <p className="mt-3 text-sm text-green-700">{cycleCountSuccess}</p>}
-        {cycleCountActionError && <p className="mt-3 text-sm text-red-600">{cycleCountActionError}</p>}
-        {cycleCountsError && <p className="mt-3 text-sm text-red-600">{cycleCountsError}</p>}
+        {cycleCountError && <p className="mt-3 text-sm text-rose-600">{cycleCountError}</p>}
+        {cycleCountSuccess && <p className="mt-3 text-sm text-emerald-700">{cycleCountSuccess}</p>}
+        {cycleCountActionError && <p className="mt-3 text-sm text-rose-600">{cycleCountActionError}</p>}
+        {cycleCountsError && <p className="mt-3 text-sm text-rose-600">{cycleCountsError}</p>}
 
         {cycleCountsLoading ? (
           <p className="mt-4 text-sm text-gray-500">Loading cycle counts...</p>
         ) : cycleCounts.length === 0 ? (
           <p className="mt-4 text-sm text-gray-500">No cycle counts yet.</p>
         ) : (
-          <div className="mt-4 overflow-x-auto rounded-md border border-gray-200">
+          <div className="mt-4 overflow-x-auto rounded-xl2 border border-gray-200 bg-white shadow-card">
             <table className="w-full text-sm">
               <thead className="bg-gray-50">
-                <tr className="text-left text-gray-500">
-                  <th className="px-4 py-2 font-medium">Warehouse</th>
-                  <th className="px-4 py-2 font-medium">Variant SKU</th>
-                  <th className="px-4 py-2 font-medium">Expected</th>
-                  <th className="px-4 py-2 font-medium">Actual</th>
-                  <th className="px-4 py-2 font-medium">Discrepancy</th>
-                  <th className="px-4 py-2 font-medium">Status</th>
-                  <th className="px-4 py-2 font-medium" />
+                <tr className="text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  <th className="px-4 py-2.5">Warehouse</th>
+                  <th className="px-4 py-2.5">Variant SKU</th>
+                  <th className="px-4 py-2.5">Expected</th>
+                  <th className="px-4 py-2.5">Actual</th>
+                  <th className="px-4 py-2.5">Discrepancy</th>
+                  <th className="px-4 py-2.5">Status</th>
+                  <th className="px-4 py-2.5" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {cycleCounts.map((c) => (
-                  <tr key={c.id}>
-                    <td className="px-4 py-2 text-gray-800">{c.warehouseName}</td>
-                    <td className="px-4 py-2 text-gray-600">{c.variantSku}</td>
-                    <td className="px-4 py-2 text-gray-600">{c.expectedQuantity}</td>
-                    <td className="px-4 py-2 text-gray-600">{c.actualQuantity ?? '—'}</td>
-                    <td className="px-4 py-2 text-gray-600">{c.discrepancy ?? '—'}</td>
-                    <td className="px-4 py-2 text-gray-600">{c.status}</td>
-                    <td className="px-4 py-2 text-right">
+                  <tr key={c.id} className="transition-colors hover:bg-gray-50">
+                    <td className="px-4 py-2.5 text-gray-800">{c.warehouseName}</td>
+                    <td className="px-4 py-2.5 text-gray-600">{c.variantSku}</td>
+                    <td className="px-4 py-2.5 text-gray-600">{c.expectedQuantity}</td>
+                    <td className="px-4 py-2.5 text-gray-600">{c.actualQuantity ?? '—'}</td>
+                    <td className="px-4 py-2.5 text-gray-600">{c.discrepancy ?? '—'}</td>
+                    <td className="px-4 py-2.5 text-gray-600">{c.status}</td>
+                    <td className="px-4 py-2.5 text-right">
                       {c.status === 'OPEN' &&
                         (completingCountId === c.id ? (
                           <form
@@ -842,13 +842,13 @@ export default function AdminInventoryPage() {
                               onChange={(e) => setCompletingCountValue(e.target.value)}
                               className={`w-24 ${inputCls()}`}
                             />
-                            <button type="submit" className="font-medium text-green-700 hover:underline">
+                            <button type="submit" className="font-medium text-emerald-700 hover:text-emerald-800 hover:underline">
                               Save
                             </button>
                             <button
                               type="button"
                               onClick={() => setCompletingCountId(null)}
-                              className="font-medium text-gray-500 hover:underline"
+                              className="font-medium text-gray-500 hover:text-gray-700 hover:underline"
                             >
                               Cancel
                             </button>
@@ -856,7 +856,7 @@ export default function AdminInventoryPage() {
                         ) : (
                           <button
                             onClick={() => openCompleteCycleCount(c.id)}
-                            className="font-medium text-brand-700 hover:underline"
+                            className="font-medium text-teal-700 hover:text-teal-800 hover:underline"
                           >
                             Complete
                           </button>

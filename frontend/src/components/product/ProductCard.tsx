@@ -1,13 +1,15 @@
 'use client';
 
-import Link from 'next/link';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { ProductListItem } from '@/lib/types';
 import { formatMoney, convertDisplay } from '@/lib/format';
 import { useCurrency } from '@/context/CurrencyContext';
 
 export function ProductCard({ product }: { product: ProductListItem }) {
   const { selected, getRate } = useCurrency();
+  const t = useTranslations('productCard');
   const image = product.image?.url ?? '/placeholder-product.svg';
 
   // DISPLAY-only conversion — product.currency is always 'VND' today (checkout still
@@ -30,7 +32,7 @@ export function ProductCard({ product }: { product: ProductListItem }) {
         />
         {product.isOrganic && (
           <span className="absolute left-2 top-2 rounded-full bg-brand-600 px-2.5 py-0.5 text-xs font-medium text-white shadow-card">
-            Organic
+            {t('organic')}
           </span>
         )}
       </div>
@@ -39,7 +41,7 @@ export function ProductCard({ product }: { product: ProductListItem }) {
           <span className="text-xs font-medium uppercase tracking-wide text-gray-500">{product.category}</span>
         )}
         <h3 className="line-clamp-2 font-medium text-gray-900">{product.name}</h3>
-        {product.origin && <p className="text-xs text-gray-500">Origin: {product.origin}</p>}
+        {product.origin && <p className="text-xs text-gray-500">{t('originLabel', { origin: product.origin })}</p>}
         <div className="mt-auto pt-2">
           {showConverted ? (
             <>
@@ -47,7 +49,7 @@ export function ProductCard({ product }: { product: ProductListItem }) {
                 {formatMoney(convertDisplay(product.basePrice, rate!), selected)}
               </p>
               <p className="text-xs text-gray-400">
-                {formatMoney(product.basePrice, product.currency)} (checkout price)
+                {formatMoney(product.basePrice, product.currency)} {t('checkoutPrice')}
               </p>
             </>
           ) : (

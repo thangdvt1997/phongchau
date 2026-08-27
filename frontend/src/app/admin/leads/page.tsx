@@ -194,11 +194,13 @@ export default function AdminLeadsPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by name or email..."
-          className="w-72 rounded-md border border-gray-300 px-3 py-1.5 text-sm"
+          className="w-72 rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
         />
       </div>
 
-      {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+      {error && (
+        <div className="mt-4 rounded-xl2 border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{error}</div>
+      )}
 
       {board === null ? (
         <p className="mt-6 text-sm text-gray-500">Loading leads...</p>
@@ -211,8 +213,8 @@ export default function AdminLeadsPage() {
               <section
                 key={status}
                 aria-labelledby={`lead-column-${status}`}
-                className={`w-72 shrink-0 rounded-md border border-gray-200 bg-gray-50 p-3 ${
-                  dragOverStatus === status ? 'ring-2 ring-brand-400 bg-brand-50/40' : ''
+                className={`w-72 shrink-0 rounded-xl2 border border-gray-200 bg-gray-50 p-3 ${
+                  dragOverStatus === status ? 'ring-2 ring-teal-400 bg-teal-50/40' : ''
                 }`}
                 onDragOver={(e) => {
                   e.preventDefault();
@@ -240,7 +242,7 @@ export default function AdminLeadsPage() {
                 }}
               >
                 <div className="flex items-center justify-between">
-                  <h2 id={`lead-column-${status}`} className="text-sm font-semibold text-gray-700">
+                  <h2 id={`lead-column-${status}`} className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                     {STATUS_LABELS[status]}
                   </h2>
                   <span className="rounded-full bg-white px-2 py-0.5 text-xs font-medium text-gray-500 ring-1 ring-gray-200">
@@ -250,7 +252,7 @@ export default function AdminLeadsPage() {
 
                 <ul className="mt-3 max-h-[65vh] space-y-2 overflow-y-auto">
                   {visible.length === 0 ? (
-                    <li className="rounded-md border border-dashed border-gray-300 p-3 text-center text-xs text-gray-400">
+                    <li className="rounded-lg border border-dashed border-gray-300 p-3 text-center text-xs text-gray-400">
                       {normalizedSearch ? 'No matches' : 'No leads'}
                     </li>
                   ) : (
@@ -264,18 +266,18 @@ export default function AdminLeadsPage() {
                           setDraggingId(lead.id);
                         }}
                         onDragEnd={() => setDraggingId(null)}
-                        className={`cursor-grab rounded-md border border-gray-200 bg-white p-3 shadow-sm active:cursor-grabbing ${
+                        className={`cursor-grab rounded-lg border border-gray-200 bg-white p-3 shadow-card transition-shadow hover:shadow-lifted active:cursor-grabbing ${
                           draggingId === lead.id ? 'opacity-50' : ''
                         } ${busyLeadId === lead.id ? 'opacity-60' : ''}`}
                       >
                         <div className="flex items-start justify-between gap-2">
                           <Link
                             href={`/admin/leads/${lead.id}`}
-                            className="text-sm font-medium text-gray-900 hover:text-brand-700 hover:underline"
+                            className="text-sm font-medium text-gray-900 hover:text-teal-700 hover:underline"
                           >
                             {lead.fullName}
                           </Link>
-                          <span className="shrink-0 rounded-full bg-brand-50 px-2 py-0.5 text-[10px] font-medium text-brand-700">
+                          <span className="shrink-0 rounded-full bg-teal-50 px-2 py-0.5 text-[10px] font-medium text-teal-700">
                             {formatEnumLabel(lead.source)}
                           </span>
                         </div>
@@ -292,7 +294,7 @@ export default function AdminLeadsPage() {
                             value={lead.assignee?.id ?? ''}
                             disabled={busyLeadId === lead.id}
                             onChange={(e) => assignLead(lead.id, status, e.target.value)}
-                            className="w-full rounded-md border border-gray-300 px-2 py-1 text-xs disabled:opacity-50"
+                            className="w-full rounded-lg border border-gray-300 px-2 py-1 text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 disabled:opacity-50"
                           >
                             <option value="">Unassigned</option>
                             {staff.map((s) => (
@@ -312,7 +314,7 @@ export default function AdminLeadsPage() {
                             value={status}
                             disabled={busyLeadId === lead.id}
                             onChange={(e) => moveLead(lead.id, status, e.target.value as LeadStatusValue)}
-                            className="w-full rounded-md border border-gray-300 px-2 py-1 text-xs disabled:opacity-50"
+                            className="w-full rounded-lg border border-gray-300 px-2 py-1 text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500 disabled:opacity-50"
                           >
                             {LEAD_STATUSES.map((s) => (
                               <option key={s} value={s}>

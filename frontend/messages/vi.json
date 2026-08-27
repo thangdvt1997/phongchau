@@ -1,0 +1,543 @@
+{
+  "nav": {
+    "products": "Sản phẩm",
+    "wholesale": "Bán sỉ",
+    "requestQuote": "Yêu cầu báo giá",
+    "oem": "OEM / Nhãn hàng riêng",
+    "logistics": "Vận chuyển",
+    "support": "Hỗ trợ",
+    "about": "Giới thiệu",
+    "news": "Tin tức",
+    "contact": "Liên hệ",
+    "cart": "Giỏ hàng",
+    "signIn": "Đăng nhập",
+    "signOut": "Đăng xuất",
+    "register": "Đăng ký",
+    "currencyLabel": "Đơn vị tiền tệ hiển thị",
+    "openMenu": "Mở menu",
+    "closeMenu": "Đóng menu",
+    "switchLanguage": "Chuyển ngôn ngữ",
+    "localeVi": "VI",
+    "localeEn": "EN"
+  },
+  "footer": {
+    "tagline": "Nông sản Việt Nam, bán sỉ, OEM/ODM và dịch vụ logistics xuất khẩu — từ nông trại đến thị trường toàn cầu.",
+    "productsHeading": "Sản phẩm",
+    "cashew": "Hạt điều",
+    "coffee": "Cà phê",
+    "pepper": "Hồ tiêu",
+    "riceGrains": "Gạo & Ngũ cốc",
+    "coconutProducts": "Sản phẩm từ dừa",
+    "businessHeading": "Kinh doanh",
+    "wholesaleB2b": "Bán sỉ / B2B",
+    "requestQuote": "Yêu cầu báo giá",
+    "oemPrivateLabel": "OEM / Nhãn hàng riêng",
+    "logisticsExport": "Vận chuyển & Xuất khẩu",
+    "companyHeading": "Công ty",
+    "aboutUs": "Giới thiệu",
+    "certifications": "Chứng nhận",
+    "newsKnowledge": "Tin tức & Kiến thức",
+    "contact": "Liên hệ",
+    "rights": "Bảo lưu mọi quyền.",
+    "privacyPolicy": "Chính sách bảo mật",
+    "termsOfService": "Điều khoản dịch vụ"
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Nguồn gốc theo vùng, xuất khẩu đúng tiêu chuẩn",
+      "titleLine1": "Cà phê Đắk Lắk, Điều Bình Phước,",
+      "titleLine2": "Tiêu Phú Quốc, Dừa Bến Tre, Gạo An Giang",
+      "body": "Chúng tôi hợp tác trực tiếp với các hợp tác xã nông nghiệp tại năm vùng trồng trọng điểm của Việt Nam, chế biến tại các cơ sở đạt chuẩn HACCP và ISO 22000, và xuất khẩu theo các điều kiện FOB, CIF, EXW, CFR, DDP — mỗi lô hàng đều có mã số lô để truy xuất nguồn gốc.",
+      "shopNow": "Mua ngay",
+      "requestQuote": "Yêu cầu báo giá",
+      "becomeDistributor": "Trở thành nhà phân phối"
+    },
+    "whyChooseUs": {
+      "eyebrow": "Điểm khác biệt",
+      "title": "Vì sao chọn Phong Châu",
+      "items": [
+        { "title": "Truy xuất nguồn gốc theo lô", "desc": "Mỗi sản phẩm đều có mã số lô, cho phép truy xuất ngày thu hoạch, chế biến và đóng gói đến tận hợp tác xã gốc." },
+        { "title": "Bảng giá sỉ theo bậc số lượng", "desc": "Chính sách giá theo bậc số lượng cho mọi sản phẩm, cùng với giá hợp đồng đàm phán riêng cho các tài khoản B2B đã được duyệt." },
+        { "title": "Báo giá xuất khẩu theo yêu cầu (RFQ)", "desc": "Gửi yêu cầu báo giá theo số lượng, quy cách đóng gói hoặc tiêu chuẩn cụ thể — đội ngũ kinh doanh sẽ xem xét và gửi báo giá chính thức." },
+        { "title": "Cơ sở chế biến đạt chứng nhận", "desc": "Chế biến và đóng gói theo tiêu chuẩn HACCP và ISO 22000, cùng các chứng nhận riêng cho từng sản phẩm như GlobalG.A.P, Organic, BRC, Halal, FDA và VietGAP." },
+        { "title": "Điều kiện xuất khẩu linh hoạt", "desc": "Giao hàng theo các Incoterm FOB, CIF, EXW, CFR hoặc DDP, kèm mã HS và số lượng đặt tối thiểu (MOQ) cho từng sản phẩm." },
+        { "title": "Kho hàng đa điểm", "desc": "Hàng tồn kho tại kho TP. Hồ Chí Minh và Đà Nẵng giúp giao hàng khu vực nhanh hơn." }
+      ]
+    },
+    "stats": {
+      "items": [
+        { "value": "5", "label": "Vùng nguyên liệu" },
+        { "value": "8", "label": "Dòng sản phẩm" },
+        { "value": "8", "label": "Chứng nhận hỗ trợ" },
+        { "value": "2", "label": "Kho hàng" },
+        { "value": "5", "label": "Điều kiện Incoterm" },
+        { "value": "100%", "label": "Truy xuất theo lô" }
+      ]
+    },
+    "certifications": {
+      "eyebrow": "Tiêu chuẩn đã kiểm chứng",
+      "title": "Chứng nhận",
+      "body": "Đạt các tiêu chuẩn an toàn thực phẩm và chất lượng quốc tế, được kiểm chứng theo từng lô hàng."
+    },
+    "supplyChain": {
+      "eyebrow": "Từ nông trại đến thị trường toàn cầu",
+      "title": "Chuỗi cung ứng của chúng tôi",
+      "steps": ["Nông trại", "Thu gom", "Chế biến", "Kiểm soát chất lượng", "Đóng gói", "Kho hàng", "Vận chuyển", "Khách hàng"]
+    },
+    "globalExport": {
+      "eyebrow": "Giao hàng toàn cầu",
+      "title": "Sẵn sàng xuất khẩu, toàn cầu",
+      "body": "Mỗi sản phẩm đều có mã HS, số lượng đặt tối thiểu (MOQ) rõ ràng và đầy đủ chứng từ xuất khẩu — sẵn sàng vận chuyển theo Incoterm và phương thức mà doanh nghiệp bạn cần.",
+      "capabilities": ["FOB", "CIF", "EXW", "CFR", "DDP", "Chứng từ theo mã HS", "Cảng Cát Lái, TP. Hồ Chí Minh", "Vận chuyển FCL / LCL"]
+    },
+    "cta": {
+      "title": "Sẵn sàng nhập hàng từ Việt Nam?",
+      "body": "Yêu cầu báo giá sỉ, trở thành nhà phân phối, hoặc yêu cầu mẫu sản phẩm.",
+      "requestPrice": "Yêu cầu giá sỉ",
+      "becomeDistributor": "Trở thành nhà phân phối"
+    },
+    "featuredCategories": {
+      "eyebrow": "Danh mục sản phẩm",
+      "title": "Mua theo danh mục",
+      "body": "Mỗi danh mục đều gắn với một vùng trồng cụ thể và bảng thông số kỹ thuật sẵn sàng xuất khẩu."
+    },
+    "featuredProducts": {
+      "eyebrow": "Bán chạy nhất",
+      "title": "Sản phẩm nổi bật",
+      "viewAll": "Xem tất cả sản phẩm →"
+    }
+  },
+  "about": {
+    "heroEyebrow": "Câu chuyện của chúng tôi",
+    "heroTitle": "Giới thiệu về Phong Châu",
+    "heroBody": "Kết nối các nông trại và hợp tác xã Việt Nam đạt chứng nhận với người mua trên toàn thế giới — từ khách hàng lẻ đến các nhà phân phối và nhập khẩu quốc tế.",
+    "whoWeAreEyebrow": "Chúng tôi là ai",
+    "whoWeAreTitle": "Doanh nghiệp nông nghiệp và xuất khẩu theo chuỗi giá trị khép kín",
+    "whoWeAreBody1": "Phong Châu là doanh nghiệp Việt Nam hoạt động trong lĩnh vực nông nghiệp, chế biến thực phẩm và xuất khẩu, kết nối các nông trại và hợp tác xã đạt chứng nhận với người mua toàn cầu. Danh mục sản phẩm của chúng tôi gồm hạt điều, cà phê, hồ tiêu, gạo và các sản phẩm từ dừa, mỗi loại đều gắn với một vùng trồng và đối tác nguồn gốc cụ thể.",
+    "whoWeAreBody2": "Chúng tôi vận hành trên toàn bộ chuỗi giá trị: thu mua từ các nông trại đối tác, chế biến và kiểm soát chất lượng nội bộ, đóng gói theo tiêu chuẩn xuất khẩu, lưu kho tại TP. Hồ Chí Minh và Đà Nẵng, cùng dịch vụ logistics quốc tế — mỗi sản phẩm đều có mã số lô để truy xuất từ nông trại đến khách hàng.",
+    "warehouseAlt": "Kho hàng chứa đầy pallet sẵn sàng xuất khẩu",
+    "regionsEyebrow": "Đối tác nguồn gốc",
+    "regionsTitle": "Vùng nguyên liệu của chúng tôi",
+    "regionsBody": "Mỗi sản phẩm trong danh mục đều được thu mua từ một vùng và đối tác nguồn gốc cụ thể.",
+    "provinceSuffix": "",
+    "originPartnerLabel": "Đối tác nguồn gốc",
+    "regions": [
+      { "region": "Cao nguyên Đắk Lắk", "province": "Đắk Lắk", "partner": "Hợp tác xã Cà phê Đắk Lắk", "products": "Cà phê robusta rang & arabica chế biến ướt" },
+      { "region": "Bình Phước", "province": "Bình Phước", "partner": "Nông trại Điều Bình Phước", "products": "Hạt điều rang & điều thô (W320, W240)" },
+      { "region": "Phú Quốc", "province": "Kiên Giang", "partner": "Hợp tác xã Hồ tiêu Phú Quốc", "products": "Hồ tiêu đen & hồ tiêu trắng" },
+      { "region": "Đồng bằng Bến Tre", "province": "Bến Tre", "partner": "Nông trại Dừa Bến Tre", "products": "Dừa nạo sấy" },
+      { "region": "An Giang", "province": "An Giang", "partner": "Hợp tác xã Lúa gạo An Giang", "products": "Gạo thơm Jasmine" }
+    ],
+    "processEyebrow": "Quy trình của chúng tôi",
+    "processTitle": "Cách chúng tôi làm việc",
+    "cards": [
+      { "title": "Thu mua", "desc": "Hợp tác trực tiếp với các hợp tác xã nông nghiệp tại năm vùng — Đắk Lắk, Bình Phước, Phú Quốc, Bến Tre và An Giang.", "alt": "Nông dân làm việc trên cánh đồng lúa Việt Nam" },
+      { "title": "Chế biến", "desc": "Chế biến và đóng gói theo tiêu chuẩn HACCP và ISO 22000, cùng các chứng nhận riêng cho từng sản phẩm như GlobalG.A.P, Organic, BRC, Halal, FDA và VietGAP.", "alt": "Sàn nhà máy chế biến thực phẩm" },
+      { "title": "Xuất khẩu", "desc": "Chứng từ xuất khẩu, mã HS và giao hàng theo các điều kiện FOB, CIF, EXW, CFR, DDP, xuất phát từ Cảng Cát Lái, TP. Hồ Chí Minh.", "alt": "Container hàng hóa xếp tại cảng" }
+    ]
+  },
+  "products": {
+    "catalogEyebrow": "Danh mục",
+    "title": "Sản phẩm",
+    "categoryEyebrow": "Danh mục",
+    "noProducts": "Không có sản phẩm nào phù hợp với bộ lọc này."
+  },
+  "productFilters": {
+    "searchLabel": "Tìm kiếm",
+    "searchPlaceholder": "Tên sản phẩm, mã SKU...",
+    "categoryLabel": "Danh mục",
+    "allCategories": "Tất cả danh mục",
+    "organicOnly": "Chỉ sản phẩm hữu cơ",
+    "inStockOnly": "Chỉ sản phẩm còn hàng",
+    "sortLabel": "Sắp xếp theo",
+    "sortNewest": "Mới nhất",
+    "sortPriceAsc": "Giá: Thấp đến cao",
+    "sortPriceDesc": "Giá: Cao đến thấp",
+    "sortPopular": "Bán chạy nhất"
+  },
+  "productCard": {
+    "organic": "Hữu cơ",
+    "originLabel": "Xuất xứ: {origin}",
+    "checkoutPrice": "(giá thanh toán)"
+  },
+  "productDetail": {
+    "productsBreadcrumb": "Sản phẩm",
+    "organic": "Hữu cơ",
+    "skuLabel": "Mã SKU: {sku}",
+    "descriptionHeading": "Mô tả",
+    "specificationsHeading": "Thông số kỹ thuật",
+    "documentsHeading": "Tài liệu",
+    "relatedHeading": "Sản phẩm liên quan",
+    "specs": {
+      "scientificName": "Tên khoa học",
+      "variety": "Giống",
+      "harvestSeason": "Mùa thu hoạch",
+      "grade": "Phân hạng",
+      "moisture": "Độ ẩm",
+      "shelfLife": "Hạn sử dụng",
+      "storageTemperature": "Nhiệt độ bảo quản",
+      "hsCode": "Mã HS",
+      "countryOfOrigin": "Xuất xứ",
+      "moq": "Số lượng đặt tối thiểu (MOQ)",
+      "supplyAbility": "Khả năng cung ứng",
+      "leadTime": "Thời gian giao hàng",
+      "portOfLoading": "Cảng xếp hàng",
+      "incoterms": "Điều kiện Incoterm",
+      "netWeight": "Trọng lượng tịnh",
+      "grossWeight": "Trọng lượng cả bì"
+    }
+  },
+  "addToCart": {
+    "checkoutPrice": "(giá thanh toán)",
+    "variantLabel": "Phân loại",
+    "inStock": "Còn {count} sản phẩm",
+    "outOfStock": "Hết hàng",
+    "quantitySr": "Số lượng",
+    "adding": "Đang thêm...",
+    "added": "Đã thêm vào giỏ",
+    "addToCart": "Thêm vào giỏ hàng",
+    "viewCart": "Xem giỏ hàng",
+    "requestQuote": "Yêu cầu báo giá",
+    "contactSales": "Liên hệ kinh doanh"
+  },
+  "cart": {
+    "title": "Giỏ hàng",
+    "loading": "Đang tải giỏ hàng...",
+    "emptyTitle": "Giỏ hàng của bạn đang trống",
+    "continueShopping": "Tiếp tục mua sắm →",
+    "skuLine": "SKU {sku}",
+    "yourContractPrice": "Giá hợp đồng của bạn",
+    "wholesaleTierPrice": "Giá sỉ theo bậc",
+    "quantitySr": "Số lượng cho {name}",
+    "remove": "Xóa",
+    "subtotal": "Tạm tính",
+    "estimateNote": "≈ {amount} (ước tính — bạn thanh toán bằng VND)",
+    "shippingNote": "Phí vận chuyển và thuế được tính khi thanh toán.",
+    "proceedToCheckout": "Tiến hành thanh toán"
+  },
+  "checkout": {
+    "title": "Thanh toán",
+    "emptyCart": "Giỏ hàng của bạn đang trống.",
+    "emailLabel": "Email",
+    "shippingAddressLegend": "Địa chỉ giao hàng",
+    "fullNameLabel": "Họ và tên",
+    "phoneLabel": "Số điện thoại",
+    "addressLabel": "Địa chỉ",
+    "cityLabel": "Thành phố",
+    "postalCodeLabel": "Mã bưu điện",
+    "countryLabel": "Quốc gia",
+    "paymentLegend": "Thanh toán",
+    "paymentMethodSr": "Phương thức thanh toán",
+    "cod": "Thanh toán khi nhận hàng (COD)",
+    "bankTransfer": "Chuyển khoản ngân hàng",
+    "vietqr": "VietQR (quét mã QR chuyển khoản)",
+    "couponLabel": "Mã giảm giá",
+    "couponPlaceholder": "vd: WELCOME10",
+    "subtotal": "Tạm tính",
+    "placingOrder": "Đang đặt hàng...",
+    "placeOrder": "Đặt hàng",
+    "genericError": "Thanh toán thất bại. Vui lòng thử lại."
+  },
+  "contact": {
+    "sideQuote": "Chúng tôi thường phản hồi trong vòng một ngày làm việc",
+    "sideNote": "Hoan nghênh các câu hỏi về kinh doanh, bán sỉ và chứng từ xuất khẩu.",
+    "successTitle": "Đã gửi tin nhắn",
+    "successBody": "Cảm ơn bạn đã liên hệ — đội ngũ của chúng tôi sẽ phản hồi sớm nhất.",
+    "eyebrow": "Liên hệ với chúng tôi",
+    "title": "Liên hệ",
+    "fullNameLabel": "Họ và tên",
+    "emailLabel": "Email",
+    "phoneLabel": "Số điện thoại",
+    "companyLabel": "Công ty (không bắt buộc)",
+    "messageLabel": "Nội dung",
+    "sendMessage": "Gửi tin nhắn",
+    "genericError": "Đã xảy ra lỗi. Vui lòng thử lại."
+  },
+  "login": {
+    "title": "Đăng nhập",
+    "emailLabel": "Email",
+    "passwordLabel": "Mật khẩu",
+    "signingIn": "Đang đăng nhập...",
+    "signIn": "Đăng nhập",
+    "noAccount": "Chưa có tài khoản?",
+    "registerLink": "Đăng ký",
+    "orText": "hoặc",
+    "applyB2bLink": "đăng ký làm khách hàng bán sỉ/B2B",
+    "invalidCredentials": "Email hoặc mật khẩu không đúng."
+  },
+  "register": {
+    "title": "Tạo tài khoản",
+    "fullNameLabel": "Họ và tên",
+    "emailLabel": "Email",
+    "phoneLabel": "Số điện thoại",
+    "passwordLabel": "Mật khẩu",
+    "passwordPlaceholder": "Mật khẩu (tối thiểu 8 ký tự)",
+    "creatingAccount": "Đang tạo tài khoản...",
+    "register": "Đăng ký",
+    "alreadyHaveAccount": "Đã có tài khoản?",
+    "signInLink": "Đăng nhập",
+    "genericError": "Đăng ký thất bại."
+  },
+  "registerB2b": {
+    "title": "Trở thành đối tác Bán sỉ / B2B",
+    "intro": "Nhà phân phối, đại lý bán sỉ, siêu thị, nhà hàng, nhà máy và nhà nhập khẩu có thể đăng ký để nhận giá sỉ, điều kiện MOQ và giá hợp đồng. Tài khoản của bạn sẽ được đội ngũ kinh doanh xem xét trước khi giá sỉ được kích hoạt.",
+    "companyNameLabel": "Tên công ty",
+    "taxIdLabel": "Mã số thuế",
+    "countryLabel": "Quốc gia",
+    "businessTypeLabel": "Loại hình kinh doanh",
+    "businessTypes": {
+      "DISTRIBUTOR": "Nhà phân phối",
+      "WHOLESALER": "Đại lý bán sỉ",
+      "IMPORTER": "Nhà nhập khẩu",
+      "RETAILER": "Nhà bán lẻ",
+      "RETAIL_CHAIN": "Chuỗi bán lẻ",
+      "RESTAURANT": "Nhà hàng",
+      "FACTORY": "Nhà máy",
+      "SUPERMARKET": "Siêu thị",
+      "OTHER": "Khác"
+    },
+    "expectedVolumeLabel": "Sản lượng mua dự kiến",
+    "interestedProductsLabel": "Sản phẩm quan tâm",
+    "websiteLabel": "Website (không bắt buộc)",
+    "contactPersonLabel": "Người liên hệ",
+    "phoneLabel": "Số điện thoại",
+    "emailLabel": "Email",
+    "passwordLabel": "Mật khẩu",
+    "passwordPlaceholder": "Mật khẩu (tối thiểu 8 ký tự)",
+    "submitting": "Đang gửi...",
+    "submitApplication": "Gửi đăng ký",
+    "applicationSubmittedTitle": "Đã gửi đăng ký",
+    "genericError": "Đăng ký thất bại."
+  },
+  "rfq": {
+    "signInTitle": "Đăng nhập để yêu cầu báo giá",
+    "signInBody": "Yêu cầu báo giá (RFQ) được theo dõi theo tài khoản của bạn.",
+    "signInBtn": "Đăng nhập",
+    "successTitle": "Đã gửi yêu cầu báo giá",
+    "successBody": "Yêu cầu {number} của bạn đã được gửi đến đội ngũ kinh doanh. Chúng tôi sẽ phản hồi báo giá trong thời gian sớm nhất.",
+    "viewMyRfqs": "Xem yêu cầu báo giá của tôi",
+    "title": "Yêu cầu báo giá (RFQ)",
+    "intro": "Cho chúng tôi biết bạn cần gì — sản phẩm, số lượng, điểm đến và Incoterm — đội ngũ kinh doanh sẽ gửi báo giá chính thức.",
+    "productLabel": "Sản phẩm",
+    "quantityLabel": "Số lượng",
+    "unitLabel": "Đơn vị",
+    "unitPlaceholder": "Đơn vị (kg, tấn, container...)",
+    "packagingLabel": "Quy cách đóng gói",
+    "packagingPlaceholder": "Quy cách đóng gói (vd: Túi hút chân không 25kg)",
+    "specificationLabel": "Tiêu chuẩn / yêu cầu phân hạng",
+    "destinationCountryLabel": "Quốc gia điểm đến",
+    "destinationPortLabel": "Cảng đến",
+    "incotermLabel": "Điều kiện Incoterm",
+    "paymentTermLabel": "Điều khoản thanh toán",
+    "paymentTermPlaceholder": "Điều khoản thanh toán (vd: T/T 30/70)",
+    "specialRequirementLabel": "Yêu cầu đặc biệt",
+    "submitting": "Đang gửi...",
+    "submitRfq": "Gửi yêu cầu báo giá",
+    "genericError": "Gửi yêu cầu báo giá thất bại."
+  },
+  "oem": {
+    "signInTitle": "Đăng nhập để yêu cầu sản xuất OEM/ODM",
+    "signInBody": "Yêu cầu OEM/ODM được theo dõi theo tài khoản của bạn.",
+    "signInBtn": "Đăng nhập",
+    "successTitle": "Đã gửi yêu cầu",
+    "successBody": "Yêu cầu OEM/ODM {number} của bạn đã được gửi đến đội ngũ kinh doanh. Chúng tôi sẽ xem xét và phản hồi bạn sớm.",
+    "viewMyRequests": "Xem yêu cầu OEM/ODM của tôi",
+    "title": "Yêu cầu OEM / Nhãn hàng riêng",
+    "intro": "Cho chúng tôi biết về sản phẩm bạn muốn sản xuất dưới thương hiệu riêng — công thức, đóng gói, thị trường mục tiêu và số lượng — đội ngũ của chúng tôi sẽ hướng dẫn bạn qua các bước xem xét, làm mẫu và báo giá.",
+    "productTypeLabel": "Loại sản phẩm",
+    "productTypePlaceholder": "vd: Hạt điều rang, Cà phê hòa tan 3 trong 1...",
+    "ingredientsLabel": "Thành phần",
+    "recipeLabel": "Công thức / ghi chú chế biến",
+    "targetMarketLabel": "Thị trường mục tiêu",
+    "targetMarketPlaceholder": "vd: EU, Mỹ, Trung Đông...",
+    "destinationCountryLabel": "Quốc gia điểm đến",
+    "packageTypeLabel": "Loại bao bì",
+    "packageTypePlaceholder": "vd: Túi, hũ, thùng carton...",
+    "packageSizeLabel": "Quy cách đóng gói",
+    "packageSizePlaceholder": "vd: 250g, 500g...",
+    "brandNameLabel": "Tên thương hiệu",
+    "brandNamePlaceholder": "Tên thương hiệu của bạn",
+    "isPrivateLabelLabel": "Đây là sản phẩm nhãn hàng riêng (đóng gói dưới thương hiệu của tôi)",
+    "estimatedQuantityLabel": "Số lượng dự kiến",
+    "estimatedQuantityPlaceholder": "vd: 5.000 đơn vị / tháng",
+    "targetPriceLabel": "Giá mục tiêu",
+    "targetPricePlaceholder": "vd: 2,50 USD / đơn vị",
+    "certificationRequirementLabel": "Yêu cầu chứng nhận",
+    "certificationRequirementPlaceholder": "vd: FDA, HACCP, Organic, Halal...",
+    "attachmentUrlLabel": "Đường dẫn tệp đính kèm",
+    "attachmentUrlPlaceholder": "Liên kết đến bảng thông số, thiết kế hoặc mẫu nhãn",
+    "submitting": "Đang gửi...",
+    "submitRequest": "Gửi yêu cầu",
+    "genericError": "Gửi yêu cầu OEM/ODM thất bại."
+  },
+  "logistics": {
+    "heroEyebrow": "Vận chuyển & Xuất khẩu",
+    "heroTitle": "Vận chuyển & Xuất khẩu",
+    "heroBody": "Giao hàng nội địa trên toàn Việt Nam và xuất khẩu quốc tế bằng FCL/LCL đến ASEAN, châu Á, châu Âu và Bắc Mỹ. Nhận báo giá vận chuyển ngay bên dưới, hoặc gửi yêu cầu báo giá (RFQ) để nhận báo giá cước vận chuyển chính thức cho các lô hàng xuất khẩu lớn.",
+    "destinationLabel": "Quốc gia điểm đến",
+    "weightLabel": "Trọng lượng (kg)",
+    "subtotalLabel": "Tạm tính đơn hàng",
+    "getEstimate": "Nhận báo giá vận chuyển",
+    "zoneLabel": "Khu vực",
+    "methodLabel": "Phương thức"
+  },
+  "wholesale": {
+    "heroEyebrow": "Nhà phân phối & Khách hàng bán sỉ",
+    "heroTitle": "Bán sỉ & B2B",
+    "heroBody": "Chúng tôi phục vụ các nhà phân phối, đại lý bán sỉ, siêu thị, nhà hàng, nhà máy và nhà nhập khẩu quốc tế với chính sách giá theo bậc số lượng, giá hợp đồng đàm phán riêng, quy trình báo giá theo yêu cầu (RFQ), đơn đặt hàng, hóa đơn và điều khoản thanh toán linh hoạt (Net 7/15/30, L/C, T/T, 30/70).",
+    "pricingEyebrow": "Bảng giá minh họa",
+    "pricingTitle": "Ví dụ giá theo bậc số lượng",
+    "tiers": [
+      { "range": "1–99 kg", "price": "5,00 USD / kg" },
+      { "range": "100–499 kg", "price": "4,50 USD / kg" },
+      { "range": "500–999 kg", "price": "4,00 USD / kg" },
+      { "range": "Từ 1.000 kg trở lên", "price": "Liên hệ kinh doanh" }
+    ],
+    "pricingNote": "Chỉ mang tính minh họa — giá thực tế được báo theo từng sản phẩm và tài khoản.",
+    "onboardingEyebrow": "Quy trình đăng ký",
+    "onboardingTitle": "Cách thức hoạt động",
+    "steps": [
+      "Đăng ký tài khoản doanh nghiệp với thông tin công ty và mã số thuế.",
+      "Đội ngũ kinh doanh của chúng tôi xem xét và phê duyệt đăng ký của bạn.",
+      "Xem giá sỉ theo bậc số lượng, cùng giá hợp đồng đàm phán riêng (nếu có), trên tài khoản của bạn.",
+      "Gửi yêu cầu báo giá (RFQ) cho số lượng, quy cách đóng gói hoặc yêu cầu xuất khẩu riêng — đội ngũ kinh doanh sẽ xem xét và gửi báo giá chính thức."
+    ],
+    "applyBtn": "Đăng ký tài khoản B2B",
+    "requestQuoteBtn": "Yêu cầu báo giá"
+  },
+  "certifications": {
+    "heroEyebrow": "Uy tín & Tuân thủ",
+    "heroTitle": "Chứng nhận",
+    "heroBody": "Sản phẩm và cơ sở của chúng tôi đạt các tiêu chuẩn an toàn thực phẩm và chất lượng quốc tế, được kiểm chứng theo từng lô hàng và sẵn sàng phục vụ việc thẩm định của người mua."
+  },
+  "blog": {
+    "eyebrow": "Góc nhìn",
+    "title": "Tin tức & Kiến thức",
+    "noArticles": "Chưa có bài viết nào."
+  },
+  "blogPost": {
+    "backLink": "← Tin tức & Kiến thức"
+  },
+  "account": {
+    "title": "Tài khoản của tôi",
+    "signOut": "Đăng xuất",
+    "b2bBadge": "Tài khoản B2B / Bán sỉ",
+    "ordersHeading": "Lịch sử đơn hàng",
+    "loadingOrders": "Đang tải đơn hàng...",
+    "noOrders": "Chưa có đơn hàng nào.",
+    "rfqsHeading": "Yêu cầu báo giá của tôi",
+    "newRfq": "Yêu cầu báo giá mới",
+    "loadingRfqs": "Đang tải yêu cầu báo giá...",
+    "noRfqs": "Chưa có yêu cầu báo giá nào.",
+    "oemHeading": "Yêu cầu OEM/ODM của tôi",
+    "newOemRequest": "Yêu cầu OEM/ODM mới",
+    "loadingOem": "Đang tải yêu cầu OEM/ODM...",
+    "noOem": "Chưa có yêu cầu OEM/ODM nào."
+  },
+  "accountSupportList": {
+    "title": "Phiếu hỗ trợ",
+    "newTicket": "Tạo phiếu mới",
+    "loading": "Đang tải phiếu hỗ trợ...",
+    "empty": "Bạn chưa mở phiếu hỗ trợ nào.",
+    "emptyLink": "Mở phiếu ngay",
+    "loadError": "Không thể tải phiếu hỗ trợ của bạn."
+  },
+  "accountSupportNew": {
+    "signInTitle": "Đăng nhập để mở phiếu hỗ trợ",
+    "signInBody": "Phiếu hỗ trợ của bạn được theo dõi theo tài khoản.",
+    "signInBtn": "Đăng nhập",
+    "successTitle": "Đã gửi phiếu hỗ trợ",
+    "successBody": "Phiếu hỗ trợ {number} của bạn đã được mở. Đội ngũ hỗ trợ sẽ phản hồi trong thời gian sớm nhất.",
+    "viewMyTickets": "Xem phiếu hỗ trợ của tôi",
+    "title": "Mở phiếu hỗ trợ",
+    "intro": "Cho chúng tôi biết vấn đề bạn gặp phải và đội ngũ hỗ trợ sẽ phản hồi bạn.",
+    "subjectLabel": "Tiêu đề",
+    "subjectPlaceholder": "Tóm tắt ngắn gọn vấn đề của bạn",
+    "categoryLabel": "Danh mục",
+    "relatedOrderLabel": "Đơn hàng liên quan (không bắt buộc)",
+    "noneOption": "Không có",
+    "messageLabel": "Nội dung",
+    "messagePlaceholder": "Mô tả chi tiết vấn đề của bạn",
+    "submitting": "Đang gửi...",
+    "submit": "Gửi phiếu hỗ trợ",
+    "genericError": "Gửi phiếu hỗ trợ thất bại."
+  },
+  "accountSupportDetail": {
+    "backLink": "Quay lại danh sách phiếu hỗ trợ",
+    "attachment": "Tệp đính kèm",
+    "replySr": "Trả lời",
+    "replyPlaceholder": "Viết phản hồi...",
+    "send": "Gửi",
+    "loading": "Đang tải phiếu hỗ trợ...",
+    "supportSuffix": "(Hỗ trợ)",
+    "you": "Bạn",
+    "orderPrefix": "Đơn hàng"
+  },
+  "ticketCategory": {
+    "ORDER": "Đơn hàng",
+    "PRODUCT": "Sản phẩm",
+    "PAYMENT": "Thanh toán",
+    "SHIPPING": "Vận chuyển",
+    "RFQ": "Yêu cầu báo giá",
+    "OEM": "OEM",
+    "ACCOUNT": "Tài khoản",
+    "OTHER": "Khác"
+  },
+  "ticketStatus": {
+    "OPEN": "Đang mở",
+    "IN_PROGRESS": "Đang xử lý",
+    "WAITING_ON_CUSTOMER": "Chờ phản hồi khách hàng",
+    "RESOLVED": "Đã giải quyết",
+    "CLOSED": "Đã đóng"
+  },
+  "orderConfirmation": {
+    "thankYou": "Cảm ơn bạn đã đặt hàng!",
+    "orderPlaced": "Đơn hàng {orderNumber} đã được đặt thành công.",
+    "vietqrInstructions": "Quét mã QR bằng ứng dụng ngân hàng bất kỳ để thanh toán, hoặc chuyển khoản thủ công theo thông tin bên dưới.",
+    "bankLabel": "Ngân hàng",
+    "accountNumberLabel": "Số tài khoản",
+    "accountNameLabel": "Tên chủ tài khoản",
+    "amountLabel": "Số tiền",
+    "transferNoteLabel": "Nội dung chuyển khoản",
+    "statusLabel": "Trạng thái",
+    "totalLabel": "Tổng cộng",
+    "continueShopping": "Tiếp tục mua sắm",
+    "trackOrder": "Theo dõi đơn hàng"
+  },
+  "track": {
+    "title": "Theo dõi đơn hàng",
+    "orderNumberLabel": "Mã đơn hàng",
+    "orderNumberPlaceholder": "Mã đơn hàng (vd: ORD-2026-XXXXXXXX)",
+    "emailLabel": "Email (đơn hàng khách vãng lai)",
+    "trackBtn": "Theo dõi",
+    "notFoundError": "Không tìm thấy đơn hàng. Vui lòng kiểm tra lại mã đơn hàng và email.",
+    "orderSummary": "Đơn hàng {orderNumber} — {amount}"
+  },
+  "privacy": {
+    "title": "Chính sách bảo mật",
+    "lastUpdated": "Cập nhật lần cuối: 2026",
+    "sections": [
+      { "heading": "Thông tin chúng tôi thu thập", "body": "Khi bạn tạo tài khoản, yêu cầu báo giá, đăng ký làm đối tác B2B hoặc đặt hàng, chúng tôi thu thập thông tin bạn cung cấp trực tiếp: họ tên, email, số điện thoại, thông tin công ty, địa chỉ giao hàng/thanh toán và lịch sử đơn hàng. Chúng tôi không lưu trữ dữ liệu thẻ thanh toán gốc — việc thanh toán được xử lý qua phương thức bạn chọn khi đặt hàng." },
+      { "heading": "Cách chúng tôi sử dụng thông tin", "body": "Chúng tôi sử dụng thông tin của bạn để xử lý đơn hàng và yêu cầu báo giá, quản lý tài khoản, tính giá sỉ/giá hợp đồng, thông báo tình trạng đơn hàng và giao hàng, cũng như phản hồi các yêu cầu hỗ trợ. Chúng tôi không bán dữ liệu cá nhân của bạn cho bên thứ ba." },
+      { "heading": "Cookie & bộ nhớ cục bộ", "body": "Chúng tôi sử dụng bộ nhớ trình duyệt để duy trì trạng thái đăng nhập và ghi nhớ giỏ hàng của bạn (kể cả khi mua hàng không cần đăng nhập, thông qua mã định danh phiên giỏ hàng). Đây là yếu tố cần thiết để trang web hoạt động và không được dùng cho mục đích theo dõi quảng cáo của bên thứ ba." }
+    ],
+    "rightsHeading": "Quyền của bạn",
+    "rightsBodyPrefix": "Bạn có thể yêu cầu truy cập, chỉnh sửa hoặc xóa dữ liệu cá nhân của mình bất kỳ lúc nào bằng cách liên hệ với chúng tôi qua",
+    "rightsLinkText": "trang Liên hệ",
+    "rightsBodySuffix": "."
+  },
+  "terms": {
+    "title": "Điều khoản dịch vụ",
+    "lastUpdated": "Cập nhật lần cuối: 2026",
+    "sections": [
+      { "heading": "Đơn hàng & giá cả", "body": "Giá bán lẻ hiển thị được tính theo đơn vị/quy cách đóng gói niêm yết. Giá bán sỉ (B2B) được tính theo bậc số lượng hoặc theo hợp đồng riêng cho các tài khoản đã được duyệt, và có thể khác với giá bán lẻ niêm yết. Giá có thể thay đổi mà không cần báo trước cho đến khi đơn hàng được xác nhận." },
+      { "heading": "Yêu cầu báo giá & báo giá", "body": "Báo giá được phát hành để phản hồi Yêu cầu báo giá (RFQ) có hiệu lực đến ngày ghi trên báo giá. Việc chấp nhận báo giá không tự động tạo thành hợp đồng ràng buộc cho đến khi đơn đặt hàng và, nếu có, điều khoản đặt cọc hoặc thanh toán được xác nhận bằng văn bản." },
+      { "heading": "Vận chuyển & giao hàng", "body": "Thời gian giao hàng dự kiến chỉ mang tính tham khảo và phụ thuộc vào điểm đến, điều kiện Incoterm, thủ tục hải quan và lịch trình của đơn vị vận chuyển. Quyền sở hữu và rủi ro được chuyển giao theo điều kiện Incoterm đã thỏa thuận cho từng đơn hàng." },
+      { "heading": "Tài khoản B2B", "body": "Tài khoản doanh nghiệp phải được xem xét và phê duyệt trước khi giá sỉ và điều khoản tín dụng được kích hoạt. Chúng tôi có quyền tạm ngưng tài khoản trong trường hợp không thanh toán hoặc vi phạm điều khoản đã thỏa thuận." }
+    ]
+  },
+  "meta": {
+    "siteTitle": "Phong Châu — Nông sản, Bán sỉ & Xuất khẩu",
+    "siteDescription": "Nông sản Việt Nam, bán sỉ B2B, nhãn hàng riêng OEM/ODM và dịch vụ logistics xuất khẩu — hạt điều, cà phê, hồ tiêu, gạo và sản phẩm từ dừa, từ nông trại đến thị trường toàn cầu."
+  }
+}

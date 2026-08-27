@@ -1,38 +1,57 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
+import viMessages from '../../messages/vi.json';
+import enMessages from '../../messages/en.json';
 
-const COLUMNS = [
-  {
-    title: 'Products',
-    links: [
-      { href: '/products?categorySlug=cashew', label: 'Cashew' },
-      { href: '/products?categorySlug=coffee', label: 'Coffee' },
-      { href: '/products?categorySlug=pepper', label: 'Pepper' },
-      { href: '/products?categorySlug=rice-grains', label: 'Rice & Grains' },
-      { href: '/products?categorySlug=coconut-products', label: 'Coconut Products' },
-    ],
-  },
-  {
-    title: 'Business',
-    links: [
-      { href: '/wholesale', label: 'Wholesale / B2B' },
-      { href: '/rfq', label: 'Request a Quote' },
-      { href: '/oem', label: 'OEM / Private Label' },
-      { href: '/logistics', label: 'Logistics & Export' },
-    ],
-  },
-  {
-    title: 'Company',
-    links: [
-      { href: '/about', label: 'About Us' },
-      { href: '/certifications', label: 'Certifications' },
-      { href: '/blog', label: 'News & Knowledge' },
-      { href: '/contact', label: 'Contact' },
-    ],
-  },
-];
+// See Header.tsx for why this reads locale from the URL and the raw message JSON instead of
+// `useTranslations()` — Footer is rendered once by the shared root layout, outside the
+// NextIntlClientProvider boundary, for both the storefront and the untouched /admin/** tree.
+const MESSAGES = { vi: viMessages, en: enMessages } as const;
 
 export function Footer() {
+  const pathname = usePathname() ?? '/';
+  const isAdmin = pathname.startsWith('/admin');
+  const locale: 'vi' | 'en' = pathname.startsWith('/en') ? 'en' : 'vi';
+  const t = MESSAGES[locale].footer;
+  const prefix = isAdmin ? '' : `/${locale}`;
+
+  const columns = [
+    {
+      title: isAdmin ? 'Products' : t.productsHeading,
+      links: [
+        { href: `${prefix}/products?categorySlug=cashew`, label: isAdmin ? 'Cashew' : t.cashew },
+        { href: `${prefix}/products?categorySlug=coffee`, label: isAdmin ? 'Coffee' : t.coffee },
+        { href: `${prefix}/products?categorySlug=pepper`, label: isAdmin ? 'Pepper' : t.pepper },
+        { href: `${prefix}/products?categorySlug=rice-grains`, label: isAdmin ? 'Rice & Grains' : t.riceGrains },
+        {
+          href: `${prefix}/products?categorySlug=coconut-products`,
+          label: isAdmin ? 'Coconut Products' : t.coconutProducts,
+        },
+      ],
+    },
+    {
+      title: isAdmin ? 'Business' : t.businessHeading,
+      links: [
+        { href: `${prefix}/wholesale`, label: isAdmin ? 'Wholesale / B2B' : t.wholesaleB2b },
+        { href: `${prefix}/rfq`, label: isAdmin ? 'Request a Quote' : t.requestQuote },
+        { href: `${prefix}/oem`, label: isAdmin ? 'OEM / Private Label' : t.oemPrivateLabel },
+        { href: `${prefix}/logistics`, label: isAdmin ? 'Logistics & Export' : t.logisticsExport },
+      ],
+    },
+    {
+      title: isAdmin ? 'Company' : t.companyHeading,
+      links: [
+        { href: `${prefix}/about`, label: isAdmin ? 'About Us' : t.aboutUs },
+        { href: `${prefix}/certifications`, label: isAdmin ? 'Certifications' : t.certifications },
+        { href: `${prefix}/blog`, label: isAdmin ? 'News & Knowledge' : t.newsKnowledge },
+        { href: `${prefix}/contact`, label: isAdmin ? 'Contact' : t.contact },
+      ],
+    },
+  ];
+
   return (
     <footer className="border-t border-gray-200 bg-gray-50">
       <div className="mx-auto grid max-w-7xl grid-cols-2 gap-8 px-6 py-12 md:grid-cols-4">
@@ -42,11 +61,12 @@ export function Footer() {
             <p className="text-lg font-bold text-brand-700">Phong Chau</p>
           </div>
           <p className="mt-3 text-sm text-gray-600">
-            Vietnamese agricultural products, wholesale, OEM/ODM, and export logistics —
-            farm to global market.
+            {isAdmin
+              ? 'Vietnamese agricultural products, wholesale, OEM/ODM, and export logistics — farm to global market.'
+              : t.tagline}
           </p>
         </div>
-        {COLUMNS.map((col) => (
+        {columns.map((col) => (
           <div key={col.title}>
             <p className="font-semibold text-gray-900">{col.title}</p>
             <ul className="mt-3 space-y-2 text-sm text-gray-600">
@@ -62,13 +82,15 @@ export function Footer() {
         ))}
       </div>
       <div className="flex flex-col items-center gap-2 border-t border-gray-200 py-4 text-center text-xs text-gray-500 sm:flex-row sm:justify-between sm:px-6">
-        <span>&copy; {new Date().getFullYear()} Phong Chau. All rights reserved.</span>
+        <span>
+          &copy; {new Date().getFullYear()} Phong Chau. {isAdmin ? 'All rights reserved.' : t.rights}
+        </span>
         <span className="flex gap-4">
-          <Link href="/privacy" className="hover:text-brand-600">
-            Privacy Policy
+          <Link href={`${prefix}/privacy`} className="hover:text-brand-600">
+            {isAdmin ? 'Privacy Policy' : t.privacyPolicy}
           </Link>
-          <Link href="/terms" className="hover:text-brand-600">
-            Terms of Service
+          <Link href={`${prefix}/terms`} className="hover:text-brand-600">
+            {isAdmin ? 'Terms of Service' : t.termsOfService}
           </Link>
         </span>
       </div>

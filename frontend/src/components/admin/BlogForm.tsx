@@ -38,6 +38,10 @@ interface BlogFormProps {
   blogId?: string;
 }
 
+const labelCls = 'text-sm font-semibold text-gray-700';
+const inputCls =
+  'mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500';
+
 function slugify(input: string): string {
   return input
     .toLowerCase()
@@ -107,20 +111,20 @@ export function BlogForm({ initial, mode, blogId }: BlogFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-6 max-w-3xl space-y-4">
+    <form onSubmit={handleSubmit} className="mt-6 max-w-3xl space-y-4 rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
       <div>
-        <label htmlFor="bf-title" className="text-sm font-semibold text-gray-700">Title</label>
+        <label htmlFor="bf-title" className={labelCls}>Title</label>
         <input
           id="bf-title"
           required
           value={values.title}
           onChange={(e) => handleTitleChange(e.target.value)}
-          className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+          className={inputCls}
         />
       </div>
 
       <div>
-        <label htmlFor="bf-slug" className="text-sm font-semibold text-gray-700">Slug</label>
+        <label htmlFor="bf-slug" className={labelCls}>Slug</label>
         <input
           id="bf-slug"
           required
@@ -129,18 +133,18 @@ export function BlogForm({ initial, mode, blogId }: BlogFormProps) {
             setSlugEdited(true);
             update('slug', e.target.value);
           }}
-          className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+          className={inputCls}
         />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label htmlFor="bf-category" className="text-sm font-semibold text-gray-700">Category</label>
+          <label htmlFor="bf-category" className={labelCls}>Category</label>
           <select
             id="bf-category"
             value={values.category}
             onChange={(e) => update('category', e.target.value)}
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+            className={inputCls}
           >
             {BLOG_CATEGORIES.map((c) => (
               <option key={c} value={c}>
@@ -150,12 +154,12 @@ export function BlogForm({ initial, mode, blogId }: BlogFormProps) {
           </select>
         </div>
         <div>
-          <label htmlFor="bf-status" className="text-sm font-semibold text-gray-700">Status</label>
+          <label htmlFor="bf-status" className={labelCls}>Status</label>
           <select
             id="bf-status"
             value={values.status}
             onChange={(e) => update('status', e.target.value)}
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+            className={inputCls}
           >
             {CONTENT_STATUSES.map((s) => (
               <option key={s} value={s}>
@@ -167,69 +171,73 @@ export function BlogForm({ initial, mode, blogId }: BlogFormProps) {
       </div>
 
       <div>
-        <label htmlFor="bf-excerpt" className="text-sm font-semibold text-gray-700">Excerpt</label>
+        <label htmlFor="bf-excerpt" className={labelCls}>Excerpt</label>
         <textarea
           id="bf-excerpt"
           value={values.excerpt}
           onChange={(e) => update('excerpt', e.target.value)}
           rows={2}
-          className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+          className={inputCls}
         />
       </div>
 
       <div>
-        <label htmlFor="bf-content" className="text-sm font-semibold text-gray-700">Content (HTML)</label>
+        <label htmlFor="bf-content" className={labelCls}>Content (HTML)</label>
         <textarea
           id="bf-content"
           required
           value={values.content}
           onChange={(e) => update('content', e.target.value)}
           rows={12}
-          className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-sm"
+          className={`${inputCls} font-mono text-sm`}
         />
       </div>
 
       <div>
-        <label htmlFor="bf-cover-image" className="text-sm font-semibold text-gray-700">Cover Image URL</label>
+        <label htmlFor="bf-cover-image" className={labelCls}>Cover Image URL</label>
         <input
           id="bf-cover-image"
           value={values.coverImageUrl}
           onChange={(e) => update('coverImageUrl', e.target.value)}
-          className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+          className={inputCls}
         />
       </div>
 
       <div className="grid grid-cols-1 gap-4">
         <div>
-          <label htmlFor="bf-seo-title" className="text-sm font-semibold text-gray-700">SEO Title</label>
+          <label htmlFor="bf-seo-title" className={labelCls}>SEO Title</label>
           <input
             id="bf-seo-title"
             value={values.seoTitle}
             onChange={(e) => update('seoTitle', e.target.value)}
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+            className={inputCls}
           />
         </div>
         <div>
-          <label htmlFor="bf-seo-description" className="text-sm font-semibold text-gray-700">SEO Description</label>
+          <label htmlFor="bf-seo-description" className={labelCls}>SEO Description</label>
           <textarea
             id="bf-seo-description"
             value={values.seoDescription}
             onChange={(e) => update('seoDescription', e.target.value)}
             rows={2}
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"
+            className={inputCls}
           />
         </div>
       </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && (
+        <div className="rounded-xl2 border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{error}</div>
+      )}
 
-      <button
-        type="submit"
-        disabled={submitting}
-        className="rounded-md bg-brand-600 px-6 py-3 font-semibold text-white disabled:opacity-50"
-      >
-        {submitting ? 'Saving...' : mode === 'create' ? 'Create Post' : 'Save Changes'}
-      </button>
+      <div className="flex items-center gap-3">
+        <button
+          type="submit"
+          disabled={submitting}
+          className="inline-flex items-center justify-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
+        >
+          {submitting ? 'Saving...' : mode === 'create' ? 'Create Post' : 'Save Changes'}
+        </button>
+      </div>
     </form>
   );
 }

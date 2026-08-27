@@ -87,6 +87,13 @@ interface Shipment {
   tracking: ShipmentTracking[];
 }
 
+function statusBadgeClass(status: string): string {
+  if (/CANCEL|REJECT/.test(status)) return 'bg-rose-50 text-rose-700';
+  if (/DELIVER|COMPLETE|APPROVE|PAID/.test(status)) return 'bg-emerald-50 text-emerald-700';
+  if (/PENDING|PROCESSING|WAITING/.test(status)) return 'bg-amber-50 text-amber-700';
+  return 'bg-gray-100 text-gray-700';
+}
+
 interface OrderDetail {
   id: string;
   orderNumber: string;
@@ -303,7 +310,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
   }
 
   if (loadError) {
-    return <p className="text-sm text-red-600">{loadError}</p>;
+    return <div className="rounded-xl2 border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{loadError}</div>;
   }
 
   if (!order) {
@@ -317,16 +324,16 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
 
   return (
     <div className="max-w-5xl">
-      <div className="flex items-center justify-between">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-2xl font-bold text-gray-900">Order {order.orderNumber}</h1>
         <button onClick={() => router.push('/admin/orders')} className="text-sm text-gray-500 hover:underline">
           Back to orders
         </button>
       </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-        <section className="rounded-md border border-gray-200 p-4">
-          <h2 className="font-semibold text-gray-800">Customer</h2>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <section className="rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+          <h2 className="text-lg font-semibold text-gray-900">Customer</h2>
           <p className="mt-2 text-sm text-gray-700">
             {order.user ? `${order.user.fullName} (${order.user.email})` : order.guestEmail ?? 'Guest'}
           </p>
@@ -339,8 +346,8 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
           )}
         </section>
 
-        <section className="rounded-md border border-gray-200 p-4">
-          <h2 className="font-semibold text-gray-800">Totals</h2>
+        <section className="rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+          <h2 className="text-lg font-semibold text-gray-900">Totals</h2>
           <dl className="mt-2 space-y-1 text-sm">
             <div className="flex justify-between">
               <dt className="text-gray-500">Subtotal</dt>
@@ -366,8 +373,8 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
         </section>
 
         {order.shippingAddress && (
-          <section className="rounded-md border border-gray-200 p-4">
-            <h2 className="font-semibold text-gray-800">Shipping Address</h2>
+          <section className="rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+            <h2 className="text-lg font-semibold text-gray-900">Shipping Address</h2>
             <p className="mt-2 text-sm text-gray-700">
               {order.shippingAddress.fullName} — {order.shippingAddress.phone}
               <br />
@@ -382,8 +389,8 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
         )}
 
         {order.billingAddress && (
-          <section className="rounded-md border border-gray-200 p-4">
-            <h2 className="font-semibold text-gray-800">Billing Address</h2>
+          <section className="rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+            <h2 className="text-lg font-semibold text-gray-900">Billing Address</h2>
             <p className="mt-2 text-sm text-gray-700">
               {order.billingAddress.fullName} — {order.billingAddress.phone}
               <br />
@@ -399,36 +406,38 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
       </div>
 
       <section className="mt-6">
-        <h2 className="font-semibold text-gray-800">Line Items</h2>
-        <div className="mt-2 overflow-x-auto rounded-md border border-gray-200">
-          <table className="min-w-full divide-y divide-gray-200 text-sm">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-2 text-left font-semibold text-gray-600">Product</th>
-                <th className="px-4 py-2 text-left font-semibold text-gray-600">SKU</th>
-                <th className="px-4 py-2 text-right font-semibold text-gray-600">Qty</th>
-                <th className="px-4 py-2 text-right font-semibold text-gray-600">Unit Price</th>
-                <th className="px-4 py-2 text-right font-semibold text-gray-600">Line Total</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 bg-white">
-              {order.items.map((item) => (
-                <tr key={item.id}>
-                  <td className="px-4 py-2">{item.productNameSnapshot}</td>
-                  <td className="px-4 py-2 text-gray-500">{item.skuSnapshot}</td>
-                  <td className="px-4 py-2 text-right">{item.quantity}</td>
-                  <td className="px-4 py-2 text-right">{formatMoney(item.unitPrice, order.currency)}</td>
-                  <td className="px-4 py-2 text-right">{formatMoney(item.lineTotal, order.currency)}</td>
+        <h2 className="text-lg font-semibold text-gray-900">Line Items</h2>
+        <div className="mt-2 overflow-hidden rounded-xl2 border border-gray-200 bg-white shadow-card">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200 text-sm">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Product</th>
+                  <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">SKU</th>
+                  <th className="px-4 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">Qty</th>
+                  <th className="px-4 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">Unit Price</th>
+                  <th className="px-4 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">Line Total</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {order.items.map((item) => (
+                  <tr key={item.id} className="transition-colors hover:bg-gray-50">
+                    <td className="px-4 py-2.5">{item.productNameSnapshot}</td>
+                    <td className="px-4 py-2.5 text-gray-500">{item.skuSnapshot}</td>
+                    <td className="px-4 py-2.5 text-right">{item.quantity}</td>
+                    <td className="px-4 py-2.5 text-right">{formatMoney(item.unitPrice, order.currency)}</td>
+                    <td className="px-4 py-2.5 text-right">{formatMoney(item.lineTotal, order.currency)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
       <section className="mt-6">
-        <h2 className="font-semibold text-gray-800">Status History</h2>
-        <ol className="mt-2 space-y-2 border-l-2 border-brand-200 pl-4">
+        <h2 className="text-lg font-semibold text-gray-900">Status History</h2>
+        <ol className="mt-2 space-y-2 border-l-2 border-teal-200 pl-4">
           {order.statusHistory.map((h) => (
             <li key={h.id} className="text-sm">
               <p className="font-medium text-gray-800">{h.status}</p>
@@ -439,8 +448,8 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
         </ol>
       </section>
 
-      <section className="mt-6 rounded-md border border-gray-200 p-4">
-        <h2 className="font-semibold text-gray-800">Update Status</h2>
+      <section className="mt-6 rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+        <h2 className="text-lg font-semibold text-gray-900">Update Status</h2>
         <form onSubmit={submitStatus} className="mt-3 space-y-3">
           <div className="flex gap-3">
             <label htmlFor="order-status-select" className="sr-only">
@@ -450,7 +459,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
               id="order-status-select"
               value={statusValue}
               onChange={(e) => setStatusValue(e.target.value)}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
             >
               {ORDER_STATUSES.map((s) => (
                 <option key={s} value={s}>
@@ -461,7 +470,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
             <button
               type="submit"
               disabled={statusSubmitting}
-              className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+              className="inline-flex items-center justify-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
             >
               Update
             </button>
@@ -474,10 +483,12 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
             placeholder="Optional note"
             value={statusNote}
             onChange={(e) => setStatusNote(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
             rows={2}
           />
-          {statusError && <p className="text-sm text-red-600">{statusError}</p>}
+          {statusError && (
+            <div className="rounded-xl2 border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">{statusError}</div>
+          )}
         </form>
 
         <div className="mt-4">
@@ -485,7 +496,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
             <button
               onClick={() => setCancelConfirm(true)}
               disabled={order.status === 'CANCELLED' || order.status === 'DELIVERED' || order.status === 'REFUNDED'}
-              className="rounded-md border border-red-300 px-4 py-2 text-sm font-semibold text-red-700 disabled:opacity-40"
+              className="inline-flex items-center justify-center rounded-lg border border-rose-300 px-4 py-2 text-sm font-semibold text-rose-600 transition-colors hover:bg-rose-50 disabled:opacity-40"
             >
               Cancel Order
             </button>
@@ -495,24 +506,26 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
               <button
                 onClick={submitCancel}
                 disabled={cancelSubmitting}
-                className="rounded-md bg-red-600 px-3 py-1.5 font-semibold text-white disabled:opacity-50"
+                className="inline-flex items-center justify-center rounded-lg bg-rose-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-rose-700 disabled:opacity-50"
               >
                 Yes, cancel
               </button>
               <button
                 onClick={() => setCancelConfirm(false)}
-                className="rounded-md border border-gray-300 px-3 py-1.5 text-gray-600"
+                className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
               >
                 No
               </button>
             </div>
           )}
-          {cancelError && <p className="mt-2 text-sm text-red-600">{cancelError}</p>}
+          {cancelError && (
+            <div className="mt-2 rounded-xl2 border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">{cancelError}</div>
+          )}
         </div>
       </section>
 
-      <section className="mt-6 rounded-md border border-gray-200 p-4">
-        <h2 className="font-semibold text-gray-800">Notes</h2>
+      <section className="mt-6 rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+        <h2 className="text-lg font-semibold text-gray-900">Notes</h2>
         <form onSubmit={submitNotes} className="mt-3 space-y-3">
           <div>
             <label htmlFor="order-internal-note" className="text-sm font-medium text-gray-700">Internal note (staff only)</label>
@@ -520,7 +533,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
               id="order-internal-note"
               value={internalNote}
               onChange={(e) => setInternalNote(e.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
               rows={2}
             />
           </div>
@@ -530,34 +543,38 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
               id="order-customer-note"
               value={customerNote}
               onChange={(e) => setCustomerNote(e.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
               rows={2}
             />
           </div>
-          {notesError && <p className="text-sm text-red-600">{notesError}</p>}
+          {notesError && (
+            <div className="rounded-xl2 border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">{notesError}</div>
+          )}
           <button
             type="submit"
             disabled={notesSubmitting}
-            className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+            className="inline-flex items-center justify-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
           >
             Save Notes
           </button>
         </form>
       </section>
 
-      <section className="mt-6 rounded-md border border-gray-200 p-4">
-        <h2 className="font-semibold text-gray-800">Payments</h2>
+      <section className="mt-6 rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+        <h2 className="text-lg font-semibold text-gray-900">Payments</h2>
         {order.payments.length === 0 ? (
           <p className="mt-2 text-sm text-gray-500">No payments recorded.</p>
         ) : (
           <div className="mt-3 space-y-3">
             {order.payments.map((p) => (
-              <div key={p.id} className="rounded-md border border-gray-100 p-3 text-sm">
+              <div key={p.id} className="rounded-lg border border-gray-100 p-3 text-sm">
                 <div className="flex items-center justify-between">
                   <span className="font-medium text-gray-800">
                     {p.provider} — {formatMoney(p.amount, p.currency)}
                   </span>
-                  <span className="text-gray-500">{p.status}</span>
+                  <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeClass(p.status)}`}>
+                    {p.status}
+                  </span>
                 </div>
                 {p.transactionRef && (
                   <p className="mt-1 text-xs text-gray-400">Ref: {p.transactionRef}</p>
@@ -569,7 +586,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                     <button
                       onClick={() => markPaid(p.id)}
                       disabled={paymentSubmitting}
-                      className="rounded-md bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50"
+                      className="inline-flex items-center justify-center rounded-lg bg-teal-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
                     >
                       Mark as Paid
                     </button>
@@ -577,7 +594,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                   {(p.status === 'PAID' || p.status === 'PARTIALLY_REFUNDED') && (
                     <button
                       onClick={() => setRefundOpenFor(refundOpenFor === p.id ? null : p.id)}
-                      className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-700"
+                      className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:bg-gray-50"
                     >
                       Refund
                     </button>
@@ -594,19 +611,19 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                       placeholder={`Amount (default full ${formatMoney(p.amount, p.currency)})`}
                       value={refundAmount}
                       onChange={(e) => setRefundAmount(e.target.value)}
-                      className="w-56 rounded-md border border-gray-300 px-2 py-1 text-xs"
+                      className="w-56 rounded-lg border border-gray-300 px-2 py-1 text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
                     />
                     <input
                       aria-label="Refund reason"
                       placeholder="Reason"
                       value={refundReason}
                       onChange={(e) => setRefundReason(e.target.value)}
-                      className="w-56 rounded-md border border-gray-300 px-2 py-1 text-xs"
+                      className="w-56 rounded-lg border border-gray-300 px-2 py-1 text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
                     />
                     <button
                       type="submit"
                       disabled={paymentSubmitting}
-                      className="rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50"
+                      className="inline-flex items-center justify-center rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-rose-700 disabled:opacity-50"
                     >
                       Confirm Refund
                     </button>
@@ -616,11 +633,13 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
             ))}
           </div>
         )}
-        {paymentActionError && <p className="mt-2 text-sm text-red-600">{paymentActionError}</p>}
+        {paymentActionError && (
+          <div className="mt-2 rounded-xl2 border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">{paymentActionError}</div>
+        )}
       </section>
 
-      <section className="mt-6 rounded-md border border-gray-200 p-4">
-        <h2 className="font-semibold text-gray-800">Shipments</h2>
+      <section className="mt-6 rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+        <h2 className="text-lg font-semibold text-gray-900">Shipments</h2>
         {order.shipments.length === 0 ? (
           <>
             <p className="mt-2 text-sm text-gray-500">No shipment created yet.</p>
@@ -630,20 +649,20 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                 placeholder="Carrier"
                 value={shipmentForm.carrier}
                 onChange={(e) => setShipmentForm((f) => ({ ...f, carrier: e.target.value }))}
-                className="rounded-md border border-gray-300 px-3 py-2"
+                className="rounded-lg border border-gray-300 px-3 py-2 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
               />
               <input
                 aria-label="Tracking number"
                 placeholder="Tracking number"
                 value={shipmentForm.trackingNumber}
                 onChange={(e) => setShipmentForm((f) => ({ ...f, trackingNumber: e.target.value }))}
-                className="rounded-md border border-gray-300 px-3 py-2"
+                className="rounded-lg border border-gray-300 px-3 py-2 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
               />
               <select
                 aria-label="Shipping method"
                 value={shipmentForm.method}
                 onChange={(e) => setShipmentForm((f) => ({ ...f, method: e.target.value }))}
-                className="rounded-md border border-gray-300 px-3 py-2"
+                className="rounded-lg border border-gray-300 px-3 py-2 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
               >
                 {SHIPPING_METHODS.map((m) => (
                   <option key={m} value={m}>
@@ -655,7 +674,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                 aria-label="Shipping zone"
                 value={shipmentForm.zone}
                 onChange={(e) => setShipmentForm((f) => ({ ...f, zone: e.target.value }))}
-                className="rounded-md border border-gray-300 px-3 py-2"
+                className="rounded-lg border border-gray-300 px-3 py-2 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
               >
                 <option value="">No zone</option>
                 {SHIPPING_ZONES.map((z) => (
@@ -672,22 +691,26 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                 placeholder="Cost"
                 value={shipmentForm.cost}
                 onChange={(e) => setShipmentForm((f) => ({ ...f, cost: e.target.value }))}
-                className="rounded-md border border-gray-300 px-3 py-2"
+                className="rounded-lg border border-gray-300 px-3 py-2 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
               />
               <button
                 type="submit"
                 disabled={shipmentSubmitting}
-                className="col-span-2 rounded-md bg-brand-600 px-4 py-2 font-semibold text-white disabled:opacity-50"
+                className="col-span-2 inline-flex items-center justify-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
               >
                 Create Shipment
               </button>
-              {shipmentError && <p className="col-span-2 text-sm text-red-600">{shipmentError}</p>}
+              {shipmentError && (
+                <div className="col-span-2 rounded-xl2 border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
+                  {shipmentError}
+                </div>
+              )}
             </form>
           </>
         ) : (
           <div className="mt-3 space-y-4">
             {order.shipments.map((s) => (
-              <div key={s.id} className="rounded-md border border-gray-100 p-3 text-sm">
+              <div key={s.id} className="rounded-lg border border-gray-100 p-3 text-sm">
                 <p className="font-medium text-gray-800">
                   {s.carrier ?? 'Unknown carrier'} {s.trackingNumber ? `— ${s.trackingNumber}` : ''}
                 </p>
@@ -695,7 +718,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                   {s.method} {s.zone ? `(${s.zone})` : ''} — {formatMoney(s.cost, order.currency)} — status:{' '}
                   {s.status}
                 </p>
-                <ol className="mt-2 space-y-1 border-l-2 border-brand-200 pl-3">
+                <ol className="mt-2 space-y-1 border-l-2 border-teal-200 pl-3">
                   {s.tracking.map((t) => (
                     <li key={t.id} className="text-xs">
                       <span className="font-medium text-gray-700">{t.status}</span>{' '}
@@ -719,7 +742,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                         [s.id]: { ...f[s.id], status: e.target.value },
                       }))
                     }
-                    className="rounded-md border border-gray-300 px-2 py-1 text-xs"
+                    className="rounded-lg border border-gray-300 px-2 py-1 text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
                   >
                     {ORDER_STATUSES.map((st) => (
                       <option key={st} value={st}>
@@ -737,7 +760,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                         [s.id]: { ...f[s.id], location: e.target.value },
                       }))
                     }
-                    className="w-32 rounded-md border border-gray-300 px-2 py-1 text-xs"
+                    className="w-32 rounded-lg border border-gray-300 px-2 py-1 text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
                   />
                   <input
                     aria-label="Tracking note"
@@ -749,19 +772,21 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                         [s.id]: { ...f[s.id], note: e.target.value },
                       }))
                     }
-                    className="w-40 rounded-md border border-gray-300 px-2 py-1 text-xs"
+                    className="w-40 rounded-lg border border-gray-300 px-2 py-1 text-xs focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
                   />
                   <button
                     type="submit"
                     disabled={trackingSubmittingId === s.id}
-                    className="rounded-md bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50"
+                    className="inline-flex items-center justify-center rounded-lg bg-teal-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
                   >
                     Update Tracking
                   </button>
                 </form>
               </div>
             ))}
-            {trackingError && <p className="text-sm text-red-600">{trackingError}</p>}
+            {trackingError && (
+              <div className="rounded-xl2 border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">{trackingError}</div>
+            )}
           </div>
         )}
       </section>

@@ -1,13 +1,16 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { useRouter } from '@/i18n/navigation';
 import { Category } from '@/lib/types';
 
 export function ProductFilters({ categories }: { categories: Category[] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [q, setQ] = useState(searchParams.get('q') ?? '');
+  const t = useTranslations('productFilters');
 
   function updateParam(key: string, value: string | null) {
     const params = new URLSearchParams(searchParams.toString());
@@ -31,19 +34,19 @@ export function ProductFilters({ categories }: { categories: Category[] }) {
         }}
       >
         <label htmlFor="product-search" className="text-sm font-semibold text-gray-700">
-          Search
+          {t('searchLabel')}
         </label>
         <input
           id="product-search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Product name, SKU..."
+          placeholder={t('searchPlaceholder')}
           className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm transition focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
         />
       </form>
 
       <div>
-        <p className="text-sm font-semibold text-gray-700">Category</p>
+        <p className="text-sm font-semibold text-gray-700">{t('categoryLabel')}</p>
         <div className="mt-2 space-y-1">
           <button
             onClick={() => updateParam('categorySlug', null)}
@@ -53,7 +56,7 @@ export function ProductFilters({ categories }: { categories: Category[] }) {
                 : 'text-gray-600 hover:bg-gray-50'
             }`}
           >
-            All Categories
+            {t('allCategories')}
           </button>
           {flatCategories.map((cat) => (
             <button
@@ -79,7 +82,7 @@ export function ProductFilters({ categories }: { categories: Category[] }) {
             onChange={(e) => updateParam('isOrganic', e.target.checked ? 'true' : null)}
             className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
           />
-          Organic only
+          {t('organicOnly')}
         </label>
         <label className="flex items-center gap-2 text-sm text-gray-700">
           <input
@@ -88,13 +91,13 @@ export function ProductFilters({ categories }: { categories: Category[] }) {
             onChange={(e) => updateParam('inStock', e.target.checked ? 'true' : null)}
             className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
           />
-          In stock only
+          {t('inStockOnly')}
         </label>
       </div>
 
       <div className="border-t border-gray-100 pt-5">
         <label htmlFor="product-sort" className="text-sm font-semibold text-gray-700">
-          Sort by
+          {t('sortLabel')}
         </label>
         <select
           id="product-sort"
@@ -102,10 +105,10 @@ export function ProductFilters({ categories }: { categories: Category[] }) {
           onChange={(e) => updateParam('sort', e.target.value)}
           className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm transition focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
         >
-          <option value="newest">Newest</option>
-          <option value="price_asc">Price: Low to High</option>
-          <option value="price_desc">Price: High to Low</option>
-          <option value="popular">Best Selling</option>
+          <option value="newest">{t('sortNewest')}</option>
+          <option value="price_asc">{t('sortPriceAsc')}</option>
+          <option value="price_desc">{t('sortPriceDesc')}</option>
+          <option value="popular">{t('sortPopular')}</option>
         </select>
       </div>
     </div>

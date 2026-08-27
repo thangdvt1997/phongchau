@@ -44,7 +44,7 @@ const TABS: { key: Tab; label: string }[] = [
 ];
 
 function inputCls() {
-  return 'rounded-md border border-gray-300 px-3 py-2 text-sm';
+  return 'rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500';
 }
 
 function extractErrorMessage(err: any, fallback: string): string {
@@ -58,15 +58,15 @@ export default function AdminCategoriesPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900">Catalog Lookups</h1>
-      <div className="mt-6 flex gap-1 border-b border-gray-200">
+      <h1 className="mb-6 text-2xl font-bold text-gray-900">Catalog Lookups</h1>
+      <div className="flex gap-1 border-b border-gray-200">
         {TABS.map((t) => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`px-4 py-2 text-sm font-medium ${
+            className={`px-4 py-2 text-sm font-medium transition-colors ${
               tab === t.key
-                ? 'border-b-2 border-brand-600 text-brand-700'
+                ? 'border-b-2 border-teal-600 text-teal-700'
                 : 'text-gray-500 hover:text-gray-800'
             }`}
           >
@@ -137,7 +137,7 @@ function CategoriesTab() {
 
   return (
     <div>
-      <form onSubmit={handleCreate} className="flex flex-wrap items-end gap-3 rounded-md border border-gray-200 p-4">
+      <form onSubmit={handleCreate} className="flex flex-wrap items-end gap-3 rounded-xl2 border border-gray-200 bg-white p-4 shadow-card">
         <input
           aria-label="Category name"
           required
@@ -183,39 +183,43 @@ function CategoriesTab() {
         <button
           type="submit"
           disabled={submitting}
-          className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+          className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
         >
           Add Category
         </button>
       </form>
 
-      {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+      {error && (
+        <div className="mt-4 rounded-xl2 border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{error}</div>
+      )}
 
       {loading ? (
         <p className="mt-4 text-sm text-gray-500">Loading categories...</p>
       ) : items.length === 0 ? (
-        <p className="mt-4 text-sm text-gray-500">No categories yet.</p>
+        <div className="mt-4 rounded-xl2 border border-dashed border-gray-300 bg-gray-50 p-8 text-center text-sm text-gray-500">
+          No categories yet.
+        </div>
       ) : (
-        <div className="mt-4 overflow-x-auto rounded-md border border-gray-200">
+        <div className="mt-4 overflow-x-auto rounded-xl2 border border-gray-200 bg-white shadow-card">
           <table className="w-full text-sm">
             <thead className="bg-gray-50">
-              <tr className="text-left text-gray-500">
-                <th className="px-4 py-2 font-medium">Name</th>
-                <th className="px-4 py-2 font-medium">Slug</th>
-                <th className="px-4 py-2 font-medium">Parent</th>
-                <th className="px-4 py-2 font-medium">Description</th>
-                <th className="px-4 py-2 font-medium" />
+              <tr className="text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                <th className="px-4 py-2.5">Name</th>
+                <th className="px-4 py-2.5">Slug</th>
+                <th className="px-4 py-2.5">Parent</th>
+                <th className="px-4 py-2.5">Description</th>
+                <th className="px-4 py-2.5" />
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {items.map((c) => (
-                <tr key={c.id}>
-                  <td className="px-4 py-2 font-medium text-gray-800">{c.name}</td>
-                  <td className="px-4 py-2 text-gray-600">{c.slug}</td>
-                  <td className="px-4 py-2 text-gray-600">{c.parentId ? nameById.get(c.parentId) ?? '—' : '—'}</td>
-                  <td className="px-4 py-2 text-gray-600">{c.description ?? '—'}</td>
-                  <td className="px-4 py-2 text-right">
-                    <button onClick={() => handleDelete(c.id)} className="font-medium text-red-600 hover:underline">
+                <tr key={c.id} className="transition-colors hover:bg-gray-50">
+                  <td className="px-4 py-2.5 font-medium text-gray-800">{c.name}</td>
+                  <td className="px-4 py-2.5 text-gray-600">{c.slug}</td>
+                  <td className="px-4 py-2.5 text-gray-600">{c.parentId ? nameById.get(c.parentId) ?? '—' : '—'}</td>
+                  <td className="px-4 py-2.5 text-gray-600">{c.description ?? '—'}</td>
+                  <td className="px-4 py-2.5 text-right">
+                    <button onClick={() => handleDelete(c.id)} className="font-medium text-rose-600 hover:text-rose-700 hover:underline">
                       Delete
                     </button>
                   </td>
@@ -278,7 +282,7 @@ function BrandsTab() {
 
   return (
     <div>
-      <form onSubmit={handleCreate} className="flex flex-wrap items-end gap-3 rounded-md border border-gray-200 p-4">
+      <form onSubmit={handleCreate} className="flex flex-wrap items-end gap-3 rounded-xl2 border border-gray-200 bg-white p-4 shadow-card">
         <input
           aria-label="Brand name"
           required
@@ -304,37 +308,41 @@ function BrandsTab() {
         <button
           type="submit"
           disabled={submitting}
-          className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+          className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
         >
           Add Brand
         </button>
       </form>
 
-      {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+      {error && (
+        <div className="mt-4 rounded-xl2 border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{error}</div>
+      )}
 
       {loading ? (
         <p className="mt-4 text-sm text-gray-500">Loading brands...</p>
       ) : items.length === 0 ? (
-        <p className="mt-4 text-sm text-gray-500">No brands yet.</p>
+        <div className="mt-4 rounded-xl2 border border-dashed border-gray-300 bg-gray-50 p-8 text-center text-sm text-gray-500">
+          No brands yet.
+        </div>
       ) : (
-        <div className="mt-4 overflow-x-auto rounded-md border border-gray-200">
+        <div className="mt-4 overflow-x-auto rounded-xl2 border border-gray-200 bg-white shadow-card">
           <table className="w-full text-sm">
             <thead className="bg-gray-50">
-              <tr className="text-left text-gray-500">
-                <th className="px-4 py-2 font-medium">Name</th>
-                <th className="px-4 py-2 font-medium">Slug</th>
-                <th className="px-4 py-2 font-medium">Logo</th>
-                <th className="px-4 py-2 font-medium" />
+              <tr className="text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                <th className="px-4 py-2.5">Name</th>
+                <th className="px-4 py-2.5">Slug</th>
+                <th className="px-4 py-2.5">Logo</th>
+                <th className="px-4 py-2.5" />
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {items.map((b) => (
-                <tr key={b.id}>
-                  <td className="px-4 py-2 font-medium text-gray-800">{b.name}</td>
-                  <td className="px-4 py-2 text-gray-600">{b.slug}</td>
-                  <td className="px-4 py-2 text-gray-600">{b.logoUrl ?? '—'}</td>
-                  <td className="px-4 py-2 text-right">
-                    <button onClick={() => handleDelete(b.id)} className="font-medium text-red-600 hover:underline">
+                <tr key={b.id} className="transition-colors hover:bg-gray-50">
+                  <td className="px-4 py-2.5 font-medium text-gray-800">{b.name}</td>
+                  <td className="px-4 py-2.5 text-gray-600">{b.slug}</td>
+                  <td className="px-4 py-2.5 text-gray-600">{b.logoUrl ?? '—'}</td>
+                  <td className="px-4 py-2.5 text-right">
+                    <button onClick={() => handleDelete(b.id)} className="font-medium text-rose-600 hover:text-rose-700 hover:underline">
                       Delete
                     </button>
                   </td>
@@ -398,7 +406,7 @@ function OriginsTab() {
 
   return (
     <div>
-      <form onSubmit={handleCreate} className="flex flex-wrap items-end gap-3 rounded-md border border-gray-200 p-4">
+      <form onSubmit={handleCreate} className="flex flex-wrap items-end gap-3 rounded-xl2 border border-gray-200 bg-white p-4 shadow-card">
         <input
           aria-label="Origin name"
           required
@@ -432,39 +440,43 @@ function OriginsTab() {
         <button
           type="submit"
           disabled={submitting}
-          className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+          className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
         >
           Add Origin
         </button>
       </form>
 
-      {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+      {error && (
+        <div className="mt-4 rounded-xl2 border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{error}</div>
+      )}
 
       {loading ? (
         <p className="mt-4 text-sm text-gray-500">Loading origins...</p>
       ) : items.length === 0 ? (
-        <p className="mt-4 text-sm text-gray-500">No origins yet.</p>
+        <div className="mt-4 rounded-xl2 border border-dashed border-gray-300 bg-gray-50 p-8 text-center text-sm text-gray-500">
+          No origins yet.
+        </div>
       ) : (
-        <div className="mt-4 overflow-x-auto rounded-md border border-gray-200">
+        <div className="mt-4 overflow-x-auto rounded-xl2 border border-gray-200 bg-white shadow-card">
           <table className="w-full text-sm">
             <thead className="bg-gray-50">
-              <tr className="text-left text-gray-500">
-                <th className="px-4 py-2 font-medium">Name</th>
-                <th className="px-4 py-2 font-medium">Country</th>
-                <th className="px-4 py-2 font-medium">Province</th>
-                <th className="px-4 py-2 font-medium">Farm</th>
-                <th className="px-4 py-2 font-medium" />
+              <tr className="text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                <th className="px-4 py-2.5">Name</th>
+                <th className="px-4 py-2.5">Country</th>
+                <th className="px-4 py-2.5">Province</th>
+                <th className="px-4 py-2.5">Farm</th>
+                <th className="px-4 py-2.5" />
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {items.map((o) => (
-                <tr key={o.id}>
-                  <td className="px-4 py-2 font-medium text-gray-800">{o.name}</td>
-                  <td className="px-4 py-2 text-gray-600">{o.country}</td>
-                  <td className="px-4 py-2 text-gray-600">{o.province ?? '—'}</td>
-                  <td className="px-4 py-2 text-gray-600">{o.farmName ?? '—'}</td>
-                  <td className="px-4 py-2 text-right">
-                    <button onClick={() => handleDelete(o.id)} className="font-medium text-red-600 hover:underline">
+                <tr key={o.id} className="transition-colors hover:bg-gray-50">
+                  <td className="px-4 py-2.5 font-medium text-gray-800">{o.name}</td>
+                  <td className="px-4 py-2.5 text-gray-600">{o.country}</td>
+                  <td className="px-4 py-2.5 text-gray-600">{o.province ?? '—'}</td>
+                  <td className="px-4 py-2.5 text-gray-600">{o.farmName ?? '—'}</td>
+                  <td className="px-4 py-2.5 text-right">
+                    <button onClick={() => handleDelete(o.id)} className="font-medium text-rose-600 hover:text-rose-700 hover:underline">
                       Delete
                     </button>
                   </td>
@@ -527,7 +539,7 @@ function CertificationsTab() {
 
   return (
     <div>
-      <form onSubmit={handleCreate} className="flex flex-wrap items-end gap-3 rounded-md border border-gray-200 p-4">
+      <form onSubmit={handleCreate} className="flex flex-wrap items-end gap-3 rounded-xl2 border border-gray-200 bg-white p-4 shadow-card">
         <input
           aria-label="Certification name"
           required
@@ -554,37 +566,41 @@ function CertificationsTab() {
         <button
           type="submit"
           disabled={submitting}
-          className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+          className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
         >
           Add Certification
         </button>
       </form>
 
-      {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+      {error && (
+        <div className="mt-4 rounded-xl2 border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{error}</div>
+      )}
 
       {loading ? (
         <p className="mt-4 text-sm text-gray-500">Loading certifications...</p>
       ) : items.length === 0 ? (
-        <p className="mt-4 text-sm text-gray-500">No certifications yet.</p>
+        <div className="mt-4 rounded-xl2 border border-dashed border-gray-300 bg-gray-50 p-8 text-center text-sm text-gray-500">
+          No certifications yet.
+        </div>
       ) : (
-        <div className="mt-4 overflow-x-auto rounded-md border border-gray-200">
+        <div className="mt-4 overflow-x-auto rounded-xl2 border border-gray-200 bg-white shadow-card">
           <table className="w-full text-sm">
             <thead className="bg-gray-50">
-              <tr className="text-left text-gray-500">
-                <th className="px-4 py-2 font-medium">Name</th>
-                <th className="px-4 py-2 font-medium">Code</th>
-                <th className="px-4 py-2 font-medium">Description</th>
-                <th className="px-4 py-2 font-medium" />
+              <tr className="text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                <th className="px-4 py-2.5">Name</th>
+                <th className="px-4 py-2.5">Code</th>
+                <th className="px-4 py-2.5">Description</th>
+                <th className="px-4 py-2.5" />
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {items.map((c) => (
-                <tr key={c.id}>
-                  <td className="px-4 py-2 font-medium text-gray-800">{c.name}</td>
-                  <td className="px-4 py-2 text-gray-600">{c.code}</td>
-                  <td className="px-4 py-2 text-gray-600">{c.description ?? '—'}</td>
-                  <td className="px-4 py-2 text-right">
-                    <button onClick={() => handleDelete(c.id)} className="font-medium text-red-600 hover:underline">
+                <tr key={c.id} className="transition-colors hover:bg-gray-50">
+                  <td className="px-4 py-2.5 font-medium text-gray-800">{c.name}</td>
+                  <td className="px-4 py-2.5 text-gray-600">{c.code}</td>
+                  <td className="px-4 py-2.5 text-gray-600">{c.description ?? '—'}</td>
+                  <td className="px-4 py-2.5 text-right">
+                    <button onClick={() => handleDelete(c.id)} className="font-medium text-rose-600 hover:text-rose-700 hover:underline">
                       Delete
                     </button>
                   </td>

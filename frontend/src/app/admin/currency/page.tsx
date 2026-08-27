@@ -11,7 +11,7 @@ interface RateRow {
 }
 
 function inputCls() {
-  return 'rounded-md border border-gray-300 px-3 py-2 text-sm';
+  return 'rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500';
 }
 
 function extractErrorMessage(err: any, fallback: string): string {
@@ -78,7 +78,10 @@ export default function AdminCurrencyPage() {
         regardless of what&apos;s shown here.
       </p>
 
-      <form onSubmit={handleUpsert} className="mt-6 flex flex-wrap items-end gap-3 rounded-md border border-gray-200 p-4">
+      <form
+        onSubmit={handleUpsert}
+        className="mt-6 flex flex-wrap items-end gap-3 rounded-xl2 border border-gray-200 bg-white p-4 shadow-card"
+      >
         <div>
           <label htmlFor="currency-code" className="mb-1 block text-xs font-medium text-gray-600">
             Currency code
@@ -112,40 +115,47 @@ export default function AdminCurrencyPage() {
         <button
           type="submit"
           disabled={submitting}
-          className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+          className="inline-flex items-center justify-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
         >
           Save Rate
         </button>
       </form>
 
-      {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+      {error && (
+        <div className="mt-4 rounded-xl2 border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{error}</div>
+      )}
 
       {loading ? (
         <p className="mt-4 text-sm text-gray-500">Loading exchange rates...</p>
       ) : items.length === 0 ? (
-        <p className="mt-4 text-sm text-gray-500">No exchange rates configured.</p>
+        <div className="mt-4 rounded-xl2 border border-dashed border-gray-300 bg-gray-50 p-8 text-center text-sm text-gray-500">
+          No exchange rates configured.
+        </div>
       ) : (
-        <div className="mt-4 overflow-x-auto rounded-md border border-gray-200">
+        <div className="mt-4 overflow-hidden rounded-xl2 border border-gray-200 bg-white shadow-card">
           <table className="w-full text-sm">
             <thead className="bg-gray-50">
-              <tr className="text-left text-gray-500">
-                <th className="px-4 py-2 font-medium">Currency</th>
-                <th className="px-4 py-2 font-medium">Rate (per 1 VND)</th>
-                <th className="px-4 py-2 font-medium">Updated</th>
-                <th className="px-4 py-2 font-medium" />
+              <tr className="text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                <th className="px-4 py-2.5">Currency</th>
+                <th className="px-4 py-2.5">Rate (per 1 VND)</th>
+                <th className="px-4 py-2.5">Updated</th>
+                <th className="px-4 py-2.5" />
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {items.map((r) => (
-                <tr key={r.targetCurrency}>
-                  <td className="px-4 py-2 font-medium text-gray-800">{r.targetCurrency}</td>
-                  <td className="px-4 py-2 text-gray-600">{r.rate}</td>
-                  <td className="px-4 py-2 text-gray-600">
+                <tr key={r.targetCurrency} className="transition-colors hover:bg-gray-50">
+                  <td className="px-4 py-2.5 font-medium text-gray-800">{r.targetCurrency}</td>
+                  <td className="px-4 py-2.5 text-gray-600">{r.rate}</td>
+                  <td className="px-4 py-2.5 text-gray-600">
                     {r.updatedAt ? new Date(r.updatedAt).toLocaleString() : '—'}
                   </td>
-                  <td className="px-4 py-2 text-right">
+                  <td className="px-4 py-2.5 text-right">
                     {r.id ? (
-                      <button onClick={() => handleDelete(r.id!)} className="font-medium text-red-600 hover:underline">
+                      <button
+                        onClick={() => handleDelete(r.id!)}
+                        className="font-medium text-rose-600 hover:text-rose-700 hover:underline"
+                      >
                         Delete
                       </button>
                     ) : (

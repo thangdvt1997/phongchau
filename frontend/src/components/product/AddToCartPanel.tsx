@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { Link, useRouter } from '@/i18n/navigation';
 import { ProductVariant } from '@/lib/types';
 import { formatMoney, convertDisplay } from '@/lib/format';
 import { useCart } from '@/context/CartContext';
@@ -28,6 +28,7 @@ export function AddToCartPanel({
   const { addItem } = useCart();
   const { selected: selectedCurrency, getRate } = useCurrency();
   const router = useRouter();
+  const t = useTranslations('addToCart');
 
   const selected = variants.find((v) => v.id === selectedId);
 
@@ -76,7 +77,7 @@ export function AddToCartPanel({
           <p className="text-2xl font-bold text-brand-700">
             {formatMoney(convertDisplay(selected.price, rate!), selectedCurrency)}
           </p>
-          <p className="text-sm text-gray-400">{formatMoney(selected.price)} (checkout price)</p>
+          <p className="text-sm text-gray-400">{formatMoney(selected.price)} {t('checkoutPrice')}</p>
         </>
       ) : (
         <p className="text-2xl font-bold text-brand-700">{formatMoney(selected.price)}</p>
@@ -86,7 +87,7 @@ export function AddToCartPanel({
       )}
 
       <div className="mt-4">
-        <p className="text-sm font-semibold text-gray-700">Variant</p>
+        <p className="text-sm font-semibold text-gray-700">{t('variantLabel')}</p>
         <div className="mt-2 flex flex-wrap gap-2">
           {variants.map((v) => (
             <button
@@ -105,12 +106,12 @@ export function AddToCartPanel({
       </div>
 
       <p className="mt-3 text-sm text-gray-500">
-        {inStock ? `${selected.availableStock} in stock` : 'Out of stock'}
+        {inStock ? t('inStock', { count: selected.availableStock }) : t('outOfStock')}
       </p>
 
       <div className="mt-4 flex items-center gap-3">
         <label htmlFor="add-to-cart-quantity" className="sr-only">
-          Quantity
+          {t('quantitySr')}
         </label>
         <input
           id="add-to-cart-quantity"
@@ -126,7 +127,7 @@ export function AddToCartPanel({
           className="flex-1 flex items-center justify-center gap-1.5 rounded-md bg-brand-600 px-4 py-2.5 font-semibold text-white transition hover:bg-brand-700 disabled:opacity-50"
         >
           {status === 'adding' ? (
-            'Adding...'
+            t('adding')
           ) : status === 'added' ? (
             <>
               <svg
@@ -141,26 +142,26 @@ export function AddToCartPanel({
                   clipRule="evenodd"
                 />
               </svg>
-              Added to cart
+              {t('added')}
             </>
           ) : (
-            'Add to Cart'
+            t('addToCart')
           )}
         </button>
       </div>
 
       <div className="mt-3 flex flex-wrap gap-3 text-sm">
         <Link href="/cart" className="font-medium text-brand-700 hover:underline">
-          View cart
+          {t('viewCart')}
         </Link>
         <button
           onClick={() => router.push(`/rfq?productSlug=${productSlug}`)}
           className="font-medium text-brand-700 hover:underline"
         >
-          Request Quote
+          {t('requestQuote')}
         </button>
         <Link href="/contact" className="font-medium text-brand-700 hover:underline">
-          Contact Sales
+          {t('contactSales')}
         </Link>
       </div>
     </div>

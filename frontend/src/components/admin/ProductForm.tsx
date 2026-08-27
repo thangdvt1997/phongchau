@@ -200,7 +200,7 @@ function toFormState(p?: AdminProductDetail): FormState {
 }
 
 function inputCls() {
-  return 'mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm';
+  return 'mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500';
 }
 
 function labelCls() {
@@ -444,7 +444,7 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-      <section>
+      <section className="border-b border-gray-100 pb-8 last:border-0 last:pb-0">
         <h2 className="text-lg font-semibold text-gray-900">Basics</h2>
         <div className="mt-4 grid grid-cols-2 gap-4">
           <div>
@@ -568,7 +568,7 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
         </div>
       </section>
 
-      <section>
+      <section className="border-b border-gray-100 pb-8 last:border-0 last:pb-0">
         <h2 className="text-lg font-semibold text-gray-900">Agricultural Details</h2>
         <div className="mt-4 grid grid-cols-3 gap-4">
           <div>
@@ -619,7 +619,7 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
         </div>
       </section>
 
-      <section>
+      <section className="border-b border-gray-100 pb-8 last:border-0 last:pb-0">
         <h2 className="text-lg font-semibold text-gray-900">Export Details</h2>
         <div className="mt-4 grid grid-cols-3 gap-4">
           <div>
@@ -673,7 +673,7 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
         </div>
       </section>
 
-      <section>
+      <section className="border-b border-gray-100 pb-8 last:border-0 last:pb-0">
         <h2 className="text-lg font-semibold text-gray-900">Packaging</h2>
         <div className="mt-4 grid grid-cols-4 gap-4">
           <div>
@@ -712,7 +712,7 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
         </div>
       </section>
 
-      <section>
+      <section className="border-b border-gray-100 pb-8 last:border-0 last:pb-0">
         <h2 className="text-lg font-semibold text-gray-900">SEO</h2>
         <div className="mt-4 grid grid-cols-1 gap-4">
           <div>
@@ -732,14 +732,14 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
         </div>
       </section>
 
-      <section>
+      <section className="border-b border-gray-100 pb-8 last:border-0 last:pb-0">
         <h2 className="text-lg font-semibold text-gray-900">Certifications</h2>
         <div className="mt-3 flex flex-wrap gap-3">
           {certifications.length === 0 ? (
             <p className="text-sm text-gray-500">No certifications defined yet.</p>
           ) : (
             certifications.map((cert) => (
-              <label key={cert.id} className="flex items-center gap-2 rounded-md border border-gray-300 px-3 py-1.5 text-sm">
+              <label key={cert.id} className="flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-1.5 text-sm">
                 <input
                   type="checkbox"
                   checked={certificationIds.has(cert.id)}
@@ -752,47 +752,47 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
         </div>
       </section>
 
-      <section>
+      <section className="border-b border-gray-100 pb-8 last:border-0 last:pb-0">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-gray-900">Variants</h2>
           <button
             type="button"
             onClick={addVariant}
-            className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
           >
             Add Variant
           </button>
         </div>
         <div className="mt-4 space-y-3">
           {variants.map((v, i) => (
-            <div key={v.id ?? i} className="grid grid-cols-6 items-center gap-2 rounded-md border border-gray-200 p-3">
+            <div key={v.id ?? i} className="grid grid-cols-6 items-center gap-2 rounded-xl2 border border-gray-200 bg-white p-3 shadow-card">
               <input
                 aria-label={`Variant ${i + 1} SKU`}
                 placeholder="SKU"
                 value={v.sku}
                 onChange={(e) => updateVariant(i, { sku: e.target.value })}
-                className="rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                className="rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
               />
               <input
                 aria-label={`Variant ${i + 1} weight label`}
                 placeholder="Weight label"
                 value={v.weightLabel}
                 onChange={(e) => updateVariant(i, { weightLabel: e.target.value })}
-                className="rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                className="rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
               />
               <input
                 aria-label={`Variant ${i + 1} packaging label`}
                 placeholder="Packaging label"
                 value={v.packagingLabel}
                 onChange={(e) => updateVariant(i, { packagingLabel: e.target.value })}
-                className="rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                className="rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
               />
               <input
                 aria-label={`Variant ${i + 1} grade label`}
                 placeholder="Grade label"
                 value={v.gradeLabel}
                 onChange={(e) => updateVariant(i, { gradeLabel: e.target.value })}
-                className="rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                className="rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
               />
               <input
                 aria-label={`Variant ${i + 1} price`}
@@ -801,7 +801,7 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
                 placeholder="Price"
                 value={v.price}
                 onChange={(e) => updateVariant(i, { price: e.target.value })}
-                className="rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                className="rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
               />
               <div className="flex items-center justify-between gap-2">
                 <label className="flex items-center gap-1 text-xs text-gray-600">
@@ -815,7 +815,7 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
                 <button
                   type="button"
                   onClick={() => removeVariant(i)}
-                  className="text-xs font-medium text-red-600 hover:underline"
+                  className="text-xs font-medium text-rose-600 hover:text-rose-700 hover:underline"
                 >
                   Remove
                 </button>
@@ -827,22 +827,24 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
 
       {isEdit && (
         <>
-          <section>
+          <section className="border-b border-gray-100 pb-8 last:border-0 last:pb-0">
             <h2 className="text-lg font-semibold text-gray-900">Images</h2>
-            {mediaError && <p className="mt-2 text-sm text-red-600">{mediaError}</p>}
+            {mediaError && (
+              <div className="mt-2 rounded-xl2 border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">{mediaError}</div>
+            )}
             {images.length === 0 ? (
               <p className="mt-2 text-sm text-gray-500">No images yet.</p>
             ) : (
               <div className="mt-3 grid grid-cols-4 gap-3">
                 {images.map((img) => (
-                  <div key={img.id} className="rounded-md border border-gray-200 p-2">
+                  <div key={img.id} className="rounded-xl2 border border-gray-200 bg-white p-2 shadow-card">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={img.url} alt={img.altText ?? ''} className="h-24 w-full rounded object-cover" />
                     <p className="mt-1 truncate text-xs text-gray-500">{img.type}</p>
                     <button
                       type="button"
                       onClick={() => handleDeleteImage(img.id)}
-                      className="mt-1 text-xs font-medium text-red-600 hover:underline"
+                      className="mt-1 text-xs font-medium text-rose-600 hover:text-rose-700 hover:underline"
                     >
                       Delete
                     </button>
@@ -867,7 +869,7 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
                   id="pf-image-alt"
                   value={imageAlt}
                   onChange={(e) => setImageAlt(e.target.value)}
-                  className="mt-1 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                  className="mt-1 rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
                 />
               </div>
               <div>
@@ -876,7 +878,7 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
                   id="pf-image-type"
                   value={imageType}
                   onChange={(e) => setImageType(e.target.value)}
-                  className="mt-1 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                  className="mt-1 rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
                 >
                   {IMAGE_TYPES.map((t) => (
                     <option key={t} value={t}>
@@ -889,19 +891,19 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
                 type="button"
                 disabled={!imageFile || uploadingImage}
                 onClick={handleUploadImage}
-                className="rounded-md bg-brand-600 px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-50"
+                className="rounded-lg bg-teal-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
               >
                 {uploadingImage ? 'Uploading...' : 'Upload Image'}
               </button>
             </div>
           </section>
 
-          <section>
+          <section className="border-b border-gray-100 pb-8 last:border-0 last:pb-0">
             <h2 className="text-lg font-semibold text-gray-900">Documents</h2>
             {documents.length === 0 ? (
               <p className="mt-2 text-sm text-gray-500">No documents yet.</p>
             ) : (
-              <div className="mt-3 divide-y divide-gray-100 rounded-md border border-gray-200">
+              <div className="mt-3 divide-y divide-gray-100 rounded-xl2 border border-gray-200 bg-white shadow-card">
                 {documents.map((doc) => (
                   <div key={doc.id} className="flex items-center justify-between p-3 text-sm">
                     <div>
@@ -909,13 +911,13 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
                       <p className="text-xs text-gray-500">{doc.type}</p>
                     </div>
                     <div className="flex items-center gap-3">
-                      <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="text-brand-700 hover:underline">
+                      <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="text-teal-700 hover:text-teal-800 hover:underline">
                         View
                       </a>
                       <button
                         type="button"
                         onClick={() => handleDeleteDocument(doc.id)}
-                        className="font-medium text-red-600 hover:underline"
+                        className="font-medium text-rose-600 hover:text-rose-700 hover:underline"
                       >
                         Delete
                       </button>
@@ -940,7 +942,7 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
                   id="pf-doc-title"
                   value={docTitle}
                   onChange={(e) => setDocTitle(e.target.value)}
-                  className="mt-1 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                  className="mt-1 rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
                 />
               </div>
               <div>
@@ -949,7 +951,7 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
                   id="pf-doc-type"
                   value={docType}
                   onChange={(e) => setDocType(e.target.value)}
-                  className="mt-1 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                  className="mt-1 rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
                 >
                   {DOCUMENT_TYPES.map((t) => (
                     <option key={t} value={t}>
@@ -962,7 +964,7 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
                 type="button"
                 disabled={!docFile || !docTitle || uploadingDoc}
                 onClick={handleUploadDocument}
-                className="rounded-md bg-brand-600 px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-50"
+                className="rounded-lg bg-teal-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
               >
                 {uploadingDoc ? 'Uploading...' : 'Upload Document'}
               </button>
@@ -971,13 +973,15 @@ export function ProductForm({ productId, initialProduct }: { productId?: string;
         </>
       )}
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && (
+        <div className="rounded-xl2 border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{error}</div>
+      )}
 
       <div className="flex items-center gap-3">
         <button
           type="submit"
           disabled={submitting}
-          className="rounded-md bg-brand-600 px-6 py-3 font-semibold text-white disabled:opacity-50"
+          className="rounded-lg bg-teal-600 px-6 py-3 font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
         >
           {submitting ? 'Saving...' : isEdit ? 'Save Changes' : 'Create Product'}
         </button>

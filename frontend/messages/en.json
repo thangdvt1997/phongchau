@@ -1,0 +1,543 @@
+{
+  "nav": {
+    "products": "Products",
+    "wholesale": "Wholesale",
+    "requestQuote": "Request Quote",
+    "oem": "OEM / Private Label",
+    "logistics": "Logistics",
+    "support": "Support",
+    "about": "About Us",
+    "news": "News",
+    "contact": "Contact",
+    "cart": "Cart",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "register": "Register",
+    "currencyLabel": "Display currency",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "switchLanguage": "Switch language",
+    "localeVi": "VI",
+    "localeEn": "EN"
+  },
+  "footer": {
+    "tagline": "Vietnamese agricultural products, wholesale, OEM/ODM, and export logistics — farm to global market.",
+    "productsHeading": "Products",
+    "cashew": "Cashew",
+    "coffee": "Coffee",
+    "pepper": "Pepper",
+    "riceGrains": "Rice & Grains",
+    "coconutProducts": "Coconut Products",
+    "businessHeading": "Business",
+    "wholesaleB2b": "Wholesale / B2B",
+    "requestQuote": "Request a Quote",
+    "oemPrivateLabel": "OEM / Private Label",
+    "logisticsExport": "Logistics & Export",
+    "companyHeading": "Company",
+    "aboutUs": "About Us",
+    "certifications": "Certifications",
+    "newsKnowledge": "News & Knowledge",
+    "contact": "Contact",
+    "rights": "All rights reserved.",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service"
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Sourced by Region, Exported to Spec",
+      "titleLine1": "Dak Lak Coffee, Binh Phuoc Cashew,",
+      "titleLine2": "Phu Quoc Pepper, Ben Tre Coconut, An Giang Rice",
+      "body": "We work directly with farm cooperatives across five growing regions of Vietnam, process under HACCP and ISO 22000-controlled facilities, and export under FOB, CIF, EXW, CFR, and DDP terms — with a batch/lot number behind every shipment.",
+      "shopNow": "Shop Now",
+      "requestQuote": "Request a Quote",
+      "becomeDistributor": "Become a Distributor"
+    },
+    "whyChooseUs": {
+      "eyebrow": "What Sets Us Apart",
+      "title": "Why Choose Phong Chau",
+      "items": [
+        { "title": "Batch-Level Traceability", "desc": "Every product carries a batch/lot number tracing harvest, processing, and packaging dates back to its origin cooperative." },
+        { "title": "Tiered Wholesale Pricing", "desc": "Volume-based tier pricing for every product, plus negotiated contract pricing for approved B2B accounts." },
+        { "title": "RFQ-Based Export Quotation", "desc": "Submit an RFQ for a specific quantity, packaging, or spec — our sales team reviews it and issues a formal quotation." },
+        { "title": "Certified Processing Facilities", "desc": "Processing and packaging under HACCP and ISO 22000, with product-specific certifications such as GlobalG.A.P, Organic, BRC, Halal, FDA, and VietGAP." },
+        { "title": "Flexible Export Terms", "desc": "Shipping under FOB, CIF, EXW, CFR, or DDP Incoterms, with HS codes and MOQ defined per product." },
+        { "title": "Multi-Warehouse Fulfillment", "desc": "Stock held across our Ho Chi Minh City and Da Nang warehouses for faster regional order fulfillment." }
+      ]
+    },
+    "stats": {
+      "items": [
+        { "value": "5", "label": "Sourcing Regions" },
+        { "value": "8", "label": "Product Lines" },
+        { "value": "8", "label": "Certifications Supported" },
+        { "value": "2", "label": "Warehouses" },
+        { "value": "5", "label": "Incoterms Supported" },
+        { "value": "100%", "label": "Batch Traceability" }
+      ]
+    },
+    "certifications": {
+      "eyebrow": "Verified Standards",
+      "title": "Certifications",
+      "body": "Certified to international food safety and quality standards, verified per batch."
+    },
+    "supplyChain": {
+      "eyebrow": "Farm to Global Market",
+      "title": "Our Supply Chain",
+      "steps": ["Farm", "Collection", "Processing", "Quality Control", "Packaging", "Warehouse", "Logistics", "Customer"]
+    },
+    "globalExport": {
+      "eyebrow": "Worldwide Shipping",
+      "title": "Export-Ready, Worldwide",
+      "body": "Every product ships with an HS code, a defined MOQ, and export documentation — ready to move under the Incoterms and shipping method your business requires.",
+      "capabilities": ["FOB", "CIF", "EXW", "CFR", "DDP", "HS-Coded Documentation", "Cat Lai Port, Ho Chi Minh City", "FCL / LCL Shipping"]
+    },
+    "cta": {
+      "title": "Ready to source from Vietnam?",
+      "body": "Request wholesale pricing, become a distributor, or ask for a product sample.",
+      "requestPrice": "Request Wholesale Price",
+      "becomeDistributor": "Become Our Distributor"
+    },
+    "featuredCategories": {
+      "eyebrow": "Our Catalog",
+      "title": "Shop by Category",
+      "body": "Every category is tied to a named growing region and export-ready specification sheet."
+    },
+    "featuredProducts": {
+      "eyebrow": "Best Selling",
+      "title": "Featured Products",
+      "viewAll": "View all products →"
+    }
+  },
+  "about": {
+    "heroEyebrow": "Our Story",
+    "heroTitle": "About Phong Chau",
+    "heroBody": "Connecting certified Vietnamese farms and cooperatives to global buyers — from individual retail customers to international distributors and importers.",
+    "whoWeAreEyebrow": "Who We Are",
+    "whoWeAreTitle": "A full value-chain agriculture and export company",
+    "whoWeAreBody1": "Phong Chau is a Vietnamese agriculture, food processing, and export company connecting certified farms and cooperatives to global buyers. Our range covers cashew, coffee, pepper, rice, and coconut products, each tied to a specific growing region and origin partner.",
+    "whoWeAreBody2": "We operate across the full value chain: sourcing from partner farms, in-house processing and quality control, packaging to export specification, warehousing in Ho Chi Minh City and Da Nang, and international logistics — with a batch/lot number behind every product, traceable from farm to customer.",
+    "warehouseAlt": "Warehouse storage filled with export-ready pallets",
+    "regionsEyebrow": "Origin Partners",
+    "regionsTitle": "Our Regions",
+    "regionsBody": "Each product in our catalog is sourced from a named region and origin partner.",
+    "provinceSuffix": "Province",
+    "originPartnerLabel": "Origin partner",
+    "regions": [
+      { "region": "Dak Lak Highlands", "province": "Dak Lak", "partner": "Dak Lak Coffee Cooperative", "products": "Roasted robusta & washed arabica coffee" },
+      { "region": "Binh Phuoc", "province": "Binh Phuoc", "partner": "Binh Phuoc Cashew Farms", "products": "Roasted & raw cashew (W320, W240)" },
+      { "region": "Phu Quoc", "province": "Kien Giang", "partner": "Phu Quoc Pepper Cooperative", "products": "Black & white pepper" },
+      { "region": "Ben Tre Delta", "province": "Ben Tre", "partner": "Ben Tre Coconut Farms", "products": "Desiccated coconut" },
+      { "region": "An Giang", "province": "An Giang", "partner": "An Giang Rice Cooperative", "products": "Jasmine rice" }
+    ],
+    "processEyebrow": "Our Process",
+    "processTitle": "How We Work",
+    "cards": [
+      { "title": "Sourcing", "desc": "Direct partnerships with farm cooperatives across five regions — Dak Lak, Binh Phuoc, Phu Quoc, Ben Tre, and An Giang.", "alt": "Farmer working in a Vietnamese rice field" },
+      { "title": "Processing", "desc": "Processing and packaging under HACCP and ISO 22000, with product-specific certifications including GlobalG.A.P, Organic, BRC, Halal, FDA, and VietGAP.", "alt": "Food processing facility floor" },
+      { "title": "Export", "desc": "Export documentation, HS coding, and shipping under FOB, CIF, EXW, CFR, and DDP terms, loaded from Cat Lai Port, Ho Chi Minh City.", "alt": "Shipping containers stacked at a port" }
+    ]
+  },
+  "products": {
+    "catalogEyebrow": "Catalog",
+    "title": "Products",
+    "categoryEyebrow": "Category",
+    "noProducts": "No products match these filters."
+  },
+  "productFilters": {
+    "searchLabel": "Search",
+    "searchPlaceholder": "Product name, SKU...",
+    "categoryLabel": "Category",
+    "allCategories": "All Categories",
+    "organicOnly": "Organic only",
+    "inStockOnly": "In stock only",
+    "sortLabel": "Sort by",
+    "sortNewest": "Newest",
+    "sortPriceAsc": "Price: Low to High",
+    "sortPriceDesc": "Price: High to Low",
+    "sortPopular": "Best Selling"
+  },
+  "productCard": {
+    "organic": "Organic",
+    "originLabel": "Origin: {origin}",
+    "checkoutPrice": "(checkout price)"
+  },
+  "productDetail": {
+    "productsBreadcrumb": "Products",
+    "organic": "Organic",
+    "skuLabel": "SKU: {sku}",
+    "descriptionHeading": "Description",
+    "specificationsHeading": "Specifications",
+    "documentsHeading": "Documents",
+    "relatedHeading": "Related Products",
+    "specs": {
+      "scientificName": "Scientific Name",
+      "variety": "Variety",
+      "harvestSeason": "Harvest Season",
+      "grade": "Grade",
+      "moisture": "Moisture",
+      "shelfLife": "Shelf Life",
+      "storageTemperature": "Storage Temperature",
+      "hsCode": "HS Code",
+      "countryOfOrigin": "Country of Origin",
+      "moq": "MOQ",
+      "supplyAbility": "Supply Ability",
+      "leadTime": "Lead Time",
+      "portOfLoading": "Port of Loading",
+      "incoterms": "Incoterms",
+      "netWeight": "Net Weight",
+      "grossWeight": "Gross Weight"
+    }
+  },
+  "addToCart": {
+    "checkoutPrice": "(checkout price)",
+    "variantLabel": "Variant",
+    "inStock": "{count} in stock",
+    "outOfStock": "Out of stock",
+    "quantitySr": "Quantity",
+    "adding": "Adding...",
+    "added": "Added to cart",
+    "addToCart": "Add to Cart",
+    "viewCart": "View cart",
+    "requestQuote": "Request Quote",
+    "contactSales": "Contact Sales"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "loading": "Loading cart...",
+    "emptyTitle": "Your cart is empty",
+    "continueShopping": "Continue shopping →",
+    "skuLine": "SKU {sku}",
+    "yourContractPrice": "Your contract price",
+    "wholesaleTierPrice": "Wholesale tier price",
+    "quantitySr": "Quantity for {name}",
+    "remove": "Remove",
+    "subtotal": "Subtotal",
+    "estimateNote": "≈ {amount} (estimate — you pay in VND)",
+    "shippingNote": "Shipping and taxes calculated at checkout.",
+    "proceedToCheckout": "Proceed to Checkout"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "emptyCart": "Your cart is empty.",
+    "emailLabel": "Email",
+    "shippingAddressLegend": "Shipping Address",
+    "fullNameLabel": "Full name",
+    "phoneLabel": "Phone",
+    "addressLabel": "Address",
+    "cityLabel": "City",
+    "postalCodeLabel": "Postal code",
+    "countryLabel": "Country",
+    "paymentLegend": "Payment",
+    "paymentMethodSr": "Payment method",
+    "cod": "Cash on Delivery",
+    "bankTransfer": "Bank Transfer",
+    "vietqr": "VietQR (scan QR code to transfer)",
+    "couponLabel": "Coupon code",
+    "couponPlaceholder": "e.g. WELCOME10",
+    "subtotal": "Subtotal",
+    "placingOrder": "Placing order...",
+    "placeOrder": "Place Order",
+    "genericError": "Checkout failed. Please try again."
+  },
+  "contact": {
+    "sideQuote": "We usually reply within one business day",
+    "sideNote": "Sales, wholesale, and export documentation questions welcome.",
+    "successTitle": "Message Sent",
+    "successBody": "Thanks for reaching out — our team will respond shortly.",
+    "eyebrow": "Get In Touch",
+    "title": "Contact Us",
+    "fullNameLabel": "Full name",
+    "emailLabel": "Email",
+    "phoneLabel": "Phone",
+    "companyLabel": "Company (optional)",
+    "messageLabel": "Message",
+    "sendMessage": "Send Message",
+    "genericError": "Something went wrong. Please try again."
+  },
+  "login": {
+    "title": "Sign In",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "signingIn": "Signing in...",
+    "signIn": "Sign In",
+    "noAccount": "No account?",
+    "registerLink": "Register",
+    "orText": "or",
+    "applyB2bLink": "apply as a wholesale/B2B customer",
+    "invalidCredentials": "Invalid email or password."
+  },
+  "register": {
+    "title": "Create an Account",
+    "fullNameLabel": "Full name",
+    "emailLabel": "Email",
+    "phoneLabel": "Phone",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Password (min 8 characters)",
+    "creatingAccount": "Creating account...",
+    "register": "Register",
+    "alreadyHaveAccount": "Already have an account?",
+    "signInLink": "Sign in",
+    "genericError": "Registration failed."
+  },
+  "registerB2b": {
+    "title": "Become a Wholesale / B2B Partner",
+    "intro": "Distributors, wholesalers, supermarkets, restaurants, factories, and importers can apply for wholesale pricing, MOQ terms, and contract pricing. Your account will be reviewed by our sales team before wholesale pricing is unlocked.",
+    "companyNameLabel": "Company name",
+    "taxIdLabel": "Tax ID",
+    "countryLabel": "Country",
+    "businessTypeLabel": "Business type",
+    "businessTypes": {
+      "DISTRIBUTOR": "Distributor",
+      "WHOLESALER": "Wholesaler",
+      "IMPORTER": "Importer",
+      "RETAILER": "Retailer",
+      "RETAIL_CHAIN": "Retail Chain",
+      "RESTAURANT": "Restaurant",
+      "FACTORY": "Factory",
+      "SUPERMARKET": "Supermarket",
+      "OTHER": "Other"
+    },
+    "expectedVolumeLabel": "Expected purchase volume",
+    "interestedProductsLabel": "Interested products",
+    "websiteLabel": "Website (optional)",
+    "contactPersonLabel": "Contact person",
+    "phoneLabel": "Phone",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Password (min 8 characters)",
+    "submitting": "Submitting...",
+    "submitApplication": "Submit Application",
+    "applicationSubmittedTitle": "Application Submitted",
+    "genericError": "Registration failed."
+  },
+  "rfq": {
+    "signInTitle": "Sign in to request a quote",
+    "signInBody": "RFQs are tracked against your account.",
+    "signInBtn": "Sign In",
+    "successTitle": "RFQ Submitted",
+    "successBody": "Your request {number} has been sent to our sales team. We will respond with a quotation shortly.",
+    "viewMyRfqs": "View my RFQs",
+    "title": "Request for Quotation (RFQ)",
+    "intro": "Tell us what you need — product, quantity, destination, and Incoterm — and our sales team will send a formal quotation.",
+    "productLabel": "Product",
+    "quantityLabel": "Quantity",
+    "unitLabel": "Unit",
+    "unitPlaceholder": "Unit (kg, tonne, container...)",
+    "packagingLabel": "Packaging",
+    "packagingPlaceholder": "Packaging (e.g. Vacuum bag 25kg)",
+    "specificationLabel": "Specification / grade requirements",
+    "destinationCountryLabel": "Destination country",
+    "destinationPortLabel": "Destination port",
+    "incotermLabel": "Incoterm",
+    "paymentTermLabel": "Payment term",
+    "paymentTermPlaceholder": "Payment term (e.g. T/T 30/70)",
+    "specialRequirementLabel": "Special requirements",
+    "submitting": "Submitting...",
+    "submitRfq": "Submit RFQ",
+    "genericError": "Failed to submit RFQ."
+  },
+  "oem": {
+    "signInTitle": "Sign in to request OEM/ODM production",
+    "signInBody": "OEM/ODM requests are tracked against your account.",
+    "signInBtn": "Sign In",
+    "successTitle": "Request Submitted",
+    "successBody": "Your OEM/ODM request {number} has been sent to our sales team. We will review it and get back to you.",
+    "viewMyRequests": "View my OEM/ODM Requests",
+    "title": "OEM / Private Label Request",
+    "intro": "Tell us about the product you want manufactured under your own brand — recipe, packaging, target market, and quantity — and our team will guide you through review, sampling, and pricing.",
+    "productTypeLabel": "Product type",
+    "productTypePlaceholder": "e.g. Roasted cashew nuts, Instant coffee 3-in-1...",
+    "ingredientsLabel": "Ingredients",
+    "recipeLabel": "Recipe / formulation notes",
+    "targetMarketLabel": "Target market",
+    "targetMarketPlaceholder": "e.g. EU, USA, Middle East...",
+    "destinationCountryLabel": "Destination country",
+    "packageTypeLabel": "Package type",
+    "packageTypePlaceholder": "e.g. Pouch, Jar, Carton...",
+    "packageSizeLabel": "Package size",
+    "packageSizePlaceholder": "e.g. 250g, 500g...",
+    "brandNameLabel": "Brand name",
+    "brandNamePlaceholder": "Your brand name",
+    "isPrivateLabelLabel": "This is a private-label product (packaged under my own brand)",
+    "estimatedQuantityLabel": "Estimated quantity",
+    "estimatedQuantityPlaceholder": "e.g. 5,000 units / month",
+    "targetPriceLabel": "Target price",
+    "targetPricePlaceholder": "e.g. USD 2.50 / unit",
+    "certificationRequirementLabel": "Certification requirements",
+    "certificationRequirementPlaceholder": "e.g. FDA, HACCP, Organic, Halal...",
+    "attachmentUrlLabel": "Attachment URL",
+    "attachmentUrlPlaceholder": "Link to spec sheet, artwork, or label design",
+    "submitting": "Submitting...",
+    "submitRequest": "Submit Request",
+    "genericError": "Failed to submit OEM/ODM request."
+  },
+  "logistics": {
+    "heroEyebrow": "Freight & Export",
+    "heroTitle": "Logistics & Export",
+    "heroBody": "Domestic delivery across Vietnam and international export via FCL/LCL to ASEAN, Asia, Europe, and North America. Get an instant shipping estimate below, or submit an RFQ for a formal freight quote on large export shipments.",
+    "destinationLabel": "Destination country",
+    "weightLabel": "Weight (kg)",
+    "subtotalLabel": "Order subtotal",
+    "getEstimate": "Get Shipping Estimate",
+    "zoneLabel": "Zone",
+    "methodLabel": "Method"
+  },
+  "wholesale": {
+    "heroEyebrow": "Distributors & Wholesale Buyers",
+    "heroTitle": "Wholesale & B2B",
+    "heroBody": "We serve distributors, wholesalers, supermarkets, restaurants, factories, and international importers with tiered volume pricing, negotiated contract pricing, an RFQ-based quotation process, purchase orders, invoicing, and flexible payment terms (Net 7/15/30, L/C, T/T, 30/70).",
+    "pricingEyebrow": "Illustrative Pricing",
+    "pricingTitle": "Example Tier Pricing",
+    "tiers": [
+      { "range": "1–99 kg", "price": "$5.00 / kg" },
+      { "range": "100–499 kg", "price": "$4.50 / kg" },
+      { "range": "500–999 kg", "price": "$4.00 / kg" },
+      { "range": "1,000+ kg", "price": "Contact Sales" }
+    ],
+    "pricingNote": "Illustrative — actual pricing is quoted per product and account.",
+    "onboardingEyebrow": "Onboarding",
+    "onboardingTitle": "How It Works",
+    "steps": [
+      "Register your business account with company and tax details.",
+      "Our sales team reviews your application and approves the account.",
+      "View wholesale tier pricing, plus any negotiated contract pricing, on your account.",
+      "Submit an RFQ for custom quantity, packaging, or export requirements — sales reviews it and issues a formal quotation."
+    ],
+    "applyBtn": "Apply for a B2B Account",
+    "requestQuoteBtn": "Request a Quote"
+  },
+  "certifications": {
+    "heroEyebrow": "Trust & Compliance",
+    "heroTitle": "Certifications",
+    "heroBody": "Our products and facilities are certified to international food safety and quality standards, verified per batch and available for buyer due-diligence."
+  },
+  "blog": {
+    "eyebrow": "Insights",
+    "title": "News & Knowledge",
+    "noArticles": "No articles yet."
+  },
+  "blogPost": {
+    "backLink": "← News & Knowledge"
+  },
+  "account": {
+    "title": "My Account",
+    "signOut": "Sign out",
+    "b2bBadge": "B2B / Wholesale Account",
+    "ordersHeading": "Order History",
+    "loadingOrders": "Loading orders...",
+    "noOrders": "No orders yet.",
+    "rfqsHeading": "My RFQs",
+    "newRfq": "New RFQ",
+    "loadingRfqs": "Loading RFQs...",
+    "noRfqs": "No RFQs yet.",
+    "oemHeading": "My OEM/ODM Requests",
+    "newOemRequest": "New OEM/ODM Request",
+    "loadingOem": "Loading OEM/ODM requests...",
+    "noOem": "No OEM/ODM requests yet."
+  },
+  "accountSupportList": {
+    "title": "Support Tickets",
+    "newTicket": "New Ticket",
+    "loading": "Loading tickets...",
+    "empty": "You have not opened any support tickets yet.",
+    "emptyLink": "Open one",
+    "loadError": "Failed to load your support tickets."
+  },
+  "accountSupportNew": {
+    "signInTitle": "Sign in to open a support ticket",
+    "signInBody": "Your tickets are tracked against your account.",
+    "signInBtn": "Sign In",
+    "successTitle": "Ticket Submitted",
+    "successBody": "Your ticket {number} has been opened. Our support team will respond shortly.",
+    "viewMyTickets": "View my tickets",
+    "title": "Open a Support Ticket",
+    "intro": "Tell us what is going on and our support team will get back to you.",
+    "subjectLabel": "Subject",
+    "subjectPlaceholder": "Brief summary of your issue",
+    "categoryLabel": "Category",
+    "relatedOrderLabel": "Related order (optional)",
+    "noneOption": "None",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Describe your issue in detail",
+    "submitting": "Submitting...",
+    "submit": "Submit Ticket",
+    "genericError": "Failed to submit ticket."
+  },
+  "accountSupportDetail": {
+    "backLink": "Back to my tickets",
+    "attachment": "Attachment",
+    "replySr": "Reply",
+    "replyPlaceholder": "Write a reply...",
+    "send": "Send",
+    "loading": "Loading ticket...",
+    "supportSuffix": "(Support)",
+    "you": "You",
+    "orderPrefix": "Order"
+  },
+  "ticketCategory": {
+    "ORDER": "Order",
+    "PRODUCT": "Product",
+    "PAYMENT": "Payment",
+    "SHIPPING": "Shipping",
+    "RFQ": "RFQ",
+    "OEM": "OEM",
+    "ACCOUNT": "Account",
+    "OTHER": "Other"
+  },
+  "ticketStatus": {
+    "OPEN": "Open",
+    "IN_PROGRESS": "In Progress",
+    "WAITING_ON_CUSTOMER": "Waiting on Customer",
+    "RESOLVED": "Resolved",
+    "CLOSED": "Closed"
+  },
+  "orderConfirmation": {
+    "thankYou": "Thank you for your order!",
+    "orderPlaced": "Order {orderNumber} has been placed.",
+    "vietqrInstructions": "Scan the QR code with any banking app to pay, or transfer manually using the details below.",
+    "bankLabel": "Bank",
+    "accountNumberLabel": "Account number",
+    "accountNameLabel": "Account name",
+    "amountLabel": "Amount",
+    "transferNoteLabel": "Transfer note",
+    "statusLabel": "Status",
+    "totalLabel": "Total",
+    "continueShopping": "Continue Shopping",
+    "trackOrder": "Track Order"
+  },
+  "track": {
+    "title": "Track Your Order",
+    "orderNumberLabel": "Order number",
+    "orderNumberPlaceholder": "Order number (e.g. ORD-2026-XXXXXXXX)",
+    "emailLabel": "Email (guest orders)",
+    "trackBtn": "Track",
+    "notFoundError": "Order not found. Check your order number and email.",
+    "orderSummary": "Order {orderNumber} — {amount}"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: 2026",
+    "sections": [
+      { "heading": "What we collect", "body": "When you create an account, request a quote, register as a B2B partner, or place an order, we collect the information you provide directly: name, email, phone, company details, shipping/billing address, and order history. We do not store raw payment card data — payments are handled through the payment method you select at checkout." },
+      { "heading": "How we use it", "body": "We use your information to process orders and RFQs, manage your account, calculate wholesale/contract pricing, communicate order and shipment status, and respond to support requests. We do not sell your personal data to third parties." },
+      { "heading": "Cookies & local storage", "body": "We use browser storage to keep you signed in and to remember your shopping cart (including for guest checkout, via a cart session identifier). This is essential to the site functioning and is not used for third-party advertising tracking." }
+    ],
+    "rightsHeading": "Your rights",
+    "rightsBodyPrefix": "You can request access to, correction of, or deletion of your personal data at any time by contacting us through the",
+    "rightsLinkText": "Contact page",
+    "rightsBodySuffix": "."
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "lastUpdated": "Last updated: 2026",
+    "sections": [
+      { "heading": "Orders & pricing", "body": "Retail prices shown are per the listed unit/packaging. Wholesale (B2B) pricing is tiered by quantity or set per contract for approved accounts and may differ from the listed retail price. Prices are subject to change without notice until an order is confirmed." },
+      { "heading": "RFQ & quotations", "body": "A quotation issued in response to a Request for Quotation is valid until the date stated on the quotation. Accepting a quotation does not itself constitute a binding contract until a purchase order and, where applicable, deposit or payment terms are confirmed in writing." },
+      { "heading": "Shipping & delivery", "body": "Estimated delivery times are indicative and depend on destination, Incoterm, customs clearance, and carrier schedules. Title and risk transfer according to the agreed Incoterm for each order." },
+      { "heading": "B2B accounts", "body": "Business accounts are subject to review and approval before wholesale pricing and credit terms are activated. We reserve the right to suspend an account for non-payment or breach of agreed terms." }
+    ]
+  },
+  "meta": {
+    "siteTitle": "Phong Chau — Agricultural Products, Wholesale & Export",
+    "siteDescription": "Vietnamese agricultural products, wholesale B2B, OEM/ODM private label, and export logistics — cashew, coffee, pepper, rice, and coconut products from farm to global market."
+  }
+}

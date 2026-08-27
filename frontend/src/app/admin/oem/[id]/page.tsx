@@ -139,7 +139,7 @@ export default function AdminOemDetailPage({ params }: { params: { id: string } 
   }
 
   if (loadError) {
-    return <p className="text-sm text-red-600">{loadError}</p>;
+    return <div className="rounded-xl2 border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{loadError}</div>;
   }
   if (!oemRequest) {
     return <p className="text-sm text-gray-500">Loading OEM/ODM request...</p>;
@@ -149,21 +149,21 @@ export default function AdminOemDetailPage({ params }: { params: { id: string } 
 
   return (
     <div className="max-w-5xl">
-      <div className="flex items-center justify-between">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">OEM/ODM Request {oemRequest.requestNumber}</h1>
           <p className="mt-1 text-sm text-gray-500">
-            Current status: <span className="font-semibold text-brand-700">{oemRequest.status}</span>
+            Current status: <span className="font-semibold text-teal-700">{oemRequest.status}</span>
           </p>
         </div>
-        <button onClick={() => router.push('/admin/oem')} className="text-sm text-gray-500 hover:underline">
+        <button onClick={() => router.push('/admin/oem')} className="text-sm font-medium text-gray-500 hover:text-gray-700 hover:underline">
           Back to OEM/ODM Requests
         </button>
       </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-        <section className="rounded-md border border-gray-200 p-4">
-          <h2 className="font-semibold text-gray-800">Customer</h2>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <section className="rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+          <h2 className="text-lg font-semibold text-gray-900">Customer</h2>
           <p className="mt-2 text-sm text-gray-700">
             {oemRequest.company
               ? `${oemRequest.company.name} (${oemRequest.company.country}, ${oemRequest.company.businessType}) — contact: ${oemRequest.company.contactPerson}`
@@ -176,8 +176,8 @@ export default function AdminOemDetailPage({ params }: { params: { id: string } 
           )}
         </section>
 
-        <section className="rounded-md border border-gray-200 p-4">
-          <h2 className="font-semibold text-gray-800">Product Details</h2>
+        <section className="rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+          <h2 className="text-lg font-semibold text-gray-900">Product Details</h2>
           <dl className="mt-2 space-y-1 text-sm text-gray-700">
             <div>Product type: {oemRequest.productType}</div>
             <div>Ingredients: {oemRequest.ingredients ?? '—'}</div>
@@ -187,8 +187,8 @@ export default function AdminOemDetailPage({ params }: { params: { id: string } 
           </dl>
         </section>
 
-        <section className="rounded-md border border-gray-200 p-4">
-          <h2 className="font-semibold text-gray-800">Packaging & Branding</h2>
+        <section className="rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+          <h2 className="text-lg font-semibold text-gray-900">Packaging & Branding</h2>
           <dl className="mt-2 space-y-1 text-sm text-gray-700">
             <div>Package type: {oemRequest.packageType ?? '—'}</div>
             <div>Package size: {oemRequest.packageSize ?? '—'}</div>
@@ -197,8 +197,8 @@ export default function AdminOemDetailPage({ params }: { params: { id: string } 
           </dl>
         </section>
 
-        <section className="rounded-md border border-gray-200 p-4">
-          <h2 className="font-semibold text-gray-800">Commercial</h2>
+        <section className="rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+          <h2 className="text-lg font-semibold text-gray-900">Commercial</h2>
           <dl className="mt-2 space-y-1 text-sm text-gray-700">
             <div>Estimated quantity: {oemRequest.estimatedQuantity ?? '—'}</div>
             <div>Target price: {oemRequest.targetPrice ?? '—'}</div>
@@ -209,7 +209,7 @@ export default function AdminOemDetailPage({ params }: { params: { id: string } 
                   href={oemRequest.attachmentUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-brand-700 hover:underline"
+                  className="text-teal-700 hover:underline"
                 >
                   Attachment
                 </a>
@@ -219,8 +219,8 @@ export default function AdminOemDetailPage({ params }: { params: { id: string } 
         </section>
       </div>
 
-      <section className="mt-6 rounded-md border border-gray-200 p-4">
-        <h2 className="font-semibold text-gray-800">Update Status</h2>
+      <section className="mt-6 rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+        <h2 className="text-lg font-semibold text-gray-900">Update Status</h2>
         <form onSubmit={submitStatus} className="mt-3 space-y-3">
           <div className="flex gap-3">
             <label htmlFor="oem-status-select" className="sr-only">
@@ -230,7 +230,7 @@ export default function AdminOemDetailPage({ params }: { params: { id: string } 
               id="oem-status-select"
               value={statusValue}
               onChange={(e) => setStatusValue(e.target.value)}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
             >
               <option value={oemRequest.status}>{oemRequest.status} (current)</option>
               {nextStatuses.map((s) => (
@@ -242,7 +242,7 @@ export default function AdminOemDetailPage({ params }: { params: { id: string } 
             <button
               type="submit"
               disabled={statusSubmitting}
-              className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+              className="inline-flex items-center justify-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
             >
               Update
             </button>
@@ -255,7 +255,7 @@ export default function AdminOemDetailPage({ params }: { params: { id: string } 
             placeholder="Optional note"
             value={statusNote}
             onChange={(e) => setStatusNote(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
             rows={2}
           />
           {nextStatuses.length === 0 && (
@@ -263,12 +263,14 @@ export default function AdminOemDetailPage({ params }: { params: { id: string } 
               This OEM/ODM request is in a terminal state; no further transitions are allowed.
             </p>
           )}
-          {statusError && <p className="text-sm text-red-600">{statusError}</p>}
+          {statusError && (
+            <div className="rounded-xl2 border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">{statusError}</div>
+          )}
         </form>
       </section>
 
-      <section className="mt-6 rounded-md border border-gray-200 p-4">
-        <h2 className="font-semibold text-gray-800">Internal Note</h2>
+      <section className="mt-6 rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+        <h2 className="text-lg font-semibold text-gray-900">Internal Note</h2>
         <form onSubmit={submitNote} className="mt-3 space-y-3">
           <label htmlFor="oem-internal-note" className="sr-only">
             Internal note
@@ -278,28 +280,30 @@ export default function AdminOemDetailPage({ params }: { params: { id: string } 
             placeholder="Internal note (not visible to the customer)"
             value={internalNote}
             onChange={(e) => setInternalNote(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
             rows={3}
           />
           <button
             type="submit"
             disabled={noteSubmitting}
-            className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+            className="inline-flex items-center justify-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
           >
             Save Note
           </button>
-          {noteError && <p className="text-sm text-red-600">{noteError}</p>}
+          {noteError && (
+            <div className="rounded-xl2 border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">{noteError}</div>
+          )}
         </form>
       </section>
 
-      <section className="mt-6 rounded-md border border-gray-200 p-4">
-        <h2 className="font-semibold text-gray-800">Messages</h2>
+      <section className="mt-6 rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+        <h2 className="text-lg font-semibold text-gray-900">Messages</h2>
         <div className="mt-3 max-h-80 space-y-3 overflow-y-auto">
           {oemRequest.messages.length === 0 ? (
             <p className="text-sm text-gray-500">No messages yet.</p>
           ) : (
             oemRequest.messages.map((m) => (
-              <div key={m.id} className="rounded-md bg-gray-50 p-3 text-sm">
+              <div key={m.id} className="rounded-lg bg-gray-50 p-3 text-sm">
                 <div className="flex items-center justify-between">
                   <span className="font-medium text-gray-800">
                     {m.sender?.fullName ?? 'Unknown'} <span className="text-gray-400">({m.sender?.role})</span>
@@ -308,7 +312,7 @@ export default function AdminOemDetailPage({ params }: { params: { id: string } 
                 </div>
                 <p className="mt-1 text-gray-700">{m.message}</p>
                 {m.attachmentUrl && (
-                  <a href={m.attachmentUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-brand-700 hover:underline">
+                  <a href={m.attachmentUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-teal-700 hover:underline">
                     Attachment
                   </a>
                 )}
@@ -325,18 +329,20 @@ export default function AdminOemDetailPage({ params }: { params: { id: string } 
             placeholder="Reply to customer..."
             value={replyMessage}
             onChange={(e) => setReplyMessage(e.target.value)}
-            className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
             rows={2}
           />
           <button
             type="submit"
             disabled={replySubmitting}
-            className="self-end rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+            className="self-end inline-flex items-center justify-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
           >
             Send
           </button>
         </form>
-        {replyError && <p className="mt-2 text-sm text-red-600">{replyError}</p>}
+        {replyError && (
+          <div className="mt-2 rounded-xl2 border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">{replyError}</div>
+        )}
       </section>
     </div>
   );

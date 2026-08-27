@@ -1,3 +1,5 @@
+import { getTranslations } from 'next-intl/server';
+
 interface Certification {
   id: string;
   name: string;
@@ -5,16 +7,15 @@ interface Certification {
   iconUrl?: string | null;
 }
 
-export function CertificationsStrip({ certifications }: { certifications: Certification[] }) {
+export async function CertificationsStrip({ certifications }: { certifications: Certification[] }) {
   if (certifications.length === 0) return null;
+  const t = await getTranslations('home.certifications');
   return (
     <section className="mx-auto max-w-7xl px-6 py-16 md:py-24">
       <div className="text-center">
-        <p className="section-eyebrow">Verified Standards</p>
-        <h2 className="mt-2 text-3xl font-bold text-gray-900">Certifications</h2>
-        <p className="mx-auto mt-3 max-w-2xl text-gray-600">
-          Certified to international food safety and quality standards, verified per batch.
-        </p>
+        <p className="section-eyebrow">{t('eyebrow')}</p>
+        <h2 className="mt-2 text-3xl font-bold text-gray-900">{t('title')}</h2>
+        <p className="mx-auto mt-3 max-w-2xl text-gray-600">{t('body')}</p>
       </div>
       <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
         {certifications.map((cert) => (

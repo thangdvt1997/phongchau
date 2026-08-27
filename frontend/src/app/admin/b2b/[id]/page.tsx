@@ -199,7 +199,7 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
   }
 
   if (loadError) {
-    return <p className="text-sm text-red-600">{loadError}</p>;
+    return <div className="rounded-xl2 border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{loadError}</div>;
   }
   if (!company) {
     return <p className="text-sm text-gray-500">Loading company...</p>;
@@ -207,15 +207,15 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
 
   return (
     <div className="max-w-4xl">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-2xl font-bold text-gray-900">{company.name}</h1>
-        <button onClick={() => router.push('/admin/b2b')} className="text-sm text-gray-500 hover:underline">
+        <button onClick={() => router.push('/admin/b2b')} className="text-sm font-medium text-gray-500 hover:text-gray-700 hover:underline">
           Back to companies
         </button>
       </div>
 
-      <section className="mt-6 rounded-md border border-gray-200 p-4">
-        <h2 className="font-semibold text-gray-800">Company Info</h2>
+      <section className="mt-6 rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+        <h2 className="text-lg font-semibold text-gray-900">Company Info</h2>
         <dl className="mt-2 grid grid-cols-2 gap-2 text-sm text-gray-700">
           <div>Tax ID: {company.taxId}</div>
           <div>Country: {company.country}</div>
@@ -241,8 +241,8 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
         )}
       </section>
 
-      <section className="mt-6 rounded-md border border-gray-200 p-4">
-        <h2 className="font-semibold text-gray-800">Credit Limit &amp; Payment Terms</h2>
+      <section className="mt-6 rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+        <h2 className="text-lg font-semibold text-gray-900">Credit Limit &amp; Payment Terms</h2>
         <form onSubmit={submitCompany} className="mt-3 flex flex-wrap items-end gap-3">
           <div>
             <label htmlFor="b2b-credit-limit" className="block text-sm font-medium text-gray-700">Credit Limit</label>
@@ -253,7 +253,7 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
               step="0.01"
               value={creditLimit}
               onChange={(e) => setCreditLimit(e.target.value)}
-              className="mt-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="mt-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
             />
           </div>
           <div>
@@ -263,23 +263,25 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
               placeholder="e.g. Net 30, T/T 30/70"
               value={paymentTerms}
               onChange={(e) => setPaymentTerms(e.target.value)}
-              className="mt-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="mt-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
             />
           </div>
           <button
             type="submit"
             disabled={companySubmitting}
-            className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+            className="inline-flex items-center justify-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
           >
             Save
           </button>
-          {companySaved && <span className="text-sm text-green-600">Saved.</span>}
+          {companySaved && <span className="text-sm font-medium text-emerald-600">Saved.</span>}
         </form>
-        {companyError && <p className="mt-2 text-sm text-red-600">{companyError}</p>}
+        {companyError && (
+          <div className="mt-2 rounded-xl2 border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">{companyError}</div>
+        )}
       </section>
 
-      <section className="mt-6 rounded-md border border-gray-200 p-4">
-        <h2 className="font-semibold text-gray-800">Product Price Tiers</h2>
+      <section className="mt-6 rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+        <h2 className="text-lg font-semibold text-gray-900">Product Price Tiers</h2>
         <p className="mt-1 text-xs text-gray-400">
           Price tiers apply per product across all B2B customers, not just this company. Pick a product to
           manage its volume-based pricing.
@@ -291,7 +293,7 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
           id="b2b-tier-product"
           value={tierProductId}
           onChange={(e) => setTierProductId(e.target.value)}
-          className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="mt-3 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
         >
           <option value="">Select a product...</option>
           {products.map((p) => (
@@ -310,7 +312,7 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
             ) : (
               <table className="mt-2 w-full text-sm">
                 <thead>
-                  <tr className="text-left text-gray-500">
+                  <tr className="text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
                     <th className="py-1">Min Qty</th>
                     <th className="py-1">Max Qty</th>
                     <th className="py-1">Price</th>
@@ -319,12 +321,12 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
                 </thead>
                 <tbody>
                   {tiers.map((t) => (
-                    <tr key={t.id} className="border-t border-gray-100">
+                    <tr key={t.id} className="border-t border-gray-100 transition-colors hover:bg-gray-50">
                       <td className="py-1">{t.minQty}</td>
                       <td className="py-1">{t.maxQty ?? '∞'}</td>
                       <td className="py-1">{formatMoney(t.price, t.currency)}</td>
                       <td className="py-1 text-right">
-                        <button onClick={() => deleteTier(t.id)} className="text-xs text-red-600">
+                        <button onClick={() => deleteTier(t.id)} className="text-xs font-medium text-rose-600 hover:text-rose-700">
                           Delete
                         </button>
                       </td>
@@ -343,7 +345,7 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
                 value={tierForm.minQty}
                 onChange={(e) => setTierForm((f) => ({ ...f, minQty: e.target.value }))}
                 required
-                className="w-24 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                className="w-24 rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
               />
               <input
                 aria-label="Maximum quantity (optional)"
@@ -352,7 +354,7 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
                 placeholder="Max qty (optional)"
                 value={tierForm.maxQty}
                 onChange={(e) => setTierForm((f) => ({ ...f, maxQty: e.target.value }))}
-                className="w-36 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                className="w-36 rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
               />
               <input
                 aria-label="Tier price"
@@ -363,7 +365,7 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
                 value={tierForm.price}
                 onChange={(e) => setTierForm((f) => ({ ...f, price: e.target.value }))}
                 required
-                className="w-28 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                className="w-28 rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
               />
               <input
                 aria-label="Currency"
@@ -371,23 +373,25 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
                 value={tierForm.currency}
                 onChange={(e) => setTierForm((f) => ({ ...f, currency: e.target.value }))}
                 required
-                className="w-24 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+                className="w-24 rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
               />
               <button
                 type="submit"
                 disabled={tierSubmitting}
-                className="rounded-md bg-brand-600 px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-50"
+                className="inline-flex items-center justify-center rounded-lg bg-teal-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
               >
                 Add Tier
               </button>
             </form>
-            {tierError && <p className="mt-2 text-sm text-red-600">{tierError}</p>}
+            {tierError && (
+              <div className="mt-2 rounded-xl2 border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">{tierError}</div>
+            )}
           </div>
         )}
       </section>
 
-      <section className="mt-6 rounded-md border border-gray-200 p-4">
-        <h2 className="font-semibold text-gray-800">Customer-Specific Contract Prices</h2>
+      <section className="mt-6 rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+        <h2 className="text-lg font-semibold text-gray-900">Customer-Specific Contract Prices</h2>
         <p className="mt-1 text-xs text-gray-400">Specific to {company.name} — overrides tier pricing for the chosen product.</p>
 
         {customerPrices === null ? (
@@ -397,7 +401,7 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
         ) : (
           <table className="mt-3 w-full text-sm">
             <thead>
-              <tr className="text-left text-gray-500">
+              <tr className="text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
                 <th className="py-1">Product</th>
                 <th className="py-1">Price</th>
                 <th className="py-1">Valid From</th>
@@ -407,13 +411,13 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
             </thead>
             <tbody>
               {customerPrices.map((cp) => (
-                <tr key={cp.id} className="border-t border-gray-100">
+                <tr key={cp.id} className="border-t border-gray-100 transition-colors hover:bg-gray-50">
                   <td className="py-1">{productName(cp.productId)}</td>
                   <td className="py-1">{formatMoney(cp.price, cp.currency)}</td>
                   <td className="py-1">{cp.validFrom ? new Date(cp.validFrom).toLocaleDateString() : '—'}</td>
                   <td className="py-1">{cp.validTo ? new Date(cp.validTo).toLocaleDateString() : '—'}</td>
                   <td className="py-1 text-right">
-                    <button onClick={() => deleteCustomerPrice(cp.id)} className="text-xs text-red-600">
+                    <button onClick={() => deleteCustomerPrice(cp.id)} className="text-xs font-medium text-rose-600 hover:text-rose-700">
                       Delete
                     </button>
                   </td>
@@ -429,7 +433,7 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
             value={cpForm.productId}
             onChange={(e) => setCpForm((f) => ({ ...f, productId: e.target.value }))}
             required
-            className="rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+            className="rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
           >
             <option value="">Select product</option>
             {products.map((p) => (
@@ -447,7 +451,7 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
             value={cpForm.price}
             onChange={(e) => setCpForm((f) => ({ ...f, price: e.target.value }))}
             required
-            className="w-28 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+            className="w-28 rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
           />
           <input
             aria-label="Currency"
@@ -455,7 +459,7 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
             value={cpForm.currency}
             onChange={(e) => setCpForm((f) => ({ ...f, currency: e.target.value }))}
             required
-            className="w-24 rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+            className="w-24 rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
           />
           <label htmlFor="cp-valid-from" className="sr-only">Valid from</label>
           <input
@@ -463,7 +467,7 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
             type="date"
             value={cpForm.validFrom}
             onChange={(e) => setCpForm((f) => ({ ...f, validFrom: e.target.value }))}
-            className="rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+            className="rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
           />
           <label htmlFor="cp-valid-to" className="sr-only">Valid to</label>
           <input
@@ -471,17 +475,19 @@ export default function AdminB2bDetailPage({ params }: { params: { id: string } 
             type="date"
             value={cpForm.validTo}
             onChange={(e) => setCpForm((f) => ({ ...f, validTo: e.target.value }))}
-            className="rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+            className="rounded-lg border border-gray-300 px-2 py-1.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
           />
           <button
             type="submit"
             disabled={cpSubmitting}
-            className="rounded-md bg-brand-600 px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-50"
+            className="inline-flex items-center justify-center rounded-lg bg-teal-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
           >
             Save Price
           </button>
         </form>
-        {cpError && <p className="mt-2 text-sm text-red-600">{cpError}</p>}
+        {cpError && (
+          <div className="mt-2 rounded-xl2 border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">{cpError}</div>
+        )}
       </section>
     </div>
   );

@@ -29,8 +29,12 @@ export default function AdminBlogEditPage({ params }: { params: { id: string } }
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900">Edit Blog Post</h1>
-      {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Edit Blog Post</h1>
+      </div>
+      {error && (
+        <div className="mt-4 rounded-xl2 border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{error}</div>
+      )}
       {!initial && !error ? (
         <p className="mt-6 text-sm text-gray-500">Loading post...</p>
       ) : initial ? (

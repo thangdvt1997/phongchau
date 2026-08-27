@@ -78,11 +78,20 @@ export default function AdminSupportListPage() {
     };
   }, [status, priority, assigneeId, page]);
 
+  function statusBadgeClass(s: string): string {
+    const lower = s.toLowerCase();
+    if (lower === 'resolved' || lower === 'closed') return 'bg-emerald-50 text-emerald-700';
+    if (lower === 'open' || lower === 'in_progress' || lower === 'waiting_on_customer') return 'bg-amber-50 text-amber-700';
+    return 'bg-gray-100 text-gray-700';
+  }
+
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900">Support Tickets</h1>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <h1 className="text-2xl font-bold text-gray-900">Support Tickets</h1>
+      </div>
 
-      <div className="mt-4 flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <label htmlFor="ticket-status-filter" className="text-sm font-medium text-gray-700">
           Status
         </label>
@@ -93,7 +102,7 @@ export default function AdminSupportListPage() {
             setStatus(e.target.value);
             setPage(1);
           }}
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm"
+          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
         >
           <option value="">All</option>
           {TICKET_STATUSES.map((s) => (
@@ -113,7 +122,7 @@ export default function AdminSupportListPage() {
             setPriority(e.target.value);
             setPage(1);
           }}
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm"
+          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
         >
           <option value="">All</option>
           {TICKET_PRIORITIES.map((p) => (
@@ -133,7 +142,7 @@ export default function AdminSupportListPage() {
             setAssigneeId(e.target.value);
             setPage(1);
           }}
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm"
+          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
         >
           <option value="">All</option>
           {staff.map((s) => (
@@ -144,46 +153,56 @@ export default function AdminSupportListPage() {
         </select>
       </div>
 
-      {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+      {error && (
+        <div className="mt-4 rounded-xl2 border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{error}</div>
+      )}
 
       {tickets === null ? (
         <p className="mt-6 text-sm text-gray-500">Loading tickets...</p>
       ) : tickets.length === 0 ? (
-        <p className="mt-6 text-sm text-gray-500">No tickets found.</p>
+        <div className="mt-6 rounded-xl2 border border-dashed border-gray-300 bg-gray-50 p-8 text-center text-sm text-gray-500">
+          No tickets found.
+        </div>
       ) : (
-        <div className="mt-4 overflow-x-auto rounded-md border border-gray-200">
-          <table className="min-w-full divide-y divide-gray-200 text-sm">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-2 text-left font-semibold text-gray-600">Ticket #</th>
-                <th className="px-4 py-2 text-left font-semibold text-gray-600">Subject</th>
-                <th className="px-4 py-2 text-left font-semibold text-gray-600">Customer</th>
-                <th className="px-4 py-2 text-left font-semibold text-gray-600">Priority</th>
-                <th className="px-4 py-2 text-left font-semibold text-gray-600">Status</th>
-                <th className="px-4 py-2 text-left font-semibold text-gray-600">Assignee</th>
-                <th className="px-4 py-2 text-left font-semibold text-gray-600">Created</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 bg-white">
-              {tickets.map((t) => (
-                <tr key={t.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-2">
-                    <Link href={`/admin/support/${t.id}`} className="font-medium text-brand-700 hover:underline">
-                      {t.ticketNumber}
-                    </Link>
-                  </td>
-                  <td className="px-4 py-2 text-gray-700">{t.subject}</td>
-                  <td className="px-4 py-2 text-gray-700">
-                    {t.user ? `${t.user.fullName} (${t.user.email})` : 'Guest'}
-                  </td>
-                  <td className="px-4 py-2 text-gray-700">{formatEnumLabel(t.priority)}</td>
-                  <td className="px-4 py-2 text-gray-700">{formatEnumLabel(t.status)}</td>
-                  <td className="px-4 py-2 text-gray-500">{t.assignee?.fullName ?? 'Unassigned'}</td>
-                  <td className="px-4 py-2 text-gray-500">{new Date(t.createdAt).toLocaleDateString()}</td>
+        <div className="mt-4 overflow-hidden rounded-xl2 border border-gray-200 bg-white shadow-card">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200 text-sm">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Ticket #</th>
+                  <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Subject</th>
+                  <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Customer</th>
+                  <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Priority</th>
+                  <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Status</th>
+                  <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Assignee</th>
+                  <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Created</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-100 bg-white">
+                {tickets.map((t) => (
+                  <tr key={t.id} className="transition-colors hover:bg-gray-50">
+                    <td className="px-4 py-2.5">
+                      <Link href={`/admin/support/${t.id}`} className="font-medium text-teal-700 hover:text-teal-800 hover:underline">
+                        {t.ticketNumber}
+                      </Link>
+                    </td>
+                    <td className="px-4 py-2.5 text-gray-700">{t.subject}</td>
+                    <td className="px-4 py-2.5 text-gray-700">
+                      {t.user ? `${t.user.fullName} (${t.user.email})` : 'Guest'}
+                    </td>
+                    <td className="px-4 py-2.5 text-gray-700">{formatEnumLabel(t.priority)}</td>
+                    <td className="px-4 py-2.5">
+                      <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeClass(t.status)}`}>
+                        {formatEnumLabel(t.status)}
+                      </span>
+                    </td>
+                    <td className="px-4 py-2.5 text-gray-500">{t.assignee?.fullName ?? 'Unassigned'}</td>
+                    <td className="px-4 py-2.5 text-gray-500">{new Date(t.createdAt).toLocaleDateString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
@@ -195,14 +214,14 @@ export default function AdminSupportListPage() {
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page <= 1}
-            className="rounded-md border border-gray-300 px-3 py-1 disabled:opacity-40"
+            className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-3 py-1 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-40"
           >
             Previous
           </button>
           <button
             onClick={() => setPage((p) => p + 1)}
             disabled={page * pageSize >= total}
-            className="rounded-md border border-gray-300 px-3 py-1 disabled:opacity-40"
+            className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-3 py-1 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-40"
           >
             Next
           </button>

@@ -136,7 +136,7 @@ export default function AdminSupportDetailPage({ params }: { params: { id: strin
   }
 
   if (loadError) {
-    return <p className="text-sm text-red-600">{loadError}</p>;
+    return <div className="rounded-xl2 border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{loadError}</div>;
   }
   if (!ticket) {
     return <p className="text-sm text-gray-500">Loading ticket...</p>;
@@ -146,23 +146,26 @@ export default function AdminSupportDetailPage({ params }: { params: { id: strin
 
   return (
     <div className="max-w-5xl">
-      <div className="flex items-center justify-between">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
             {ticket.ticketNumber} — {ticket.subject}
           </h1>
           <p className="mt-1 text-sm text-gray-500">
-            Current status: <span className="font-semibold text-brand-700">{formatEnumLabel(ticket.status)}</span>
+            Current status: <span className="font-semibold text-teal-700">{formatEnumLabel(ticket.status)}</span>
           </p>
         </div>
-        <button onClick={() => router.push('/admin/support')} className="text-sm text-gray-500 hover:underline">
+        <button
+          onClick={() => router.push('/admin/support')}
+          className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+        >
           Back to Tickets
         </button>
       </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-        <section className="rounded-md border border-gray-200 p-4">
-          <h2 className="font-semibold text-gray-800">Customer</h2>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <section className="rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+          <h2 className="text-lg font-semibold text-gray-900">Customer</h2>
           <p className="mt-2 text-sm text-gray-700">
             {ticket.user
               ? `${ticket.user.fullName} (${ticket.user.email})`
@@ -176,8 +179,8 @@ export default function AdminSupportDetailPage({ params }: { params: { id: strin
           )}
         </section>
 
-        <section className="rounded-md border border-gray-200 p-4">
-          <h2 className="font-semibold text-gray-800">Details</h2>
+        <section className="rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+          <h2 className="text-lg font-semibold text-gray-900">Details</h2>
           <dl className="mt-2 space-y-1 text-sm text-gray-700">
             <div>Category: {formatEnumLabel(ticket.category)}</div>
             <div>Priority: {formatEnumLabel(ticket.priority)}</div>
@@ -187,8 +190,8 @@ export default function AdminSupportDetailPage({ params }: { params: { id: strin
         </section>
       </div>
 
-      <section className="mt-6 rounded-md border border-gray-200 p-4">
-        <h2 className="font-semibold text-gray-800">Ticket Controls</h2>
+      <section className="mt-6 rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+        <h2 className="text-lg font-semibold text-gray-900">Ticket Controls</h2>
         <form onSubmit={submitControls} className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
           <div>
             <label htmlFor="ticket-status-select" className="text-xs font-medium text-gray-600">
@@ -198,7 +201,7 @@ export default function AdminSupportDetailPage({ params }: { params: { id: strin
               id="ticket-status-select"
               value={statusValue}
               onChange={(e) => setStatusValue(e.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
             >
               <option value={ticket.status}>{formatEnumLabel(ticket.status)} (current)</option>
               {nextStatuses.map((s) => (
@@ -216,7 +219,7 @@ export default function AdminSupportDetailPage({ params }: { params: { id: strin
               id="ticket-priority-select"
               value={priorityValue}
               onChange={(e) => setPriorityValue(e.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
             >
               {TICKET_PRIORITIES.map((p) => (
                 <option key={p} value={p}>
@@ -233,7 +236,7 @@ export default function AdminSupportDetailPage({ params }: { params: { id: strin
               id="ticket-category-select"
               value={categoryValue}
               onChange={(e) => setCategoryValue(e.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
             >
               {TICKET_CATEGORIES.map((c) => (
                 <option key={c} value={c}>
@@ -250,7 +253,7 @@ export default function AdminSupportDetailPage({ params }: { params: { id: strin
               id="ticket-assignee-select"
               value={assigneeValue}
               onChange={(e) => setAssigneeValue(e.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
             >
               <option value="">Unassigned</option>
               {staff.map((s) => (
@@ -264,20 +267,22 @@ export default function AdminSupportDetailPage({ params }: { params: { id: strin
             <button
               type="submit"
               disabled={controlsSubmitting}
-              className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+              className="inline-flex items-center justify-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
             >
               {controlsSubmitting ? 'Saving...' : 'Save Changes'}
             </button>
             {nextStatuses.length === 0 && (
               <p className="mt-2 text-xs text-gray-400">This ticket is in a terminal state; no further status transitions are allowed.</p>
             )}
-            {controlsError && <p className="mt-2 text-sm text-red-600">{controlsError}</p>}
+            {controlsError && (
+              <div className="mt-2 rounded-xl2 border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{controlsError}</div>
+            )}
           </div>
         </form>
       </section>
 
-      <section className="mt-6 rounded-md border border-gray-200 p-4">
-        <h2 className="font-semibold text-gray-800">Messages</h2>
+      <section className="mt-6 rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+        <h2 className="text-lg font-semibold text-gray-900">Messages</h2>
         <div className="mt-3 max-h-96 space-y-3 overflow-y-auto">
           {ticket.messages.length === 0 ? (
             <p className="text-sm text-gray-500">No messages yet.</p>
@@ -285,14 +290,14 @@ export default function AdminSupportDetailPage({ params }: { params: { id: strin
             ticket.messages.map((m) => (
               <div
                 key={m.id}
-                className={`rounded-md p-3 text-sm ${
-                  m.isFromStaff ? 'bg-brand-50 border border-brand-100' : 'bg-gray-50'
+                className={`rounded-lg border p-4 text-sm ${
+                  m.isFromStaff ? 'border-teal-100 bg-teal-50' : 'border-gray-200 bg-white'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-medium text-gray-800">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                     {m.sender?.fullName ?? (m.isFromStaff ? 'Support' : 'Customer')}{' '}
-                    <span className="text-gray-400">({m.isFromStaff ? 'Staff' : 'Customer'})</span>
+                    <span className="text-gray-400 normal-case">({m.isFromStaff ? 'Staff' : 'Customer'})</span>
                   </span>
                   <span className="text-xs text-gray-400">{new Date(m.createdAt).toLocaleString()}</span>
                 </div>
@@ -302,7 +307,7 @@ export default function AdminSupportDetailPage({ params }: { params: { id: strin
                     href={m.attachmentUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-1 inline-block text-xs text-brand-700 hover:underline"
+                    className="mt-1 inline-block text-xs font-medium text-teal-700 hover:text-teal-800 hover:underline"
                   >
                     Attachment
                   </a>
@@ -320,18 +325,20 @@ export default function AdminSupportDetailPage({ params }: { params: { id: strin
             placeholder="Reply to customer..."
             value={replyMessage}
             onChange={(e) => setReplyMessage(e.target.value)}
-            className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
             rows={2}
           />
           <button
             type="submit"
             disabled={replySubmitting}
-            className="self-end rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+            className="inline-flex items-center justify-center self-end rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
           >
             Send
           </button>
         </form>
-        {replyError && <p className="mt-2 text-sm text-red-600">{replyError}</p>}
+        {replyError && (
+          <div className="mt-2 rounded-xl2 border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{replyError}</div>
+        )}
       </section>
     </div>
   );

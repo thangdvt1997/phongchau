@@ -1,18 +1,18 @@
-import Link from 'next/link';
 import Image from 'next/image';
+import { getTranslations } from 'next-intl/server';
+import { Link } from '@/i18n/navigation';
 import { Category } from '@/lib/types';
 import { categoryImage, categoryFallbackGradient } from '@/lib/category-images';
 
-export function FeaturedCategories({ categories }: { categories: Category[] }) {
+export async function FeaturedCategories({ categories }: { categories: Category[] }) {
   if (categories.length === 0) return null;
+  const t = await getTranslations('home.featuredCategories');
   return (
     <section className="mx-auto max-w-7xl px-6 py-16 md:py-24">
       <div className="max-w-xl">
-        <p className="section-eyebrow">Our Catalog</p>
-        <h2 className="mt-2 text-3xl font-bold text-gray-900">Shop by Category</h2>
-        <p className="mt-3 text-gray-600">
-          Every category is tied to a named growing region and export-ready specification sheet.
-        </p>
+        <p className="section-eyebrow">{t('eyebrow')}</p>
+        <h2 className="mt-2 text-3xl font-bold text-gray-900">{t('title')}</h2>
+        <p className="mt-3 text-gray-600">{t('body')}</p>
       </div>
       <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
         {categories.slice(0, 6).map((cat) => {

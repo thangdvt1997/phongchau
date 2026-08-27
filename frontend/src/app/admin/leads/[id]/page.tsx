@@ -113,7 +113,7 @@ export default function AdminLeadDetailPage({ params }: { params: { id: string }
   }
 
   if (loadError) {
-    return <p className="text-sm text-red-600">{loadError}</p>;
+    return <div className="rounded-xl2 border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{loadError}</div>;
   }
   if (!lead) {
     return <p className="text-sm text-gray-500">Loading lead...</p>;
@@ -121,23 +121,26 @@ export default function AdminLeadDetailPage({ params }: { params: { id: string }
 
   return (
     <div className="max-w-4xl">
-      <div className="flex items-center justify-between">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">{lead.fullName}</h1>
           <p className="mt-1 text-sm text-gray-500">
-            Status: <span className="font-semibold text-brand-700">{formatEnumLabel(lead.status)}</span>
+            Status: <span className="font-semibold text-teal-700">{formatEnumLabel(lead.status)}</span>
             {' · '}
             Source: {formatEnumLabel(lead.source)}
           </p>
         </div>
-        <button onClick={() => router.push('/admin/leads')} className="text-sm text-gray-500 hover:underline">
+        <button
+          onClick={() => router.push('/admin/leads')}
+          className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+        >
           Back to Leads
         </button>
       </div>
 
-      <section className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-        <div className="rounded-md border border-gray-200 p-4">
-          <h2 className="font-semibold text-gray-800">Contact</h2>
+      <section className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+          <h2 className="text-lg font-semibold text-gray-900">Contact</h2>
           <dl className="mt-2 space-y-1 text-sm text-gray-700">
             <div>Email: {lead.email ?? '—'}</div>
             <div>Phone: {lead.phone ?? '—'}</div>
@@ -145,8 +148,8 @@ export default function AdminLeadDetailPage({ params }: { params: { id: string }
             {lead.message && <div>Message: {lead.message}</div>}
           </dl>
         </div>
-        <div className="rounded-md border border-gray-200 p-4">
-          <h2 className="font-semibold text-gray-800">Assignment</h2>
+        <div className="rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+          <h2 className="text-lg font-semibold text-gray-900">Assignment</h2>
           <dl className="mt-2 space-y-1 text-sm text-gray-700">
             <div>Assignee: {lead.assignee ? `${lead.assignee.fullName} (${lead.assignee.email})` : 'Unassigned'}</div>
             <div>Created: {new Date(lead.createdAt).toLocaleString()}</div>
@@ -155,8 +158,8 @@ export default function AdminLeadDetailPage({ params }: { params: { id: string }
         </div>
       </section>
 
-      <section className="mt-6 rounded-md border border-gray-200 p-4">
-        <h2 className="font-semibold text-gray-800">Log Activity</h2>
+      <section className="mt-6 rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+        <h2 className="text-lg font-semibold text-gray-900">Log Activity</h2>
         <form onSubmit={submitActivity} className="mt-3 space-y-3">
           <div className="flex flex-wrap gap-3">
             <label htmlFor="activity-type" className="sr-only">
@@ -166,7 +169,7 @@ export default function AdminLeadDetailPage({ params }: { params: { id: string }
               id="activity-type"
               value={activityType}
               onChange={(e) => setActivityType(e.target.value)}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
             >
               {ACTIVITY_TYPES.map((t) => (
                 <option key={t} value={t}>
@@ -184,7 +187,7 @@ export default function AdminLeadDetailPage({ params }: { params: { id: string }
                   type="date"
                   value={activityDueAt}
                   onChange={(e) => setActivityDueAt(e.target.value)}
-                  className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
                 />
               </>
             )}
@@ -197,33 +200,37 @@ export default function AdminLeadDetailPage({ params }: { params: { id: string }
             placeholder={activityType === 'TASK' ? 'What needs to be done?' : 'What happened?'}
             value={activityContent}
             onChange={(e) => setActivityContent(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
             rows={3}
           />
-          {activityError && <p className="text-sm text-red-600">{activityError}</p>}
+          {activityError && (
+            <div className="rounded-xl2 border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{activityError}</div>
+          )}
           <button
             type="submit"
             disabled={activitySubmitting || !activityContent.trim()}
-            className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+            className="inline-flex items-center justify-center rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700 disabled:opacity-50"
           >
             {activitySubmitting ? 'Saving...' : 'Add to Timeline'}
           </button>
         </form>
       </section>
 
-      <section className="mt-6 rounded-md border border-gray-200 p-4">
-        <h2 className="font-semibold text-gray-800">Timeline</h2>
+      <section className="mt-6 rounded-xl2 border border-gray-200 bg-white p-6 shadow-card">
+        <h2 className="text-lg font-semibold text-gray-900">Timeline</h2>
         {lead.activities.length === 0 ? (
-          <p className="mt-2 text-sm text-gray-500">No activity logged yet.</p>
+          <div className="mt-3 rounded-xl2 border border-dashed border-gray-300 bg-gray-50 p-8 text-center text-sm text-gray-500">
+            No activity logged yet.
+          </div>
         ) : (
           <ul className="mt-3 space-y-3">
             {lead.activities.map((a) => (
-              <li key={a.id} className="rounded-md bg-gray-50 p-3 text-sm">
+              <li key={a.id} className="rounded-lg border border-gray-200 bg-white p-4 text-sm">
                 <div className="flex items-start justify-between gap-2">
-                  <span className="font-medium text-gray-800">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                     <span aria-hidden="true">{ACTIVITY_ICON[a.type] ?? '•'}</span>{' '}
                     {formatEnumLabel(a.type)}
-                    {a.author && <span className="text-gray-400"> — {a.author.fullName}</span>}
+                    {a.author && <span className="text-gray-400 normal-case"> — {a.author.fullName}</span>}
                   </span>
                   <span className="shrink-0 text-xs text-gray-400">{formatRelativeTime(a.createdAt)}</span>
                 </div>
@@ -234,14 +241,14 @@ export default function AdminLeadDetailPage({ params }: { params: { id: string }
                       <span className="text-gray-500">Due {new Date(a.dueAt).toLocaleDateString()}</span>
                     )}
                     {a.completedAt ? (
-                      <span className="font-medium text-green-700">
+                      <span className="inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
                         Completed {new Date(a.completedAt).toLocaleDateString()}
                       </span>
                     ) : (
                       <button
                         onClick={() => completeTask(a.id)}
                         disabled={busyActivityId === a.id}
-                        className="rounded-md border border-brand-300 px-2 py-1 font-medium text-brand-700 hover:bg-brand-50 disabled:opacity-50"
+                        className="rounded-lg border border-teal-300 px-2 py-1 font-medium text-teal-700 hover:bg-teal-50 disabled:opacity-50"
                       >
                         Mark complete
                       </button>
