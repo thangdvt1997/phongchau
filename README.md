@@ -1,7 +1,10 @@
 # Phong Chau — Agriculture/Food B2B+B2C Commerce Platform
 
-P0 MVP implementation. See `docs/Pormt.docx` / `docs/prompt-summary.pdf` for the full source spec
-and `ROADMAP.md` for what's deliberately deferred to P1–P3.
+Full B2C+B2B commerce platform — catalog, cart, checkout, orders, RFQ, B2B tier/contract pricing,
+OEM/ODM workflow, WMS, CRM, customer support ticketing, marketing automation, multi-currency
+display, VietQR payment, CMS blog, SEO, and an admin panel with RBAC. See `docs/Pormt.docx` /
+`docs/prompt-summary.pdf` for the full source spec and `ROADMAP.md` for what's done vs. still
+deferred (P3 marketplace/AI/ERP integrations, live carrier APIs, real payment gateway keys).
 
 ## Stack
 - **Frontend**: Next.js 14 (App Router), TypeScript, Tailwind CSS
@@ -24,13 +27,9 @@ docker compose exec backend npx prisma migrate dev
 docker compose exec backend npx prisma db seed
 ```
 
-Seeded accounts (see `backend/prisma/seed.ts`):
-| Role | Email | Password |
-|---|---|---|
-| Super Admin | admin@phongchau.com | Admin@12345 |
-| Sales | sales@phongchau.com | Sales@12345 |
-| Retail customer | customer@phongchau.com | Customer@12345 |
-| B2B customer (pre-approved) | b2b@phongchau.com | B2bCustomer@12345 |
+Seeding creates one demo account per role (Super Admin, Sales, Retail customer, pre-approved B2B
+customer) — see `backend/prisma/seed.ts` for the actual emails/passwords rather than duplicating
+credentials here.
 
 ## Tests
 
@@ -54,5 +53,6 @@ Nginx listens on `NGINX_HTTP_PORT` (default `8730`) and routes `/api/*`, `/healt
 backend/   NestJS API (modular monolith — see module list in src/app.module.ts)
 frontend/  Next.js site (public storefront + admin panel)
 infra/     nginx config, deploy scripts
+scripts/   CI checkpoint scripts, prod nginx configs, one-off migration/seed helpers
 docs/      original requirement documents
 ```
